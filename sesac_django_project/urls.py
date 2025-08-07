@@ -23,12 +23,7 @@ from django.urls import path, include
 #http://127.0.0.1
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include('single_pages.urls')),
-    path("blog/", include('blog.urls')),
-    path('library/', include('library.urls')),
-    path('shop/', include('shop.urls')),
-    path('aboutme/',include('single_pages.urls')),
-    path('example/',include('example.urls')),
+    path("", include('shop.urls')),
    path('accounts/', include('allauth.urls')),
 
    ]

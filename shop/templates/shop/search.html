@@ -1,0 +1,41 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+
+<div class="container py-5">
+  <h3 class="mb-4 text-center">검색 결과: "{{ query }}"</h3>
+
+  {% if posts %}
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+      {% for post in posts %}
+        <div class="col">
+          <div class="card h-100 shadow-sm border-0 hover-grow" style="overflow: hidden">  <!-- hover-grow는 base.html에서 정의한 클래스라고 가정 -->
+
+            {% if post.uploaded_image %}
+                <div class="hover-box">
+              <img src="{{ post.uploaded_image.url }}" class="card-img-top" alt="..." >
+                </div>
+            {% else %}
+              <img src="https://dummyimage.com/400x250/eee/aaa&text=No+Image" class="card-img-top" alt="...">
+            {% endif %}
+
+            <div class="card-body">
+              <h6 class="text-muted mb-1">{{ post.category.name }}</h6>
+              <h5 class="card-title">{{ post.title }}</h5>
+              <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+            </div>
+
+            <div class="card-footer bg-transparent border-0 text-center">
+              <a href="{% url 'shopdetail' post.pk %}" class="btn btn-outline-dark btn-sm">자세히 보기</a>
+            </div>
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center">검색 결과가 없습니다.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

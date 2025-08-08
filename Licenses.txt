@@ -1,0 +1,31 @@
+<!-- Icon from Lucide (https://lucide.dev/)
+Licensed under the MIT License
+https://github.com/lucide-icons/lucide/blob/main/LICENSE
+아이콘 라이선스 표기 -->
+<!-- Login icon and text -->
+<svg class="navbar-icon" width="24px" height="24px" stroke-width="1.5"
+viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M19 12H12M12 12L15 15M12 12L15 9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M19 6V5C19 3.895 18.105 3 17 3H7C5.895 3 5 3.895 5 5V19C5 20.105 5.895 21 7 21H17C18.105 21 19 20.105 19 19V18"
+stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+<!-- Icon from Lucide (https://lucide.dev/)
+Licensed under the MIT License
+https://github.com/lucide-icons/lucide/blob/main/LICENSE
+아이콘 라이선스 표기 -->
+<!-- Search icon and text -->
+<svg width="24px" height="24px" viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
+<path d="M17 17L21 21" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M3 11C3 15.4183 6.58172 19 11 19C13.213 19 15.2161 18.1015 16.6644 16.6493C18.1077 15.2022 19 13.2053 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11Z"
+stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+
+<!-- Icon from Lucide (https://lucide.dev/)
+Licensed under the MIT License
+https://github.com/lucide-icons/lucide/blob/main/LICENSE
+아이콘 라이선스 표기 -->
+<!-- Logout icon and text -->
+<svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
+<path d="M12 12H19M19 12L16 15M19 12L16 9" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M19 6V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V18"
+stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+

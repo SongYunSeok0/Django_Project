@@ -1,0 +1,160 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+
+<!-- 문의하기 폼 -->
+<div style="max-width: 1000px; margin: 60px auto; padding: 32px;
+            background:#fff; border-radius:16px;
+            box-shadow:0 8px 24px rgba(0,0,0,.08);">
+
+  <h2 style="text-align:center; margin-bottom:24px; font-size:28px; font-weight:700;">문의하기</h2>
+
+  <form method="post" enctype="multipart/form-data" style="margin-bottom: 40px;">
+    {% csrf_token %}
+
+    <!-- 제목 -->
+    {% if commentform.title %}
+      <div style="margin-bottom:16px;">
+        <label for="{{ commentform.title.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ commentform.title.label }}
+        </label>
+        {{ commentform.title }}
+      </div>
+    {% endif %}
+
+    <!-- 내용 -->
+    <div style="margin-bottom:24px;">
+      <label for="{{ commentform.content.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+        {{ commentform.content.label }}
+      </label>
+      {{ commentform.content }}
+    </div>
+
+    <!-- 사진(한 장) -->
+    <div id="upload-row" style="display:flex; align-items:center; gap:16px; padding-bottom: 20px;">
+        {{ commentform.uploaded_image }}  <!-- input -->
+        <!-- 미리보기 박스 -->
+        <label for="{{ commentform.uploaded_image.id_for_label }}"
+               id="preview"
+               style="width:120px;height:120px;border:1px solid #ccc;border-radius:6px;
+                      background:#f9f9f9;display:flex;align-items:center;justify-content:center;
+                      color:#bbb;font-size:24px; cursor:pointer;">
+          +
+        </label>
+    </div>
+
+    <!-- 제출 버튼 -->
+    <button type="submit"
+            style="display:block; width:100%; padding:12px; font-size:16px; font-weight:600;
+                   background:#212529; color:#fff; border:none; border-radius:8px; cursor:pointer;"
+            onmouseover="this.style.opacity='0.9'"
+            onmouseout="this.style.opacity='1'">
+      제출
+    </button>
+  </form>
+
+  <!-- 문의 목록 -->
+  <hr style="border:1px solid #000; margin-bottom:400px;">
+  <h2 style="text-align:center; margin-bottom:100px; font-size:28px; font-weight:700;">문의내역</h2>
+  <hr style="border:1px solid #000; margin-bottom:20px;">
+  {% if comments %}
+    <ul style="list-style:none; padding:0; margin:0;">
+      {% for comment in comments %}
+        <li style="border-bottom:1px solid #ddd; padding:12px 0; margin-top:0;">
+          {% if comment.title %}
+            <div style="margin-top:6px; margin-bottom:6px; font-size:24px; font-weight:700;">
+              Title - {{ comment.title }}
+            </div>
+          {% endif %}
+
+          <div style="font-size:20px; font-weight:600;">Content</div>
+          <p style="margin:6px 0 0; line-height:1.6;">{{ comment.content }}</p>
+
+          {% if comment.uploaded_image %}
+            <div style="margin-top:20px;">
+              <img src="{{ comment.uploaded_image.url }}"
+                   alt=""
+                   class="comment-img"
+                   style="width:160px;height:160px;object-fit:cover;border-radius:6px;
+                          border:1px solid #eee; cursor:pointer;">
+            </div>
+          {% endif %}
+
+          <div style="display:flex; align-items:center; margin-top:-4px;">
+            <span style="font-size:16px; font-weight:700; margin-left:auto;">
+              Username - {{ comment.author }}
+            </span>
+            <span style="color: gray; font-size:0.9em; margin-left:8px;">
+              {{ comment.created_date|date:"Y-m-d H:i" }}
+            </span>
+          </div>
+
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>아직 등록된 문의가 없습니다.</p>
+  {% endif %}
+</div>
+
+<!-- 단일 이미지 미리보기 -->
+<script>
+(function(){
+  const row = document.getElementById('upload-row');
+  if (!row) return;
+  const input = row.querySelector('input[type="file"]');
+  const box = document.getElementById('preview');
+  if (!input || !box) return;
+
+  box.addEventListener('click', () => input.click());
+
+  input.addEventListener('change', function () {
+    const f = this.files && this.files[0];
+    if (!f) {
+      box.style.background = '#f9f9f9';
+      box.style.backgroundImage = '';
+      box.textContent = '+';
+      return;
+    }
+    const r = new FileReader();
+    r.onload = e => {
+      box.style.backgroundImage = `url(${e.target.result})`;
+      box.style.backgroundSize = 'cover';
+      box.style.backgroundPosition = 'center';
+      box.textContent = '';
+    };
+    r.readAsDataURL(f);
+  });
+})();
+</script>
+
+<!-- 확대용 모달 -->
+<div id="imgModal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100%;height:100%;
+                           background:rgba(0,0,0,0.8);align-items:center;justify-content:center;">
+  <span id="imgClose" style="position:absolute;top:20px;right:35px;color:#fff;font-size:40px;cursor:pointer;">&times;</span>
+  <img id="imgModalContent" style="max-width:90%;max-height:90%;border-radius:8px;">
+</div>
+
+<script>
+const modal = document.getElementById("imgModal");
+const modalImg = document.getElementById("imgModalContent");
+const modalClose = document.getElementById("imgClose");
+
+document.querySelectorAll(".comment-img").forEach(img => {
+  img.addEventListener("click", () => {
+    modal.style.display = "flex";
+    modalImg.src = img.src;
+  });
+});
+
+modalClose.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+</script>
+
+{% endblock %}

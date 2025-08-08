@@ -66,7 +66,7 @@ def search(request):
             title__icontains=query
         )  # title에서 검색 (대소문자 구분 없이 포함된 것)
 
-    return render(request, 'shop/search_results.html', {
+    return render(request, 'shop/search.html', {
         'query': query,
         'posts': posts
     })

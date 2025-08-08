@@ -4,6 +4,24 @@
 {% block title %}Shop List - Dusty Shop{% endblock %}
 
 {% block content %}
+    {% load static %}
+
+
+
+<header id="hero-header" class="bg-dark py-5 d-flex align-items-center" style="background-image: url('{% static 'images/header-bg.gif' %}'); background-size: cover; background-position: center; min-height: 1000px;">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-1 fw-bolder dusty-text" style="font-family: Georgia, Times New Roman, serif;">Dusty Shop</h1>
+        </div>
+    </div>
+</header>
+
+<script>
+    // 5초 후에 배경 이미지를 black.jpg로 변경
+    setTimeout(function() {
+        document.getElementById('hero-header').style.backgroundImage = "url('{% static 'images/black.jpg' %}')";
+    }, 5000); // 5000ms = 5초
+</script>
 <section class="px-5 my-5">
     <h3 style="color:black; font-family: Georgia, Times New Roman, serif ;"> Last Chance </h3>
     <div class="container px-4 px-lg-5 mt-5">
@@ -23,13 +41,6 @@
                     <div class="card-body p-4">
                         <div class="text-center">
                             <h5 class="fw-bolder">{{ post.title }}</h5>
-                            <div class="d-flex justify-content-center small text-warning mb-2">
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                            </div>
                             <span>{{ post.price }}₩</span>
                         </div>
                     </div>
@@ -64,54 +75,6 @@
                     <div class="card-body p-4">
                         <div class="text-center">
                             <h5 class="fw-bolder">{{ post.title }}</h5>
-                            <div class="d-flex justify-content-center small text-warning mb-2">
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                            </div>
-                            <span>{{ post.price }}₩</span>
-                        </div>
-                    </div>
-
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center">
-                            <a class="btn btn-outline-dark mt-auto" href="{{ post.pk }}">상세 보기</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-<section class="px-5">
-    <h3 style="color:black; font-family: Georgia, Times New Roman, serif ;" >Most Popular</h3>
-    <div class="container px-4 px-lg-5 mt-5">
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            {% for post in posts %}
-            <div class="col mb-5">
-                <div class="card h-100" style="overflow: hidden">
-                    <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
-                    {% if post.uploaded_image %}
-                    <div class="hover-box">
-                        <img class="img-fluid rounded" src="{{ post.uploaded_image.url }}" alt="..." />
-                    </div>
-                    {% else %}
-                    <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
-                    {% endif %}
-
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <h5 class="fw-bolder">{{ post.title }}</h5>
-                            <div class="d-flex justify-content-center small text-warning mb-2">
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                                <div class="bi-star-fill"></div>
-                            </div>
                             <span>{{ post.price }}₩</span>
                         </div>
                     </div>

@@ -1,4 +1,6 @@
 {% load socialaccount %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid container">
         <a class="navbar-brand" href="#"></a>
@@ -35,14 +37,14 @@
                   <a class="nav-link" href="{% url 'etc' %}">ETC</a>
                 </li>
               </ul>
-                        <form class="mx-auto w-100 d-flex justify-content-center" method="get" action="{% url 'search' %}" style="max-width: 600px;">
+                <form class="mx-auto w-100 d-flex justify-content-center" method="get" action="{% url 'search' %}" style="max-width: 600px;">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Search..." name="q" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
                 </div>
-            </form>
+                </form>
             <!-- Search icon -->
             <ul class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}

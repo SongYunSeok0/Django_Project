@@ -1,38 +1,41 @@
 {% extends 'shop/base.html' %}
 {% block content %}
-<h3 class="mb-3">검색 결과: "{{ query }}"</h3>
 
-{% if posts %}
-  {% for post in posts %}
-    <div class="card mb-3 p-3">
-      <div class="row g-0 align-items-center">
+<div class="container py-5">
+  <h3 class="mb-4 text-center">검색 결과: "{{ query }}"</h3>
 
-        <!-- 왼쪽 텍스트 -->
-        <div class="col-md-9">
-          <div class="card-body">
-            <h5 class="card-title">{{ post.brand }} - {{ post.type }}</h5>
-            {% if post.content %}
-              <p class="card-text">{{ post.content }}</p>
+  {% if posts %}
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+      {% for post in posts %}
+        <div class="col">
+          <div class="card h-100 shadow-sm border-0 hover-grow" style="overflow: hidden">  <!-- hover-grow는 base.html에서 정의한 클래스라고 가정 -->
+
+            {% if post.uploaded_image %}
+                <div class="hover-box">
+              <img src="{{ post.uploaded_image.url }}" class="card-img-top" alt="..." >
+                </div>
+            {% else %}
+              <img src="https://dummyimage.com/400x250/eee/aaa&text=No+Image" class="card-img-top" alt="...">
             {% endif %}
-            <a href="{% url 'detail' post.pk %}" class="btn btn-primary">자세히 보기</a>
+
+            <div class="card-body">
+              <h6 class="text-muted mb-1">{{ post.category.name }}</h6>
+              <h5 class="card-title">{{ post.title }}</h5>
+              <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+            </div>
+
+            <div class="card-footer bg-transparent border-0 text-center">
+              <a href="{% url 'shopdetail' post.pk %}" class="btn btn-outline-dark btn-sm">자세히 보기</a>
+            </div>
+
           </div>
         </div>
-
-        <!-- 오른쪽 이미지 -->
-        <div class="col-md-3 text-end">
-          {% if post.uploaded_image %}
-            <img src="{{ post.uploaded_image.url }}" alt="이미지"
-                 class="img-fluid rounded" style="max-height: 120px; object-fit: cover;">
-          {% else %}
-            <img src="https://dummyimage.com/150x120/eee/aaa&text=No+Image"
-                 class="img-fluid rounded" style="max-height: 120px; object-fit: cover;">
-          {% endif %}
-        </div>
-
-      </div>
+      {% endfor %}
     </div>
-  {% endfor %}
-{% else %}
-  <p>검색 결과가 없습니다.</p>
-{% endif %}
+  {% else %}
+    <p class="text-center">검색 결과가 없습니다.</p>
+  {% endif %}
+</div>
+
 {% endblock %}

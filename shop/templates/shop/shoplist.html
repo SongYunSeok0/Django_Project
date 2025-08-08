@@ -4,24 +4,6 @@
 {% block title %}Shop List - Dusty Shop{% endblock %}
 
 {% block content %}
-    {% load static %}
-
-
-
-<header id="hero-header" class="bg-dark py-5 d-flex align-items-center" style="background-image: url('{% static 'images/header-bg.gif' %}'); background-size: cover; background-position: center; min-height: 1000px;">
-    <div class="container px-4 px-lg-5 my-5">
-        <div class="text-center text-white">
-            <h1 class="display-1 fw-bolder dusty-text" style="font-family: Georgia, Times New Roman, serif;">Dusty Shop</h1>
-        </div>
-    </div>
-</header>
-
-<script>
-    // 5초 후에 배경 이미지를 black.jpg로 변경
-    setTimeout(function() {
-        document.getElementById('hero-header').style.backgroundImage = "url('{% static 'images/black.jpg' %}')";
-    }, 5000); // 5000ms = 5초
-</script>
 <section class="px-5 my-5">
     <h3 style="color:black; font-family: Georgia, Times New Roman, serif ;"> Last Chance </h3>
     <div class="container px-4 px-lg-5 mt-5">

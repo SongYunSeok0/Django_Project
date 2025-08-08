@@ -70,3 +70,6 @@ def search(request):
         'query': query,
         'posts': posts
     })
+
+def aboutme(request):
+    return render(request, 'shop/aboutme.html')

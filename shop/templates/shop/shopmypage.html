@@ -1,0 +1,33 @@
+<!-- templates/shop/shop_detail.html -->
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ post.title }} - Dusty Shop{% endblock %}
+
+{% block content %}
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-1 fw-bolder dusty-text">Dusty Shop</h1>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid bg-light pt-5 mt-0" style="min-height: 100vh;">
+    <div class="container" style="max-width: 1000px;">
+        <h3 class="mb-4">내 프로필</h3>
+
+        <div class="d-flex align-items-center gap-4">
+            <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg"
+                 alt="더미 이미지"
+                 class="rounded-circle"
+                 width="100"
+                 height="100">
+            <div>
+                <h5 class="mb-1"><strong>{{ user.username }}</strong></h5>
+                <small class="text-muted">{{ user.email }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mt-5" style="height: 600px;"></div>
+{% endblock %}

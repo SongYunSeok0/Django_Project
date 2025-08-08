@@ -1,0 +1,38 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+<h3 class="mb-3">검색 결과: "{{ query }}"</h3>
+
+{% if posts %}
+  {% for post in posts %}
+    <div class="card mb-3 p-3">
+      <div class="row g-0 align-items-center">
+
+        <!-- 왼쪽 텍스트 -->
+        <div class="col-md-9">
+          <div class="card-body">
+            <h5 class="card-title">{{ post.brand }} - {{ post.type }}</h5>
+            {% if post.content %}
+              <p class="card-text">{{ post.content }}</p>
+            {% endif %}
+            <a href="{% url 'detail' post.pk %}" class="btn btn-primary">자세히 보기</a>
+          </div>
+        </div>
+
+        <!-- 오른쪽 이미지 -->
+        <div class="col-md-3 text-end">
+          {% if post.uploaded_image %}
+            <img src="{{ post.uploaded_image.url }}" alt="이미지"
+                 class="img-fluid rounded" style="max-height: 120px; object-fit: cover;">
+          {% else %}
+            <img src="https://dummyimage.com/150x120/eee/aaa&text=No+Image"
+                 class="img-fluid rounded" style="max-height: 120px; object-fit: cover;">
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>검색 결과가 없습니다.</p>
+{% endif %}
+{% endblock %}

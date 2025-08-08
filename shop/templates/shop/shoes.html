@@ -1,0 +1,39 @@
+{% extends 'shop/base.html' %}
+{% block title %}Top 카테고리 - Dusty Shop{% endblock %}
+
+{% block content %}
+<section class="px-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <h2 class="mb-4 text-center">SHOES</h2>
+
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for post in posts %}
+            <div class="col mb-5">
+                <div class="card h-100" style="overflow: hidden">
+                    {% if post.uploaded_image %}
+                    <div class="hover-box">
+                        <img class="card-img-top" src="{{ post.uploaded_image.url }}" alt="..." style="height: 300px; object-fit: cover;">
+                    </div>
+                    {% else %}
+                    <img class="card-img-top" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
+                    {% endif %}
+
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bolder">{{ post.title }}</h5>
+                            <span>{{ post.price }}₩</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center">
+                            <a class="btn btn-outline-dark mt-auto" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

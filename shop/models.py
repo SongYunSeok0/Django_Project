@@ -5,15 +5,15 @@ from django.urls import reverse
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, allow_unicode=True)
-
+ 
     def __str__(self):
         return f'{self.name} - {self.slug}'
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
-    price = models.IntegerField(null=True)
-    size = models.CharField(max_length=10, null=True)
+    price = models.IntegerField(null=True, blank=True)
+    size = models.CharField(max_length=10, null=True, blank=True)
     shoulder= models.FloatField(null=True, blank=True)
     chest= models.FloatField(null=True, blank=True)
     somae= models.FloatField(null=True, blank=True)
@@ -63,6 +63,8 @@ class Comment(models.Model):
     uploaded_image = models.ImageField(upload_to='images/', blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True, null=True)
     updated_date = models.DateTimeField(auto_now=True, null=True)
+    parent = models.ForeignKey('self', null=True, blank=True,
+                               on_delete=models.CASCADE, related_name='replies')
 
     def __str__(self):
         who = self.author.username if self.author else "익명"
@@ -70,8 +72,19 @@ class Comment(models.Model):
     
     def get_absolute_url(self):
         return reverse('contact_history')
-
+    
+    def is_reply(self):
+        return self.parent_id is not None
+    
 class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'post')
+
+class Cartlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)

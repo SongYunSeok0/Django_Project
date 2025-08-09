@@ -1,0 +1,178 @@
+{% extends 'shop/base.html' %}
+{% block content %}
+
+<div style="max-width: 1000px; margin: 60px auto; padding: 32px;
+            background:#fff; border-radius:16px;
+            box-shadow:0 8px 24px rgba(0,0,0,.08);">
+
+  <h2 style="text-align:center; margin-bottom:24px; font-size:28px; font-weight:700;">
+    포스트 작성
+  </h2>
+
+  <form method="post" enctype="multipart/form-data" style="margin-bottom: 8px;">
+    {% csrf_token %}
+    {{ postform.non_field_errors }}
+
+    <!-- 제목 -->
+    <div style="margin-bottom:16px;">
+      <label for="{{ postform.title.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+        {{ postform.title.label }}
+      </label>
+      {{ postform.title }}
+      {{ postform.title.errors }}
+    </div>
+
+    <!-- 내용 -->
+    <div style="margin-bottom:24px;">
+      <label for="{{ postform.content.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+        {{ postform.content.label }}
+      </label>
+      {{ postform.content }}
+      {{ postform.content.errors }}
+    </div>
+
+    <!-- 가격 -->
+    <div style="margin-bottom:16px;">
+      <label for="{{ postform.price.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+        {{ postform.price.label }}
+      </label>
+      {{ postform.price }}
+      {{ postform.price.errors }}
+    </div>
+
+    <!-- 표기 사이즈 -->
+    <div style="margin-bottom:16px;">
+      <label for="{{ postform.size.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+        {{ postform.size.label }}
+      </label>
+      {{ postform.size }}
+      {{ postform.size.errors }}
+    </div>
+
+    <!-- 치수 정보 (개별 출력) -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:16px;">
+      <div>
+        <label for="{{ postform.shoulder.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ postform.shoulder.label }}
+        </label>
+        {{ postform.shoulder }}
+        {{ postform.shoulder.errors }}
+      </div>
+      <div>
+        <label for="{{ postform.chest.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ postform.chest.label }}
+        </label>
+        {{ postform.chest }}
+        {{ postform.chest.errors }}
+      </div>
+      <div>
+        <label for="{{ postform.somae.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ postform.somae.label }}
+        </label>
+        {{ postform.somae }}
+        {{ postform.somae.errors }}
+      </div>
+      <div>
+        <label for="{{ postform.chongjang.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ postform.chongjang.label }}
+        </label>
+        {{ postform.chongjang }}
+        {{ postform.chongjang.errors }}
+      </div>
+      <div>
+        <label for="{{ postform.waist.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ postform.waist.label }}
+        </label>
+        {{ postform.waist }}
+        {{ postform.waist.errors }}
+      </div>
+      <div>
+        <label for="{{ postform.bottom_top.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ postform.bottom_top.label }}
+        </label>
+        {{ postform.bottom_top }}
+        {{ postform.bottom_top.errors }}
+      </div>
+      <div>
+        <label for="{{ postform.thigh.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ postform.thigh.label }}
+        </label>
+        {{ postform.thigh }}
+        {{ postform.thigh.errors }}
+      </div>
+      <div>
+        <label for="{{ postform.mit_dan.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ postform.mit_dan.label }}
+        </label>
+        {{ postform.mit_dan }}
+        {{ postform.mit_dan.errors }}
+      </div>
+    </div>
+
+    <!-- 카테고리 -->
+    {% if postform.category %}
+      <div style="margin-bottom:16px;">
+        <label for="{{ postform.category.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+          {{ postform.category.label }}
+        </label>
+        {{ postform.category }}
+        {{ postform.category.errors }}
+      </div>
+    {% endif %}
+
+    <!-- 이미지 업로드 + 미리보기 -->
+    {% if postform.uploaded_image %}
+      <div id="upload-row" style="display:flex; align-items:center; gap:16px; padding-bottom: 20px;">
+        {{ postform.uploaded_image }}
+        {{ postform.uploaded_image.errors }}
+        <label for="{{ postform.uploaded_image.id_for_label }}"
+               id="preview"
+               style="width:120px;height:120px;border:1px solid #ccc;border-radius:6px;
+                      background:#f9f9f9;display:flex;align-items:center;justify-content:center;
+                      color:#bbb;font-size:24px; cursor:pointer;">
+          +
+        </label>
+      </div>
+    {% endif %}
+
+    <button type="submit"
+            style="display:block; width:100%; padding:12px; font-size:16px; font-weight:600;
+                   background:#212529; color:#fff; border:none; border-radius:8px; cursor:pointer;"
+            onmouseover="this.style.opacity='0.9'"
+            onmouseout="this.style.opacity='1'">
+      제출
+    </button>
+  </form>
+
+</div>
+
+<script>
+(function(){
+  const row = document.getElementById('upload-row');
+  if (!row) return;
+  const input = row.querySelector('input[type="file"]');
+  const box = document.getElementById('preview');
+  if (!input || !box) return;
+
+  box.addEventListener('click', () => input.click());
+  input.addEventListener('change', function () {
+    const f = this.files && this.files[0];
+    if (!f) {
+      box.style.background = '#f9f9f9';
+      box.style.backgroundImage = '';
+      box.textContent = '+';
+      return;
+    }
+    const r = new FileReader();
+    r.onload = e => {
+      box.style.backgroundImage = `url(${e.target.result})`;
+      box.style.backgroundSize = 'cover';
+      box.style.backgroundPosition = 'center';
+      box.textContent = '';
+    };
+    r.readAsDataURL(f);
+  });
+})();
+</script>
+
+{% endblock %}

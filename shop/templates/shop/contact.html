@@ -31,8 +31,7 @@
 
     <!-- 사진(한 장) -->
     <div id="upload-row" style="display:flex; align-items:center; gap:16px; padding-bottom: 20px;">
-        {{ commentform.uploaded_image }}  <!-- input -->
-        <!-- 미리보기 박스 -->
+        {{ commentform.uploaded_image }}
         <label for="{{ commentform.uploaded_image.id_for_label }}"
                id="preview"
                style="width:120px;height:120px;border:1px solid #ccc;border-radius:6px;
@@ -56,20 +55,27 @@
   <hr style="border:1px solid #000; margin-bottom:400px;">
   <h2 style="text-align:center; margin-bottom:100px; font-size:28px; font-weight:700;">문의내역</h2>
   <hr style="border:1px solid #000; margin-bottom:20px;">
-  {% if comments %}
-    <ul style="list-style:none; padding:0; margin:0;">
-      {% for comment in comments %}
-        <li style="border-bottom:1px solid #ddd; padding:12px 0; margin-top:0;">
-          {% if comment.title %}
-            <div style="margin-top:6px; margin-bottom:6px; font-size:24px; font-weight:700;">
-              Title - {{ comment.title }}
-            </div>
-          {% endif %}
 
-          <div style="font-size:20px; font-weight:600;">Content</div>
-          <p style="margin:6px 0 0; line-height:1.6;">{{ comment.content }}</p>
+{% if comments %}
+  <ul style="list-style:none; padding:0; margin:0;">
+    {% for comment in comments %}
+      <li style="border-bottom:1px solid #ddd; padding:12px 0; margin-top:0;">
 
-          {% if comment.uploaded_image %}
+        {% if comment.title %}
+          <div style="margin-top:6px; margin-bottom:6px; font-size:24px; font-weight:700;">
+            Title - {{ comment.title }}
+          </div>
+        {% endif %}
+
+        <div style="font-size:20px; font-weight:600;">Content</div>
+        {% if comment.author == user or request.user.is_staff %}
+            <p style="margin:6px 0 0; line-height:1.6; white-space:pre-wrap;">{{ comment.content }}</p>
+        {% else %}
+            <p style="margin:6px 0 0; line-height:1.6; white-space:pre-wrap;">비공개</p>
+        {% endif %}
+        
+        {% if comment.uploaded_image %}
+          {% if comment.author == user or request.user.is_staff %}
             <div style="margin-top:20px;">
               <img src="{{ comment.uploaded_image.url }}"
                    alt=""
@@ -77,24 +83,71 @@
                    style="width:160px;height:160px;object-fit:cover;border-radius:6px;
                           border:1px solid #eee; cursor:pointer;">
             </div>
+          {% else %}
+            <div style="margin-top:20px;">
+              <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg"
+                   alt=""
+                   class="comment-img"
+                   style="width:160px;height:160px;object-fit:cover;border-radius:6px;
+                          border:1px solid #eee; cursor:pointer;">
+            </div>
           {% endif %}
+        {% endif %}
 
-          <div style="display:flex; align-items:center; margin-top:-4px;">
-            <span style="font-size:16px; font-weight:700; margin-left:auto;">
+        <div style="display:flex; align-items:center; margin-top:-4px;">
+          <span style="font-size:16px; font-weight:700; margin-left:auto;">
+            {% if comment.author == user or request.user.is_staff %}
               Username - {{ comment.author }}
-            </span>
-            <span style="color: gray; font-size:0.9em; margin-left:8px;">
-              {{ comment.created_date|date:"Y-m-d H:i" }}
-            </span>
-          </div>
+            {% else %}
+              Username - ******
+            {% endif %}
+          </span>
+          <span style="color: gray; font-size:0.9em; margin-left:8px;">
+            {{ comment.created_date|date:"Y-m-d H:i" }}
+          </span>
+        </div>
 
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>아직 등록된 문의가 없습니다.</p>
-  {% endif %}
-</div>
+        {# ▼▼ HTML만으로 대댓글 접기/펼치기 ▼▼ #}
+        {% if comment.replies.all %}
+          <details style="margin-top:10px;">
+            <summary style="cursor:pointer; font-size:14px; padding:4px 10px; background:#f8f9fa; border:1px solid #ccc; border-radius:6px; display:inline-block; user-select:none;">
+              대댓글 보기 ({{ comment.replies.count }})
+            </summary>
+
+            <ul style="list-style:none; padding:0; margin:12px 0 12px 0;">
+              {% for reply in comment.replies.all %}
+              <li style="margin-bottom: 13px; padding:8px 12px; border-left:3px solid #e9ecef; background:#fafafa; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; color:#6c757d; font-size:14px;">
+                  <span>
+                    <strong>
+                      {{ reply.author }}
+                      {% if reply.author.is_staff %}
+                        <span style="font-size:12px; color:#0d6efd; border:1px solid #0d6efd; border-radius:4px; padding:1px 6px; margin-left:6px;">
+                          관리자
+                        </span>
+                      {% endif %}
+                    </strong>
+                  </span>
+                  <span>{{ reply.created_date|date:"Y-m-d H:i" }}</span>
+                </div>
+              
+                <!-- 내용 -->
+                <div style="margin-top:4px; margin-bottom:4px; line-height:1.4; white-space:pre-line;">
+                  {{ reply.content }}
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </details>
+        {% endif %}
+        {# ▲▲ /HTML만으로 대댓글 접기/펼치기 ▲▲ #}
+
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>아직 등록된 문의가 없습니다.</p>
+{% endif %}
 
 <!-- 단일 이미지 미리보기 -->
 <script>

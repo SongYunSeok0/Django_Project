@@ -21,23 +21,20 @@
 
     <!-- 오른쪽: 텍스트 정보 -->
     <div class="col-md-6" >
-        <div style="position: sticky; top: 500px;">
-            <h3 class="fw-bold">{{ post.title }}</h3>
+        <div style="position: sticky; top: 400px;">
+            <h3 class="fw-bold" style="color: #555555">{{ post.title }}</h3>
 
-            <h4 class="fw-bold pt-4 pb-1" style="font-size:10px;">DETAIL</h4>
-            <ul style="font-size:10px;">
-              <li>375G/YDS COTTON FABRIC USED FOR BETTER COMFORT AND DURABILITY</li>
-              <li>GLITTER LOGO PRINT ON THE FRONT BODY</li>
-              <li>NEW SEASON GRAPHIC PRINT ON THE BACK</li>
-              <li>UTILIZED A LONG-LASTING SILICON PRINT</li>
+            <h4 class="fw-bold pt-4 pb-1" style="font-size:16px; color: #555555">DETAIL</h4>
+            <ul style="font-size:16px;">
+              {{post.content}}
             </ul>
 
-            <h4 class="fw-bold pt-2 pb-2" style="font-size:10px;">SIZE  {{post.size}}</h4>
+            <h4 class="fw-bold pt-2 pb-2" style="font-size:16px; color: #555555">SIZE  {{post.size}}</h4>
             <div style="display: flex; align-items: center;">
-              <a style="font-size:10px;">{{post.summary}}</a>
+              <a style="font-size:16px;">{{post.summary}}</a>
             </div>
-            <h4 class="fw-bold pt-3 pb-2" style="font-size:10px;">CARE</h4>
-            <ul style="font-size:10px; margin-bottom: 40px;">
+            <h4 class="fw-bold pt-3 pb-2" style="font-size:16px; color: #555555">CARE</h4>
+            <ul style="font-size:16px; margin-bottom: 40px;">
               <li>COLOR BLEEDING WARNING</li>
               <li>WASH DARK COLOR SEPERATELY</li>
               <li>MACHINE WASH COLD</li>
@@ -45,22 +42,85 @@
                 <li>반품불가</li>
             </ul>
 
-
+            {% if post.category and post.category.slug != "event" %}
             <hr class="divider"></hr>
             <h3 style="font-size:16px;">₩ {{ post.price|intcomma }}</h3>
             <p class="mt-3">{{ post.body }}</p>
 
-            <div class="button-group" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <div class="button-group" style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 20px;">
               {% if user.is_authenticated %}
-                <form action="{% url 'add_to_wishlist' post.pk %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Wish</button>
-                </form>
-                {% endif %}
-              
-              <a class="btn btn-dark" href="#" style="min-width: 120px;">Add to Cart</a>
+                  {% if is_wished %}
+                      <form action="{% url 'remove_from_wishlist' post.pk %}" method="post">
+                          {% csrf_token %}
+                          <button class="btn btn-dark" type="submit" style="min-width: 120px;">❤️</button>
+                      </form>
+                  {% else %}
+                      <form action="{% url 'add_to_wishlist' post.pk %}" method="post">
+                          {% csrf_token %}
+                          <button class="btn btn-dark" type="submit" style="min-width: 120px;">♡</button>
+                      </form>
+                  {% endif %}
+              {% endif %}
+
+              <form action="{% url 'add_to_cartlist' post.pk %}" method="post" onsubmit="handleCartSidebar()">
+                {% csrf_token %}
+                <button id="addToCartBtn" class="btn btn-dark" type="submit" style="min-width: 120px;">Add to Cart</button>
+              </form>
               <a class="btn btn-dark" href="#" style="min-width: 120px;">Buy</a>
             </div>
+        {% endif %}
+
+            <div id="cartSidebar" style="
+              position: fixed;
+              top: 0;
+              right: -300px;
+              width: 300px;
+              height: 100%;
+              background-color: white;
+              box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+              transition: right 0.3s ease;
+              padding: 20px;
+              z-index: 1000;
+            ">
+              <h3>🛒 장바구니에 추가됨!</h3>
+              <div id="cartItemInfo"></div>
+            </div>
+            
+            <script>
+                function handleCartSidebar(e) {
+                   e.preventDefault(); // 기본 제출 막기
+
+                   const item = {
+                     name: '{{post.title}}',
+                     price: '{{post.price|intcomma}}',
+                     size: '{{post.size}}',
+                     image: '{{ post.uploaded_image.url }}'
+                   };
+                 
+                   sessionStorage.setItem('cartItem', JSON.stringify(item));
+                 
+                   const cartInfo = document.getElementById('cartItemInfo');
+                   cartInfo.innerHTML = `
+                     <div style="border:1px solid #ccc; border-radius:10px; padding:10px; margin-bottom:15px;">
+                       <img src="${item.image}" alt="${item.name}" style="width:100%; border-radius:10px;">
+                       <h5 style="margin-top:10px;">${item.name}</h5>
+                       <p>가격: ${item.price}</p>
+                       <p>사이즈: ${item.size}</p>
+                     </div>
+                   `;
+                 
+                   const sidebar = document.getElementById('cartSidebar');
+                   sidebar.style.right = '0';
+                 
+                   // 2초 후에 폼 수동 제출
+                   setTimeout(() => {
+                     sidebar.style.right = '0';
+                     document.getElementById('cartForm').submit();
+                   }, 2000);
+                 }                 
+
+             </script>
+
         </div>
     </div>
   </div>

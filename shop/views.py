@@ -1,9 +1,24 @@
-from django.shortcuts import render, redirect
-from .models import Post, Comment, Wishlist
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Post, Comment, Wishlist, Category, Cartlist
 from .forms import PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
+
+def create(request):
+    if request.method == "POST":
+        postform = PostForm(request.POST, request.FILES)
+        if postform.is_valid():
+            postform.save()
+            return redirect('shopmypage')  # 원하는 곳으로
+    else:
+        postform = PostForm()
+    return render(request, 'shop/postform.html', {'postform': postform})
+
+
+def is_staff(user):
+    return user.is_authenticated and user.is_staff
 
 def shoplist(request):
     #db에서 query select * from post
@@ -15,9 +30,12 @@ def shoplist(request):
 
 def shopdetail(request, pk):
     post = Post.objects.get(pk=pk)
+    is_wished = False
+    if request.user.is_authenticated:
+        is_wished = post.wishlist_set.filter(user=request.user).exists()
     return render(request,
                   'shop/shopdetail.html',
-                  context={'post':post})
+                  context={'post':post, 'is_wished': is_wished})
 
 def shopmyPage(request):
     posts = Post.objects.all()
@@ -90,11 +108,6 @@ def order_history(request):
                   'shop/order_history.html',
                   context={'posts':posts})
 
-#def wishlist(request):
-#    posts = Post.objects.filter(category__slug='check')
-#    return render(request,
-#                  'shop/wishlist.html',
-#                  context={'posts':posts})
 @login_required
 def wishlist(request):
     wish_posts = Post.objects.filter(wishlist__user=request.user)
@@ -102,19 +115,28 @@ def wishlist(request):
                   'shop/wishlist.html',
                   context={'posts': wish_posts})
 
+@login_required
+def cartlist(request):
+    cart_posts = Post.objects.filter(cartlist__user=request.user)
+    return render(request,
+                  'shop/cartlist.html',
+                  context={'posts': cart_posts})
+
 def contact(request):
     if request.method == "POST":
         commentform = CommentForm(request.POST, request.FILES)
         if commentform.is_valid():
             comment = commentform.save(commit=False)
             comment.author = request.user if request.user.is_authenticated else None
-            comment.save()  # ✅ 한 번만 저장 (루프 없음)
+            comment.save()
             messages.success(request, "문의가 등록되었습니다.")
             return redirect('contact')
     else:
         commentform = CommentForm()
 
-    comments = Comment.objects.order_by("-created_date")  # ✅ 최신순
+    qs = Comment.objects.filter(parent__isnull=True).order_by("-created_date")
+    comments = qs.select_related('author').prefetch_related('replies__author')
+
     return render(request, "shop/contact.html", {
         "commentform": commentform,
         "comments": comments,
@@ -122,16 +144,12 @@ def contact(request):
 
 def contact_history(request):
     if not request.user.is_authenticated:
-        return redirect('account_login')  # allauth 기본 로그인 URL name
+        return redirect('account_login')
     comments = Comment.objects.filter(author_id=request.user.id).order_by('-id')
     return render(request, 'shop/contact_history.html', {'comments': comments})
 
 def updatecomment(request, pk):
     comment = Comment.objects.get(pk=pk)
-
-    # 작성자 검증이 필요하면 아래 주석 해제
-    # if comment.author != request.user:
-    #     return redirect('my_inquiries')
 
     if request.method == "POST":
         form = CommentForm(request.POST, instance=comment)
@@ -144,7 +162,7 @@ def updatecomment(request, pk):
     return render(request, 'shop/commentform.html', {'commentform': form})
 
 
-# @login_required
+@login_required
 def deletecomment(request, pk):
     comment = comment = Comment.objects.get(pk=pk)
 
@@ -155,7 +173,56 @@ def deletecomment(request, pk):
     return render(request, 'shop/comment_confirm_delete.html', {'comment': comment})
 
 @login_required
+def admincontact(request):
+    if request.user.is_staff:
+        qs = Comment.objects.filter(parent__isnull=True).order_by('-id')
+    else:
+        qs = Comment.objects.filter(author=request.user, parent__isnull=True).order_by('-id')
+    comments = qs.select_related('author').prefetch_related('replies__author')  # N+1 방지
+    return render(request, 'shop/admincontact.html', {'comments': comments})
+
+
+@staff_member_required
+def reply_comment(request, comment_id):
+    parent = Comment.objects.get(pk=comment_id)
+
+    if request.method != "POST":
+        return redirect('admincontact')
+
+    content = (request.POST.get('content') or '').strip()
+    if not content:
+        messages.error(request, "답글 내용을 입력하세요.")
+        return redirect('admincontact')
+
+    Comment.objects.create(
+        author=request.user,
+        content=content,
+        parent=parent,     # ← 대댓글 연결 핵심
+    )
+    messages.success(request, "답글이 등록되었습니다.")
+    return redirect('admincontact')
+
+@login_required
 def add_to_wishlist(request, pk):
     post = Post.objects.get(pk=pk)
     Wishlist.objects.get_or_create(user=request.user, post=post)
+    return redirect('shopdetail', pk=pk)
+
+@login_required
+def remove_from_wishlist(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    Wishlist.objects.filter(user=request.user, post=post).delete()
+    return redirect('shopdetail', pk=pk)
+
+@login_required
+def add_to_cartlist(request, pk):
+    post = Post.objects.get(pk=pk)
+    Cartlist.objects.get_or_create(user=request.user, post=post)
+    return redirect('shopdetail', pk=pk)
+
+
+@login_required
+def remove_from_cartlist(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    Cartlist.objects.filter(user=request.user, post=post).delete()
     return redirect('shopdetail', pk=pk)

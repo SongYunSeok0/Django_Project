@@ -51,7 +51,13 @@
             <p class="mt-3">{{ post.body }}</p>
 
             <div class="button-group" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-              <a class="btn btn-dark" href="#" style="min-width: 120px;">Wishlist</a>
+              {% if user.is_authenticated %}
+                <form action="{% url 'add_to_wishlist' post.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Wish</button>
+                </form>
+                {% endif %}
+              
               <a class="btn btn-dark" href="#" style="min-width: 120px;">Add to Cart</a>
               <a class="btn btn-dark" href="#" style="min-width: 120px;">Buy</a>
             </div>

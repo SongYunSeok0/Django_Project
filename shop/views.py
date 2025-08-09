@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
-from .models import Post, Comment
+from .models import Post, Comment, Wishlist
 from .forms import PostForm, CommentForm
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 
 def shoplist(request):
     #db에서 query select * from post
@@ -88,11 +90,17 @@ def order_history(request):
                   'shop/order_history.html',
                   context={'posts':posts})
 
+#def wishlist(request):
+#    posts = Post.objects.filter(category__slug='check')
+#    return render(request,
+#                  'shop/wishlist.html',
+#                  context={'posts':posts})
+@login_required
 def wishlist(request):
-    posts = Post.objects.all()
+    wish_posts = Post.objects.filter(wishlist__user=request.user)
     return render(request,
                   'shop/wishlist.html',
-                  context={'posts':posts})
+                  context={'posts': wish_posts})
 
 def contact(request):
     if request.method == "POST":
@@ -145,3 +153,9 @@ def deletecomment(request, pk):
         return redirect('contact_history')  # 내 문의 내역 페이지로 이동
 
     return render(request, 'shop/comment_confirm_delete.html', {'comment': comment})
+
+@login_required
+def add_to_wishlist(request, pk):
+    post = Post.objects.get(pk=pk)
+    Wishlist.objects.get_or_create(user=request.user, post=post)
+    return redirect('shopdetail', pk=pk)

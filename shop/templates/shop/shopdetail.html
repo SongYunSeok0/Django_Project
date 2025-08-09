@@ -61,7 +61,11 @@
                       </form>
                   {% endif %}
               {% endif %}
-              <button id="addToCartBtn" class="btn btn-dark" type="submit" style="min-width: 120px;">Add to Cart</button>
+              
+              <form action="{% url 'add_to_cartlist' post.pk %}" method="post" onsubmit="handleCartSidebar()">
+                {% csrf_token %}
+                <button id="addToCartBtn" class="btn btn-dark" type="submit" style="min-width: 120px;">Add to Cart</button>
+              </form>
               <a class="btn btn-dark" href="#" style="min-width: 120px;">Buy</a>
             </div>
             <div id="cartSidebar" style="
@@ -81,38 +85,39 @@
             </div>
             
             <script>
-              document.getElementById('addToCartBtn').addEventListener('click', function() {
-                const item = {
-                  name: '{{post.title}}',
-                  price: '{{post.price|intcomma}}',
-                  size: '{{post.size}}',
-                  image: '{{ post.uploaded_image.url }}'
-                };
-              
-                // 세션에 저장
-                sessionStorage.setItem('cartItem', JSON.stringify(item));
-              
-                // 정보 표시
-                const cartInfo = document.getElementById('cartItemInfo');
-                cartInfo.innerHTML = `
-                  <div style="border:1px solid #ccc; border-radius:10px; padding:10px; margin-bottom:15px;">
-                    <img src="${item.image}" alt="${item.name}" style="width:100%; border-radius:10px;">
-                    <h5 style="margin-top:10px;">${item.name}</h5>
-                    <p>가격: ${item.price}</p>
-                    <p>사이즈: ${item.size}</p>
-                  </div>
-                `;
-              
-                // 슬라이드 창 보여주기
-                const sidebar = document.getElementById('cartSidebar');
-                sidebar.style.right = '0';
-              
-                // 자동 닫기 (3초 후)
-                setTimeout(() => {
-                  sidebar.style.right = '-300px';
-                }, 3000);
-              });
-            </script>
+                function handleCartSidebar(e) {
+                   e.preventDefault(); // 기본 제출 막기
+
+                   const item = {
+                     name: '{{post.title}}',
+                     price: '{{post.price|intcomma}}',
+                     size: '{{post.size}}',
+                     image: '{{ post.uploaded_image.url }}'
+                   };
+                 
+                   sessionStorage.setItem('cartItem', JSON.stringify(item));
+                 
+                   const cartInfo = document.getElementById('cartItemInfo');
+                   cartInfo.innerHTML = `
+                     <div style="border:1px solid #ccc; border-radius:10px; padding:10px; margin-bottom:15px;">
+                       <img src="${item.image}" alt="${item.name}" style="width:100%; border-radius:10px;">
+                       <h5 style="margin-top:10px;">${item.name}</h5>
+                       <p>가격: ${item.price}</p>
+                       <p>사이즈: ${item.size}</p>
+                     </div>
+                   `;
+                 
+                   const sidebar = document.getElementById('cartSidebar');
+                   sidebar.style.right = '0';
+                 
+                   // 2초 후에 폼 수동 제출
+                   setTimeout(() => {
+                     sidebar.style.right = '0';
+                     document.getElementById('cartForm').submit();
+                   }, 2000);
+                 }                 
+
+             </script>
 
         </div>
     </div>

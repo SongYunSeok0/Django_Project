@@ -1,5 +1,4 @@
 <!-- templates/shop/aboutme.html -->
-{% include 'shop/nav.html' %}
 {% load static %}
 
 <!DOCTYPE html>
@@ -41,19 +40,24 @@
 </head>
 <body class="bg-black">
 
-
+<!-- 영상 비율 9:16 고정, 반응형 모드인데 이후 사이즈 비율 조정 가능함-->
 {% block content %}
-<header class="bg-black py-5">
-    <div class="container px-5"; >
-        <div class="text-center text-white">
-            <video width="1000px" height="1000px" autoplay muted loop playsinline class="w-100">
-            <source src="{% static 'videos/addlogo.mp4' %}" type="video/mp4">
-            </video>
-            <!--<h1 class="display-1 fw-bolder dusty-text" style="font-size: 150px; font-family: Georgia, Times New Roman, serif;" >Dusty Shop</h1>
-            <h1 class="display-1 fw-bolder dusty-text" style="font-size: 150px; font-family: Constantia;" >Dusty Shop</h1>
-            <h1 class="display-1 fw-bolder dusty-text" style="font-size: 150px; font-family: fr" >Dusty Shop</h1>-->
-        </div>
-    </div>
-</header>
 
+{% include 'shop/nav.html' %}   <!-- nav 기준 비율 유지용 추가-->
+
+<header style="position: relative; height: auto; padding: 0; overflow: hidden;">
+  <div style="position: relative; width: 100%; padding-top: 56.25%;">
+    <video autoplay muted loop playsinline
+           style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;">
+      <source src="{% static 'videos/addlogo.mp4' %}" type="video/mp4">
+    </video>
+  </div>
+</header>
 {% endblock %}
+
+{% include 'shop/footer.html' %}  <!-- nav 기준 비율 유지용 추가 -->
+
+<!-- 부트스트랩 JS 필수 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+</body>

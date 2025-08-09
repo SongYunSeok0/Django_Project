@@ -1,103 +1,86 @@
 {% load socialaccount %}
+{% load static %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid container">
-        <a class="navbar-brand" href="#"></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-            <style>
-                .navbar-nav {
-                    font-family: Constantia;
-                }
-            </style>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a class="nav-link active"
-                     aria-current="page"
-                     href="{% url 'shoplist' %}"
-                     style="font-size: 16.3px"
-                  >Dusty Shop</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'outer' %}">OUTER</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'top' %}">TOP</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'bottom'%}">BOTTOM</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'shoes' %}">SHOES</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'etc' %}">ETC</a>
-                </li>
-              </ul>
-             <!-- Search icon -->
-             <form class="mx-auto w-100 d-flex justify-content-center" method="get" action="{% url 'search' %}" style="max-width: 300px; max-height: 100px">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search..." name="q" aria-label="Search">
-                    <button class="btn btn-light" type="submit">
-                      <svg width="24px" height="24px" viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
-                          <path d="M17 17L21 21" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                          <path d="M3 11C3 15.4183 6.58172 19 11 19C13.213 19 15.2161 18.1015 16.6644 16.6493C18.1077 15.2022 19 13.2053 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11Z"
-                                stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                          </path>
-                      </svg>
-                  </button>
-                </div>
-            </form>
-            <ul class="navbar-nav ms-auto">
-                {% if user.is_authenticated %}
-                    <!-- mypage링크는 login 시 버튼 오픈 -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'mypage' %}">MyPage</a>
-                    </li>
-                <li class="nav-link" style="color:olivedrab"> hello, {{user.username}} </li>
-                <li class = "nav-item">
-                <!-- Logout icon -->
-                  <a class="nav-link" href="/accounts/logout">
-                      <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
-                      <path d="M12 12H19M19 12L16 15M19 12L16 9" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                      <path d="M19 6V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V18"
-                            stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                    Logout</a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" role="button" href="{% provider_login_url 'google' %}">
-                            <!-- Login icon and text -->
-                            <svg class="navbar-icon" width="24px" height="24px" stroke-width="1.5"
-                                 viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M19 12H12M12 12L15 15M12 12L15 9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                              <path d="M19 6V5C19 3.895 18.105 3 17 3H7C5.895 3 5 3.895 5 5V19C5 20.105 5.895 21 7 21H17C18.105 21 19 20.105 19 19V18"
-                                    stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                    Login
-                    </a>
-                </li>
-                {%endif%}
-            </ul>
-        </div>
-      </div>
-    </nav>
-        <!-- Modal --><!-- login+icon 부분으로 구글로그인 이동, 모달 우선 주석 처리
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Login & Sign up</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <a role="button" href="{% provider_login_url 'google' %}">로그인/회원가입 페이지로 이동합니다.</a>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style="background-color:lightgray; border-color: ghostwhite;" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" style="background-color:dimgray; border-color: ghostwhite;">Login</button>
-              </div>
+  <div class="container-fluid container">
+    <a class="navbar-brand" href="#"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <style>
+        .navbar-nav {
+            font-family: Constantia;
+        }
+    </style>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active"
+             aria-current="page"
+             href="{% url 'shoplist' %}"
+                 style="font-size: 16.3px"
+              >Dusty Shop</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'outer' %}">OUTER</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'top' %}">TOP</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'bottom'%}">BOTTOM</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'shoes' %}">SHOES</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'etc' %}">ETC</a>
+        </li>
+      </ul>
+       <!-- Search icon -->
+         <form class="mx-auto w-100 d-flex justify-content-center" method="get" action="{% url 'search' %}" style="max-width: 300px; max-height: 100px">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search..." name="q" aria-label="Search">
+                <button class="btn btn-light" type="submit">
+                  <svg width="24px" height="24px" viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
+                      <path d="M17 17L21 21" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M3 11C3 15.4183 6.58172 19 11 19C13.213 19 15.2161 18.1015 16.6644 16.6493C18.1077 15.2022 19 13.2053 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11Z"
+                            stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      </path>
+                  </svg>
+              </button>
             </div>
-          </div>
-        </div>-->
+        </form>
+        <ul class="navbar-nav ms-auto">
+            {% if user.is_authenticated %}
+                <!-- mypage링크는 login 시 버튼 오픈 -->
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'mypage' %}">MyPage</a>
+                </li>
+            <li class="nav-link" style="color:olivedrab"> hello, {{user.username}} </li>
+            <li class = "nav-item"> 
+            <!-- Logout icon -->
+              <a class="nav-link" href="/accounts/logout">
+                  <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
+                  <path d="M12 12H19M19 12L16 15M19 12L16 9" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M19 6V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V18"
+                        stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" role="button" href="{% provider_login_url 'google' %}">
+                <!-- Login icon and text -->
+                <svg class="navbar-icon" width="24px" height="24px" stroke-width="1.5"
+                     viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19 12H12M12 12L15 15M12 12L15 9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M19 6V5C19 3.895 18.105 3 17 3H7C5.895 3 5 3.895 5 5V19C5 20.105 5.895 21 7 21H17C18.105 21 19 20.105 19 19V18"
+                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Login
+              </a>
+            </li>
+            {%endif%}
+        </ul>
+    </div>
+  </div>
+</nav>

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post, Comment, Wishlist
 from .forms import PostForm, CommentForm
 from django.contrib import messages
@@ -15,9 +15,12 @@ def shoplist(request):
 
 def shopdetail(request, pk):
     post = Post.objects.get(pk=pk)
+    is_wished = False
+    if request.user.is_authenticated:
+        is_wished = post.wishlist_set.filter(user=request.user).exists()
     return render(request,
                   'shop/shopdetail.html',
-                  context={'post':post})
+                  context={'post':post, 'is_wished': is_wished})
 
 def shopmyPage(request):
     posts = Post.objects.all()
@@ -158,4 +161,11 @@ def deletecomment(request, pk):
 def add_to_wishlist(request, pk):
     post = Post.objects.get(pk=pk)
     Wishlist.objects.get_or_create(user=request.user, post=post)
+    return redirect('shopdetail', pk=pk)
+
+
+@login_required
+def remove_from_wishlist(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    Wishlist.objects.filter(user=request.user, post=post).delete()
     return redirect('shopdetail', pk=pk)

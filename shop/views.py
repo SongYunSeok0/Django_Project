@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from .models import Post, Comment, Wishlist
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Post, Comment, Wishlist, Cartlist
 from .forms import PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -15,9 +15,12 @@ def shoplist(request):
 
 def shopdetail(request, pk):
     post = Post.objects.get(pk=pk)
+    is_wished = False
+    if request.user.is_authenticated:
+        is_wished = post.wishlist_set.filter(user=request.user).exists()
     return render(request,
                   'shop/shopdetail.html',
-                  context={'post':post})
+                  context={'post':post, 'is_wished': is_wished})
 
 def shopmyPage(request):
     posts = Post.objects.all()
@@ -102,6 +105,13 @@ def wishlist(request):
                   'shop/wishlist.html',
                   context={'posts': wish_posts})
 
+@login_required
+def cartlist(request):
+    wish_posts = Post.objects.filter(cartlist__user=request.user)
+    return render(request,
+                  'shop/cartlist.html',
+                  context={'posts': cart_posts})
+
 def contact(request):
     if request.method == "POST":
         commentform = CommentForm(request.POST, request.FILES)
@@ -158,4 +168,24 @@ def deletecomment(request, pk):
 def add_to_wishlist(request, pk):
     post = Post.objects.get(pk=pk)
     Wishlist.objects.get_or_create(user=request.user, post=post)
+    return redirect('shopdetail', pk=pk)
+
+
+@login_required
+def remove_from_wishlist(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    Wishlist.objects.filter(user=request.user, post=post).delete()
+    return redirect('shopdetail', pk=pk)
+
+@login_required
+def add_to_cartlist(request, pk):
+    post = Post.objects.get(pk=pk)
+    Cartlist.objects.get_or_create(user=request.user, post=post)
+    return redirect('shopdetail', pk=pk)
+
+
+@login_required
+def remove_from_cartlist(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    Cartlist.objects.filter(user=request.user, post=post).delete()
     return redirect('shopdetail', pk=pk)

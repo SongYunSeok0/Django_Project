@@ -91,6 +91,9 @@
             {% if user.is_authenticated %}
                 <!-- mypage링크는 login 시 버튼 오픈 -->
                 <li class="nav-item">
+                  <a class="nav-link" href="{% url 'cartlist' %}">Cart</a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link" href="{% url 'mypage' %}">MyPage</a>
                 </li>
             <li class="nav-link" style="color:olivedrab"> hello, {{user.username}} </li>

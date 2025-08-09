@@ -107,7 +107,7 @@ def wishlist(request):
 
 @login_required
 def cartlist(request):
-    wish_posts = Post.objects.filter(cartlist__user=request.user)
+    cart_posts = Post.objects.filter(cartlist__user=request.user)
     return render(request,
                   'shop/cartlist.html',
                   context={'posts': cart_posts})

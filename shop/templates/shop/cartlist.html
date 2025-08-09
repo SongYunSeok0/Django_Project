@@ -2,7 +2,7 @@
 {% load humanize %}
 {% block content %}
 <div class="container my-5">
-  <h2>내 위시리스트</h2>
+  <h2>My Cart</h2>
   <div class="row">
     {% for post in posts %}
       <div class="col-md-4 mb-4">
@@ -13,16 +13,16 @@
           <div class="card-body">
             <h5 class="card-title">{{ post.title }}</h5>
             <p class="card-text">₩ {{ post.price|intcomma }}</p>
-            <form action="{% url 'remove_from_wishlist' post.pk %}" method="post" style="display:inline;">
+            <form action="{% url 'remove_from_cartlist' post.pk %}" method="post" style="display:inline;">
               {% csrf_token %}
-              <button type="submit" class="btn btn-secondary">❤️</button>
+              <button type="submit" class="btn btn-secondary">delete from cart</button>
             </form>
             <a href="{% url 'shopdetail' post.pk %}" class="btn btn-dark">상세보기</a>
           </div>
         </div>
       </div>
     {% empty %}
-      <p>위시리스트에 상품이 없습니다.</p>
+      <p>장바구니에 상품이 없습니다.</p>
     {% endfor %}
   </div>
 </div>

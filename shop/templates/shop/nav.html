@@ -1,7 +1,6 @@
 {% load socialaccount %}
-{% load static %}
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid container">
+  <div class="container-fluid">  <!-- 반응형 왼,오 정렬을 위해 수정 -->
     <a class="navbar-brand" href="#"></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -10,6 +9,10 @@
         .navbar-nav {
             font-family: Constantia;
         }
+      /* 메뉴와 버튼 둘 다 왼쪽 정렬 유지 */
+      #navbarNavDropdown {
+        justify-content: flex-start !important; /* 내비바 전체를 왼쪽 정렬 */
+      }
     </style>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
@@ -36,20 +39,47 @@
           <a class="nav-link" href="{% url 'etc' %}">ETC</a>
         </li>
       </ul>
-       <!-- Search icon -->
-         <form class="mx-auto w-100 d-flex justify-content-center" method="get" action="{% url 'search' %}" style="max-width: 300px; max-height: 100px">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search..." name="q" aria-label="Search">
-                <button class="btn btn-light" type="submit">
-                  <svg width="24px" height="24px" viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
-                      <path d="M17 17L21 21" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                      <path d="M3 11C3 15.4183 6.58172 19 11 19C13.213 19 15.2161 18.1015 16.6644 16.6493C18.1077 15.2022 19 13.2053 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11Z"
-                            stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      </path>
-                  </svg>
-              </button>
-            </div>
-        </form>
+
+        <!-- Search icon -->
+         <button id="searchToggle" class="btn btn-light" type="button" aria-label="검색 열기">
+           <svg width="24px" height="24px" viewBox="0 0 24 24" stroke-width="1.5" fill="none"
+             xmlns="http://www.w3.org/2000/svg" color="#000000">
+             <path d="M17 17L21 21" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+             <path d="M3 11C3 15.4183 6.58172 19 11 19C13.213 19 15.2161 18.1015 16.6644 16.6493
+             C18.1077 15.2022 19 13.2053 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11Z"
+               stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+           </svg>
+         </button>
+
+        <!-- Search Form 기본상태 숨김, 아이콘 클릭 시 오픈 -->
+         <form id="searchForm" method="get" action="{% url 'search' %}" style="display:none; width:200px; height:30px;">
+           <input type="text" class="form-control" placeholder="Search..." name="q" aria-label="Search" autocomplete="off" autofocus>
+           <button class="btn btn-outline-dark" type="submit">
+               <svg width="24px" height="24px" style="margin-top: -10px" viewBox="0 0 24 24" stroke-width="1.5" fill="none"
+             xmlns="http://www.w3.org/2000/svg" color="#000000">
+             <path d="M17 17L21 21" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+             <path d="M3 11C3 15.4183 6.58172 19 11 19C13.213 19 15.2161 18.1015 16.6644 16.6493
+             C18.1077 15.2022 19 13.2053 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11Z"
+               stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+           </svg>
+               </button>
+         </form>
+           <script>
+             const btn = document.getElementById('searchToggle');
+             const form = document.getElementById('searchForm');
+
+             btn.addEventListener('click', () => {
+               if (form.style.display === 'none' || form.style.display === '') {
+                 form.style.display = 'flex';  // flex로 보여주기 (input-group이라 flex 권장)
+                 btn.style.display = 'none';   // 검색 아이콘 숨기기
+                 form.querySelector('input').focus(); // 검색창 포커스
+               } else {
+                 form.style.display = 'none';
+                 btn.style.display = 'inline-block'; // 검색 아이콘 다시 보이기
+               }
+             });
+           </script>
+
         <ul class="navbar-nav ms-auto">
             {% if user.is_authenticated %}
                 <!-- mypage링크는 login 시 버튼 오픈 -->

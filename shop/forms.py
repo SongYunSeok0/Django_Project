@@ -32,5 +32,5 @@ class CommentForm(forms.ModelForm):
         labels = {
             'title': '제목',
             'content': '내용',
-            'uploaded_image': 'images'
+            'uploaded_image': '사진'
         }

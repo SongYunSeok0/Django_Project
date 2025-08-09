@@ -1,30 +1,33 @@
-{# templates/shop/contact_history.html #}
 {% extends 'shop/base.html' %}
 {% block content %}
 
-<div style="max-width: 960px; margin: 60px auto; padding: 40px;
-            background:#fff; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,.08);">
-  <h2 style="margin-bottom: 24px;">내 문의 내역</h2>
+<div style="max-width: 1000px; margin: 60px auto; padding: 32px;
+            background:#fff; border-radius:16px;
+            box-shadow:0 8px 24px rgba(0,0,0,.08);">
+
+  <h2 style="text-align:center; margin-bottom:42px; font-size:28px; font-weight:700;">
+    내 문의 내역
+  </h2>
+  <hr style="border:1px solid #ddd; margin-bottom:4px;">
 
   {% if comments %}
     <ul style="list-style:none; padding:0; margin:0;">
       {% for comment in comments %}
-        <li style="border-bottom:1px solid #eee; padding:14px 0;">
-          <div style="display:flex; gap:8px; align-items:center;">
-            <strong>{{ comment.author }}</strong>
-            <span style="color:#777; font-size:0.9em;">
-              {{ comment.created_date|date:"Y-m-d H:i" }}
-            </span>
-          </div>
+        <li style="border-bottom:1px solid #ddd; padding:8px 0; margin-top:0;">
+
+          {# ---- 상단 정보(작성자/날짜) 제거됨 ---- #}
 
           {% if comment.title %}
-            <div style="margin-top:6px; font-weight:600;">{{ comment.title }}</div>
+            <div style="margin-top:6px; margin-bottom:4px; font-size:24px; font-weight:600;">
+              Title -- {{ comment.title }}
+            </div>
           {% endif %}
 
-          <p style="margin:6px 0 0;">{{ comment.content }}</p>
+          <div style="margin-top:8px; font-size:20px; font-weight:600;">Content</div>
+          <p style="margin:0; line-height:1.6;">{{ comment.content }}</p>
 
           {% if comment.uploaded_image %}
-            <div style="margin-top:8px;">
+            <div style="margin-top:20px;">
               <img src="{{ comment.uploaded_image.url }}"
                    alt=""
                    class="comment-img"
@@ -32,6 +35,46 @@
                           border:1px solid #eee; cursor:pointer;">
             </div>
           {% endif %}
+
+          {# ---- 하단 footer: 왼쪽 작성자/날짜, 오른쪽 버튼 ---- #}
+          <div style="display:flex; align-items:center; margin-top:-4px;">
+            <div>
+              <span style="font-size: 16px; font-weight:10000; padding-left: 550px;">Username - {{ comment.author }}</span>
+              <span style="color: gray; font-size: 0.9em;">
+                {{ comment.created_date|date:"Y-m-d H:i" }}
+              </span>
+            </div>
+          
+            {% if comment.author == user %}
+              <div style="display:flex; gap:8px; margin-left:auto; padding-right:20px;">
+                <!-- Edit button -->
+                <a href="{% url 'updatecomment' comment.pk %}"
+                   onclick="return confirm('Are you sure you want to edit this comment?')"
+                   style="padding:6px 10px; border:none; border-radius:6px;
+                          text-decoration:none; background:#343a40; color:#fff;
+                          transition:background 0.2s;"
+                   onmouseover="this.style.background='#495057'"
+                   onmouseout="this.style.background='#343a40'">
+                  Edit
+                </a>
+                <!-- Delete button -->
+                <form action="{% url 'deletecomment' comment.pk %}" method="post" style="display:inline;"
+                      onsubmit="return confirm('Are you sure you want to delete this comment?')">
+                  {% csrf_token %}
+                  <button type="submit"
+                    style="padding:6px 10px; border:none; border-radius:6px;
+                           background:#343a40; color:#fff; cursor:pointer;
+                           transition:background 0.2s;"
+                    onmouseover="this.style.background='#495057'"
+                    onmouseout="this.style.background='#343a40'">
+                    Del
+                  </button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+          {# ---- /footer ---- #}
+
         </li>
       {% endfor %}
     </ul>
@@ -40,7 +83,7 @@
   {% endif %}
 </div>
 
-{# 이미지 확대 모달 #}
+<!-- 이미지 확대 모달 (문의하기 페이지와 동일 스타일) -->
 <div id="imgModal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100%;height:100%;
                            background:rgba(0,0,0,0.8);align-items:center;justify-content:center;">
   <span id="imgClose" style="position:absolute;top:20px;right:35px;color:#fff;font-size:40px;cursor:pointer;">&times;</span>
@@ -50,11 +93,11 @@
 const modal = document.getElementById("imgModal");
 const modalImg = document.getElementById("imgModalContent");
 const modalClose = document.getElementById("imgClose");
-
 document.querySelectorAll(".comment-img").forEach(img => {
   img.addEventListener("click", () => { modal.style.display = "flex"; modalImg.src = img.src; });
 });
 modalClose.addEventListener("click", () => { modal.style.display = "none"; });
 modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
 </script>
+
 {% endblock %}

@@ -17,4 +17,8 @@ urlpatterns = [
     path('mypage/wishlist/', views.wishlist, name='wishlist'),
     path('mypage/contact/', views.contact, name='contact'),
     path('mypage/contact_history/', views.contact_history, name='contact_history'),
+    path('comment/<int:pk>/updatecomment/', views.updatecomment, name='updatecomment'),
+    path('comment/<int:pk>/deletecomment/', views.deletecomment, name='deletecomment'),
+    path('wishlist/add/<int:pk>/', views.add_to_wishlist, name='add_to_wishlist'),
+
     ]

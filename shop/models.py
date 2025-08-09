@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -66,3 +67,14 @@ class Comment(models.Model):
     def __str__(self):
         who = self.author.username if self.author else "익명"
         return f'{who} - {self.title}'
+    
+    def get_absolute_url(self):
+        return reverse('contact_history')
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'post')

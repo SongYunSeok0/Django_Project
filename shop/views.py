@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
-from .models import Post, Comment
+from .models import Post, Comment, Wishlist
 from .forms import PostForm, CommentForm
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 
 def shoplist(request):
     #db에서 query select * from post
@@ -88,11 +90,17 @@ def order_history(request):
                   'shop/order_history.html',
                   context={'posts':posts})
 
+#def wishlist(request):
+#    posts = Post.objects.filter(category__slug='check')
+#    return render(request,
+#                  'shop/wishlist.html',
+#                  context={'posts':posts})
+@login_required
 def wishlist(request):
-    posts = Post.objects.all()
+    wish_posts = Post.objects.filter(wishlist__user=request.user)
     return render(request,
                   'shop/wishlist.html',
-                  context={'posts':posts})
+                  context={'posts': wish_posts})
 
 def contact(request):
     if request.method == "POST":
@@ -113,5 +121,41 @@ def contact(request):
     })
 
 def contact_history(request):
-    comments = Comment.objects.filter(author=request.user).order_by('created_date')
+    if not request.user.is_authenticated:
+        return redirect('account_login')  # allauth 기본 로그인 URL name
+    comments = Comment.objects.filter(author_id=request.user.id).order_by('-id')
     return render(request, 'shop/contact_history.html', {'comments': comments})
+
+def updatecomment(request, pk):
+    comment = Comment.objects.get(pk=pk)
+
+    # 작성자 검증이 필요하면 아래 주석 해제
+    # if comment.author != request.user:
+    #     return redirect('my_inquiries')
+
+    if request.method == "POST":
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('contact_history')
+    else:
+        form = CommentForm(instance=comment)
+
+    return render(request, 'shop/commentform.html', {'commentform': form})
+
+
+# @login_required
+def deletecomment(request, pk):
+    comment = comment = Comment.objects.get(pk=pk)
+
+    if request.method == "POST":
+        comment.delete()
+        return redirect('contact_history')  # 내 문의 내역 페이지로 이동
+
+    return render(request, 'shop/comment_confirm_delete.html', {'comment': comment})
+
+@login_required
+def add_to_wishlist(request, pk):
+    post = Post.objects.get(pk=pk)
+    Wishlist.objects.get_or_create(user=request.user, post=post)
+    return redirect('shopdetail', pk=pk)

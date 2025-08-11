@@ -1,15 +1,15 @@
 from django.urls import path
 from . import views
 urlpatterns = [
-    path('', views.shoplist, name='shoplist'),
-    path('<int:pk>/', views.shopdetail, name='shopdetail'),
+    path('', views.aboutme, name='aboutme'),
+    path('main/<int:pk>/', views.shopdetail, name='shopdetail'),
+
     path('mypage/', views.shopmyPage, name='mypage'),
     path('create/', views.create, name='itemcreate'),
     path('category/<slug:slug>/', views.category_view, name='category_view'),
     path('search/', views.search, name='search'),
-    path('aboutme/', views.aboutme, name='aboutme'),
+    path('main/', views.shoplist, name='main'),
     path('mypage/order_status/', views.order_status, name='order_status'),
-    path('mypage/order_history/', views.order_history, name='order_history'),
     path('mypage/wishlist/', views.wishlist, name='wishlist'),
     path('mypage/contact/', views.contact, name='contact'),
     path('mypage/contact_history/', views.contact_history, name='contact_history'),
@@ -25,4 +25,8 @@ urlpatterns = [
     path('cartlist/', views.cartlist, name='cartlist'),
     path('get-messages/', views.get_messages, name='get_messages'),
     path('send-message/', views.send_message, name='send_message'),
+    path('orderlist/add/<int:pk>/', views.add_to_orderlist, name='add_to_orderlist'),
+    path('orderlist/remove/<int:pk>/', views.remove_from_orderlist, name='remove_from_orderlist'),
+    path('orderlist/', views.orderlist, name='orderlist'),
+    path('cartlist/remove_selected/', views.remove_from_cartlist_bulk, name='remove_from_cartlist_bulk'),
     ]

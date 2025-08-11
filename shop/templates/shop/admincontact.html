@@ -31,6 +31,11 @@
               <img src="{{ comment.uploaded_image.url }}" alt="" class="comment-img"
                    style="width:160px;height:160px;object-fit:cover;border-radius:8px;border:1px solid #eee;cursor:pointer;">
             </div>
+          {% else %}
+            <div style="margin-top:14px;">
+              <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg" alt="" class="comment-img"
+                   style="width:160px;height:160px;object-fit:cover;border-radius:8px;border:1px solid #eee;cursor:pointer;">
+            </div>
           {% endif %}
 
           <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:14px;">

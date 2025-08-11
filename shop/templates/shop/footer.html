@@ -1,14 +1,53 @@
-<footer class="py-5 bg-dark text-white" style="font-family: Georgia, Times New Roman, serif;">
+<style>
+  #dusty-footer {
+  position: relative;
+  background-color: #000;
+  background-image: url('https://www.transparenttextures.com/patterns/dust.png');
+  background-repeat: repeat;
+  background-size: auto;
+  padding: 5rem 0;
+  border-top: 1px solid #222;
+  color: #f5f1e9;
+  font-family: Georgia, Times New Roman, serif;
+  /* overflow: hidden; ← 이 줄 제거 */
+  min-height: 400px; /* 충분한 높이 확보 */
+}
+
+
+  #dusty-footer::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+  }
+
+  #dusty-footer > .container {
+    position: relative;
+    z-index: 2;
+  }
+
+  #dusty-footer a {
+    color: #f5f1e9;
+    text-decoration: none;
+  }
+
+  #dusty-footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<footer id="dusty-footer">
   <div class="container">
     <div class="row">
       <!-- 고객 정보 섹션 -->
       <div class="col-md-4 mb-3">
         <h5>고객 지원</h5>
         <ul class="list-unstyled">
-          <li><a href="#" class="text-white text-decoration-none">문의하기</a></li>
-          <li><a href="#" class="text-white text-decoration-none">배송</a></li>
-          <li><a href="#" class="text-white text-decoration-none">반품 정책</a></li>
-          <li><a href="#" class="text-white text-decoration-none">이용 약관</a></li>
+          <li><a href="#">문의하기</a></li>
+          <li><a href="#">배송</a></li>
+          <li><a href="#">반품 정책</a></li>
+          <li><a href="#">이용 약관</a></li>
         </ul>
       </div>
 
@@ -16,8 +55,8 @@
       <div class="col-md-4 mb-3">
         <h5>정책</h5>
         <ul class="list-unstyled">
-          <li><a href="#" class="text-white text-decoration-none">개인정보 보호정책</a></li>
-          <li><a href="#" class="text-white text-decoration-none">쿠키 정책</a></li>
+          <li><a href="#">개인정보 보호정책</a></li>
+          <li><a href="#">쿠키 정책</a></li>
         </ul>
       </div>
 

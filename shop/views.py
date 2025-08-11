@@ -4,12 +4,10 @@ from .forms import PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from .models import ChatMessage
-from django.core.serializers import serialize
-from django.utils.dateparse import parse_datetime
 from django.views.decorators.http import require_POST
+from datetime import timedelta
+from django.utils import timezone
 
 #결제창
 import requests, json, base64
@@ -261,13 +259,20 @@ def get_messages(request):
         event_id = int(request.GET.get('event_id', 0))
         last_id = int(request.GET.get('last_id', 0))
 
-        messages = ChatMessage.objects.filter(event_id=event_id, id__gt=last_id).values(
-            'id', 'user__username', 'message', 'timestamp'
-        )
+        # 1분 지난 메시지 삭제
+        threshold = timezone.now() - timedelta(minutes=1)
+        ChatMessage.objects.filter(timestamp__lt=threshold).delete()
+
+        # 1분 이내 + last_id 이후 메시지만 반환
+        messages = ChatMessage.objects.filter(
+            event_id=event_id,
+            id__gt=last_id,
+            timestamp__gte=threshold
+        ).values('id', 'user__username', 'message', 'timestamp')
+
         return JsonResponse(list(messages), safe=False)
 
     except Exception as e:
-        print("get_messages error:", str(e))  # 콘솔에 출력
         return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
 
 @login_required

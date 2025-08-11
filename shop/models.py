@@ -13,6 +13,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
     price = models.IntegerField(null=True, blank=True)
+    starting_price = models.PositiveIntegerField(null=True, blank=True)
     size = models.CharField(max_length=10, null=True, blank=True)
     shoulder= models.FloatField(null=True, blank=True)
     chest= models.FloatField(null=True, blank=True)

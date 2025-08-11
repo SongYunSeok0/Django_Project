@@ -5,67 +5,86 @@
 {% block title %}{{ post.title }} - Dusty Shop{% endblock %}
 
 {% block content %}
-
-
 <div class="container my-5">
-  <div class="row">    <!-- 왼쪽: 이미지 -->
-    <div class="col-md-6 d-flex align-items-start flex-column justify-content-center">
-      {% if post.uploaded_image %}
-
-            {% for img in post.images.all %}
-                <img class="img-fluid mb-3" src="{{ img.image.url }}" alt="{{ post.title }}" style="min-height: 1000px; width: auto; object-fit: contain;">
-            {% endfor %}
-
-      {% endif %}
+  <div class="row">
+    <!-- 왼쪽: 썸네일 이미지 (sticky 고정) -->
+    <div class="col-md-2">
+      <div style="position: sticky; top: 100px;">
+        <div class="d-flex flex-column align-items-start" style="gap: 10px;">
+          {% for img in post.images.all %}
+            <img src="{{ img.image.url }}" class="img-thumbnail dusty-image" style="width: 70%; cursor: pointer;" onclick="document.getElementById('mainImage').src='{{ img.image.url }}'" alt="thumbnail">
+          {% endfor %}
+        </div>
+      </div>
     </div>
 
-    <!-- 오른쪽: 텍스트 정보 -->
-    <div class="col-md-6" >
-        <div style="position: sticky; top: 400px;">
-            <h3 class="fw-bold" style="color: #555555">{{ post.title }}</h3>
+    <!-- 가운데: 메인 이미지 + 코멘트 -->
+    <div class="col-md-7">
+      {% if post.images.all %}
+        <img id="mainImage" class="img-fluid mb-3 dusty-image" src="{{ post.images.first.image.url }}" alt="{{ post.title }}" style="max-height: 800px; width: 100%; object-fit: contain;">
+      {% endif %}
 
-            <h4 class="fw-bold pt-4 pb-1" style="font-size:16px; color: #555555">DETAIL</h4>
-            <ul style="font-size:16px;">
-              {{post.content}}
-            </ul>
-
-            <h4 class="fw-bold pt-2 pb-2" style="font-size:16px; color: #555555">SIZE  {{post.size}}</h4>
-            <div style="display: flex; align-items: center;">
-              <a style="font-size:16px;">{{post.summary}}</a>
+        {% if post.category and post.category.slug == "event" %}
+          <div style="margin-top: 20px;">
+            <h4 style="font-weight: bold; color: #333; text-align: center">💬 Make offer 💬</h4>
+            <div id="chat-box" style="height:300px; overflow-y:auto; border:1px solid #ccc; padding:10px; margin-bottom:10px;"></div>
+            <div style="display: flex; gap: 10px;">
+              <input type="text" id="chat-input" placeholder="가격을 제시하세요." class="form-control" />
+              <button id="send-btn" class="btn btn-dark" style="min-width: 100px;">입찰</button>
             </div>
-            <h4 class="fw-bold pt-3 pb-2" style="font-size:16px; color: #555555">CARE</h4>
-            <ul style="font-size:16px; margin-bottom: 40px;">
-              <li>COLOR BLEEDING WARNING</li>
-              <li>WASH DARK COLOR SEPERATELY</li>
-              <li>MACHINE WASH COLD</li>
-              <li>케어라벨 참고</li>
-                <li>반품불가</li>
-            </ul>
+          </div>
+        {% endif %}
+    </div>
 
-            {% if post.category and post.category.slug != "event" %}
-            <hr class="divider"></hr>
-            <h3 style="font-size:16px;">₩ {{ post.price|intcomma }}</h3>
-            <p class="mt-3">{{ post.body }}</p>
+    <!-- 오른쪽: 상세 설명 (sticky 고정) -->
+    <div class="col-md-3">
+      <div style="position: sticky; top: 100px;">
+        <h3 class="fw-bold" style="color: #555555">{{ post.title }}</h3>
 
+        <h4 class="fw-bold pt-4 pb-1" style="font-size:16px; color: #555555">DETAIL</h4>
+        <p style="font-size:16px;">{{ post.content }}</p>
+
+        <h4 class="fw-bold pt-2 pb-2" style="font-size:16px; color: #555555">SIZE</h4>
+        <p style="font-size:16px;">{{ post.size }}</p>
+
+        <h4 class="fw-bold pt-3 pb-2" style="font-size:16px; color: #555555">CARE</h4>
+        <ul style="font-size:16px;">
+          <li>COLOR BLEEDING WARNING</li>
+          <li>WASH DARK COLOR SEPERATELY</li>
+          <li>MACHINE WASH COLD</li>
+          <li>케어라벨 참고</li>
+          <li>반품불가</li>
+        </ul>
+
+        {% if post.category and post.category.slug != "event" %}
+          <hr class="divider">
+          <h3 style="font-size:16px;">₩ {{ post.price|intcomma }}</h3>
+          <p class="mt-3">{{ post.body }}</p>
             <div class="button-group" style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 20px;">
-              {% if user.is_authenticated %}
-                  {% if is_wished %}
-                      <form action="{% url 'remove_from_wishlist' post.pk %}" method="post">
-                          {% csrf_token %}
-                          <button class="btn btn-dark" type="submit" style="min-width: 120px;">❤️</button>
-                      </form>
-                  {% else %}
-                      <form action="{% url 'add_to_wishlist' post.pk %}" method="post">
-                          {% csrf_token %}
-                          <button class="btn btn-dark" type="submit" style="min-width: 120px;">♡</button>
-                      </form>
-                  {% endif %}
+            {% if user.is_authenticated %}
+              {% if is_wished %}
+                <form action="{% url 'remove_from_wishlist' post.pk %}" method="post">
+                  {% csrf_token %}
+                  <button class="btn btn-dark" type="submit" style="min-width: 120px;">❤️</button>
+                </form>
+              {% else %}
+                <form action="{% url 'add_to_wishlist' post.pk %}" method="post">
+                  {% csrf_token %}
+                  <button class="btn btn-dark" type="submit" style="min-width: 120px;">♡</button>
+                </form>
               {% endif %}
+            {% endif %}
 
-             <form action="{% url 'add_to_cartlist' post.pk %}" method="post" onsubmit="handleCartSidebar()">
+            <form action="{% url 'add_to_cartlist' post.pk %}" method="post" onsubmit="handleCartSidebar()">
                 {% csrf_token %}
                 <button id="addToCartBtn" class="btn btn-dark" type="submit" style="min-width: 120px;">Add to Cart</button>
+            </form>
+              <form action="{% url 'add_to_orderlist' post.pk %}" method="post" style="display:inline; margin:0;"onsubmit="return alert('구매되었습니다')">
+                {% csrf_token %}
+                <button id="buyBtn" class="btn btn-dark" type="submit" style="min-width: 120px;">Buy</button>
+
               </form>
+          </div>
               <!-- 8/11 buy 버튼 클릭 시 구매창(테스트용) 이동 -->
              <form action="{% url 'checkout' post.pk %}" method="get">
                 <button id="buy" class="btn btn-dark" type="submit" style="min-width: 120px;">Buy</button>
@@ -73,62 +92,109 @@
             </div>
 
         {% endif %}
-
-            <div id="cartSidebar" style="
-              position: fixed;
-              top: 0;
-              right: -300px;
-              width: 300px;
-              height: 100%;
-              background-color: white;
-              box-shadow: -2px 0 5px rgba(0,0,0,0.2);
-              transition: right 0.3s ease;
-              padding: 20px;
-              z-index: 1000;
-            ">
-              <h3>🛒 장바구니에 추가됨!</h3>
-              <div id="cartItemInfo"></div>
-            </div>
-            
-            <script>
-                function handleCartSidebar(e) {
-                   e.preventDefault(); // 기본 제출 막기
-
-                   const item = {
-                     name: '{{post.title}}',
-                     price: '{{post.price|intcomma}}',
-                     size: '{{post.size}}',
-                     image: '{{ post.uploaded_image.url }}'
-                   };
-                 
-                   sessionStorage.setItem('cartItem', JSON.stringify(item));
-                 
-                   const cartInfo = document.getElementById('cartItemInfo');
-                   cartInfo.innerHTML = `
-                     <div style="border:1px solid #ccc; border-radius:10px; padding:10px; margin-bottom:15px;">
-                       <img src="${item.image}" alt="${item.name}" style="width:100%; border-radius:10px;">
-                       <h5 style="margin-top:10px;">${item.name}</h5>
-                       <p>가격: ${item.price}</p>
-                       <p>사이즈: ${item.size}</p>
-                     </div>
-                   `;
-                 
-                   const sidebar = document.getElementById('cartSidebar');
-                   sidebar.style.right = '0';
-                 
-                   // 2초 후에 폼 수동 제출
-                   setTimeout(() => {
-                     sidebar.style.right = '0';
-                     document.getElementById('cartForm').submit();
-                   }, 2000);
-                 }                 
-
-             </script>
-
-        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- 장바구니 사이드바 -->
+  <div id="cartSidebar" style="
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+    transition: right 0.3s ease;
+    padding: 20px;
+    z-index: 1000;
+  ">
+    <h3>🛒 장바구니에 추가됨!</h3>
+    <div id="cartItemInfo"></div>
   </div>
 </div>
 
+<script>
+  function handleCartSidebar(e) {
+    e.preventDefault();
 
+    const item = {
+      name: '{{ post.title }}',
+      price: '{{ post.price|intcomma }}',
+      size: '{{ post.size }}',
+      image: '{{ post.uploaded_image.url }}'
+    };
+
+    sessionStorage.setItem('cartItem', JSON.stringify(item));
+
+    const cartInfo = document.getElementById('cartItemInfo');
+    cartInfo.innerHTML = `
+      <div style="border:1px solid #ccc; border-radius:10px; padding:10px; margin-bottom:15px;">
+        <img src="${item.image}" alt="${item.name}" style="width:100%; border-radius:10px;">
+        <h5 style="margin-top:10px;">${item.name}</h5>
+        <p>가격: ${item.price}</p>
+        <p>사이즈: ${item.size}</p>
+      </div>
+    `;
+
+    const sidebar = document.getElementById('cartSidebar');
+    sidebar.style.right = '0';
+
+    setTimeout(() => {
+      sidebar.style.right = '-300px';
+      document.getElementById('cartForm').submit();
+    }, 2000);
+  }
+</script>
+
+{% if post.category and post.category.slug == "event" %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const eventId = {{ post.id }};
+  let lastMessageId = 0;
+
+  $.ajaxSetup({
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}'
+    }
+  });
+
+  function addMessage(msg) {
+    $('#chat-box').append(`<p><b>${msg.user__username}:</b> ${msg.message}</p>`);
+    $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+  }
+
+  function fetchMessages() {
+    $.get("{% url 'get_messages' %}", {
+      event_id: eventId,
+      last_id: lastMessageId
+    }, function(data) {
+      data.forEach(msg => {
+        addMessage(msg);
+        lastMessageId = msg.id;
+      });
+    });
+  }
+
+  $('#send-btn').click(function() {
+    const message = $('#chat-input').val();
+    if (message.trim() === '') return;
+
+    $.post("{% url 'send_message' %}", {
+      message: message,
+      event_id: eventId
+    }, function(res) {
+      if (res.status === 'ok') {
+        $('#chat-input').val('');
+        fetchMessages();
+      } else {
+        alert('전송 실패');
+      }
+    });
+  });
+
+  setInterval(fetchMessages, 2000);
+  $(document).ready(fetchMessages);
+</script>
+{% endif %}
 {% endblock %}

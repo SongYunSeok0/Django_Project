@@ -143,6 +143,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'_media')
 MEDIA_URL = "/media/"
+MEDIAC_ROOT = BASE_DIR / "media"
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -155,6 +156,13 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_SIGNUP_FIELDS = ['email*','username*','password1*','password2*']
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
+
+ALLOWED_HOSTS = ["18.205.246.211", "localhost", "127.0.0.1"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://18.205.246.211:8000",
+    "http://18.205.246.211",
+]
 
 TOSS_API_SECRET_KEY = "test_sk_Poxy1XQL8RJmjGzj0Zz987nO5Wml"        #토스시크릿키
 #BUY_REDIRECT_URL='/'

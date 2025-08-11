@@ -1,6 +1,6 @@
 {% extends 'shop/base.html' %}
 {% block title %}{% endblock %}
-
+{% load humanize %}
 {% block content %}
 <section class="px-5">
     <div class="container px-4 px-lg-5 mt-5">
@@ -21,14 +21,19 @@
                     <div class="card-body p-4">
                         <div class="text-center">
                             <h5 class="fw-bolder">{{ post.title }}</h5>
-                            <span>{{ post.price }}₩</span>
+                            <span>₩{{ post.price|intcomma }}</span>
                         </div>
                     </div>
 
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center">
-                            <a class="btn btn-outline-dark mt-auto" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
-                        </div>
+                             
+                        <form action="{% url 'remove_from_wishlist' post.pk %}" method="post" class="d-flex gap-2">
+                        {% csrf_token %}
+                            <button class="btn btn-dark" type="submit" style="min-width: 70px;">❤️</button>
+                            <a class="btn btn-outline-dark" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
+                        </form>
+
+
                     </div>
                 </div>
             </div>

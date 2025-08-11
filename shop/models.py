@@ -57,6 +57,8 @@ class PostImage(models.Model):
 
 
 class Comment(models.Model):
+    post = models.ForeignKey('Post', on_delete=models.CASCADE,
+                             related_name='comments', null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=100, default="No title")
     content = models.TextField()
@@ -103,3 +105,22 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.order_id} by {self.user.username}"
+
+
+class ChatMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    event_id = models.IntegerField()
+    temp_field = models.BooleanField(default=True)  # ✅ 임시 필드 추가
+
+    class Meta:
+        ordering = ['timestamp']
+
+class Orderlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'post')

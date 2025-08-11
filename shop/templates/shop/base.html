@@ -10,6 +10,11 @@
           integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
           crossorigin="anonymous">
     <style>
+    html, body { height: 100%; margin: 0; }
+    body { display: flex; flex-direction: column; }
+    main { flex: 1; }
+    </style>
+    <style>
         .hover-box:hover {
             cursor: pointer;
             transform: scale(1.1);
@@ -42,6 +47,23 @@
         background-attachment: fixed; /* optional: keeps bg fixed on scroll */
     }
 
+    .dusty-image {
+  display: inline-block;
+  animation: dustyFadeIn 10s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes dustyFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 </style>
     {% block extra_css %}
 <style>
@@ -51,7 +73,7 @@
     font-family: 'Georgia', 'serif';
 
     /* 텍스트 내부에 이미지 넣기 */
-    background: url("{% static 'images/얼룩.avif' %}") no-repeat center center;
+    background: url("{% static 'images/leopard.jpg' %}") no-repeat center center;
     background-size: cover;
 
     color: transparent;
@@ -59,8 +81,6 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
 
-    /* 선택적으로 그림자 추가 */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 </style>
     {% endblock %}
@@ -68,8 +88,10 @@
 <body>
 
     {% include 'shop/nav.html' %}
-    
+
+    <main>
     {% block content %}{% endblock %}
+    </main>
 
     {% include 'shop/footer.html' %}
 

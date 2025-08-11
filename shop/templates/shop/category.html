@@ -13,7 +13,9 @@
                 <div class="card h-100" style="overflow: hidden">
                     {% if post.uploaded_image %}
                     <div class="hover-box">
-                        <img class="card-img-top" src="{{ post.uploaded_image.url }}" alt="..." style="height: 300px; object-fit: cover;">
+                        <a href="{% url 'shopdetail' post.pk %}">
+                            <img class="card-img-top" src="{{ post.uploaded_image.url }}" alt="{{ post.title }}" style="height: 300px; object-fit: cover;">
+                        </a>
                     </div>
                     {% else %}
                     <img class="card-img-top" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
@@ -27,9 +29,6 @@
                     </div>
 
                     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center">
-                            <a class="btn btn-outline-dark mt-auto" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
-                        </div>
                     </div>
                 </div>
             </div>

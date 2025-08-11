@@ -59,11 +59,15 @@
               {% endif %}
             {% endif %}
 
-            <form id="cartForm" action="{% url 'add_to_cartlist' post.pk %}" method="post" onsubmit="handleCartSidebar(event)">
-              {% csrf_token %}
-              <button id="addToCartBtn" class="btn btn-dark" type="submit" style="min-width: 120px;">Add to Cart</button>
-            </form>
-            <a class="btn btn-dark" href="#" style="min-width: 120px;">Buy</a>
+            <form action="{% url 'add_to_cartlist' post.pk %}" method="post" onsubmit="handleCartSidebar()">
+                {% csrf_token %}
+                <button id="addToCartBtn" class="btn btn-dark" type="submit" style="min-width: 120px;">Add to Cart</button>
+              </form>
+              <form action="{% url 'add_to_orderlist' post.pk %}" method="post" style="display:inline; margin:0;"onsubmit="return alert('구매되었습니다')">
+                {% csrf_token %}
+                <button id="buyBtn" class="btn btn-dark" type="submit" style="min-width: 120px;">Buy</button>
+                
+              </form>
           </div>
         {% else %}
           <!-- 이벤트일 경우: 실시간 채팅 -->
@@ -72,7 +76,6 @@
             <input type="text" id="chat-input" placeholder="메시지를 입력하세요" class="form-control" />
             <button id="send-btn" class="btn btn-dark">전송</button>
           </div>
-
           <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
           <script>
             const eventId = {{ post.id }};
@@ -112,7 +115,7 @@
               }, function(res) {
                 if (res.status === 'ok') {
                   $('#chat-input').val('');
-                    fetchMessages(); // 전송 후 바로 갱신 #}
+                    fetchMessages(); // 전송 후 바로 갱신
                 } else {
                   alert('전송 실패');
                 }
@@ -122,6 +125,7 @@
             setInterval(fetchMessages, 2000);
             $(document).ready(fetchMessages);
           </script>
+
         {% endif %}
 
         <!-- 장바구니 사이드바 -->
@@ -146,10 +150,10 @@
             e.preventDefault();
 
                    const item = {
-                     name: '{{post.title}}',
-                     price: '{{post.price|intcomma}}',
-                     size: '{{post.size}}',
-                     image: '{{ post.uploaded_image.url }}',
+                     name: '{{ post.title }}',
+                     price: '{{ post.price|intcomma }}',
+                     size: '{{ post.size }}',
+                     image: '{{ post.uploaded_image.url }}'
                    };
                  
                    sessionStorage.setItem('cartItem', JSON.stringify(item));
@@ -167,15 +171,12 @@
                    const sidebar = document.getElementById('cartSidebar');
                    sidebar.style.right = '0';
                  
-                   // 2초 후에 폼 수동 제출
                    setTimeout(() => {
                      sidebar.style.right = '-300px';
                      document.getElementById('cartForm').submit();
                    }, 2000);
                  }                 
-
              </script>
-
         </div>
     </div>
   </div>

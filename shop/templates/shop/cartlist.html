@@ -1,29 +1,47 @@
 {% extends 'shop/base.html' %}
+{% block title %}My Cart{% endblock %}
 {% load humanize %}
 {% block content %}
-<div class="container my-5">
-  <h2>My Cart</h2>
-  <div class="row">
-    {% for post in posts %}
-      <div class="col-md-4 mb-4">
-        <div class="card">
-          {% if post.uploaded_image %}
-            <img src="{{ post.uploaded_image.url }}" class="card-img-top" alt="{{ post.title }}">
-          {% endif %}
-          <div class="card-body">
-            <h5 class="card-title">{{ post.title }}</h5>
-            <p class="card-text">₩ {{ post.price|intcomma }}</p>
-            <form action="{% url 'remove_from_cartlist' post.pk %}" method="post" style="display:inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-secondary">delete from cart</button>
-            </form>
-            <a href="{% url 'shopdetail' post.pk %}" class="btn btn-dark">상세보기</a>
-          </div>
+<form method="post" action="{% url 'remove_from_cartlist_bulk' %}">
+    {% csrf_token %}
+    <section class="px-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <h2 class="mb-4 text-center">🛒 My Cart</h2>
+
+            <div class="card">
+                <div class="card-body">
+                    {% for post in posts %}
+                    <div class="row align-items-center mb-3 pb-3 border-bottom">
+                        <div class="col-md-1 text-center">
+                            <input type="checkbox" name="selected_posts" value="{{ post.pk }}">
+                        </div>
+                        <div class="col-md-2">
+                            {% if post.uploaded_image %}
+                            <img src="{{ post.uploaded_image.url }}" alt="{{ post.title }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
+                            {% else %}
+                            <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg" alt="No image" class="img-fluid rounded">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-9">
+                            <div><strong>{{ post.title }}</strong></div>
+                            <div>₩{{ post.price|intcomma }}</div>
+                            <div class="mt-1 d-flex justify-content-end gap-2">
+                                <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
+                                <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송 조회</a>
+                                <a class="btn btn-sm btn-outline-danger w-100" href="{% url 'remove_from_cartlist' post.pk %}">내역 삭제</a>
+                                <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' post.pk %}">구매하기</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-sm btn-outline-danger">선택 삭제</button>
+                <button type="submit" class="btn btn-sm btn-dark" onclick="alert('구매 완료')">선택 구매</button>
+            </div>
         </div>
-      </div>
-    {% empty %}
-      <p>장바구니에 상품이 없습니다.</p>
-    {% endfor %}
-  </div>
-</div>
+    </section>
+</form>
 {% endblock %}

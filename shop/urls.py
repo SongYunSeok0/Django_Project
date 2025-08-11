@@ -3,6 +3,7 @@ from . import views
 urlpatterns = [
     path('', views.aboutme, name='aboutme'),
     path('main/<int:pk>/', views.shopdetail, name='shopdetail'),
+
     path('mypage/', views.shopmyPage, name='mypage'),
     path('create/', views.create, name='itemcreate'),
     path('category/<slug:slug>/', views.category_view, name='category_view'),
@@ -25,4 +26,8 @@ urlpatterns = [
     path('cartlist/', views.cartlist, name='cartlist'),
     path('get-messages/', views.get_messages, name='get_messages'),
     path('send-message/', views.send_message, name='send_message'),
+    path('orderlist/add/<int:pk>/', views.add_to_orderlist, name='add_to_orderlist'),
+    path('orderlist/remove/<int:pk>/', views.remove_from_orderlist, name='remove_from_orderlist'),
+    path('orderlist/', views.orderlist, name='orderlist'),
+    path('cartlist/remove_selected/', views.remove_from_cartlist_bulk, name='remove_from_cartlist_bulk'),
     ]

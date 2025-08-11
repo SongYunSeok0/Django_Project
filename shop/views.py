@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Comment, Wishlist, Category, Cartlist
+from .models import Post, Comment, Wishlist, Category, Cartlist, Orderlist
 from .forms import PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -95,11 +95,12 @@ def order_status(request):
                   'shop/order_status.html',
                   context={'posts':posts})
 
-def order_history(request):
-    posts = Post.objects.all()
+@login_required
+def orderlist(request):
+    order_posts = Post.objects.filter(orderlist__user=request.user)
     return render(request,
-                  'shop/order_history.html',
-                  context={'posts':posts})
+                  'shop/orderlist.html',
+                  context={'posts': order_posts})
 
 @login_required
 def wishlist(request):
@@ -218,7 +219,7 @@ def add_to_cartlist(request, pk):
 def remove_from_cartlist(request, pk):
     post = get_object_or_404(Post, pk=pk)
     Cartlist.objects.filter(user=request.user, post=post).delete()
-    return redirect('shopdetail', pk=pk)
+    return redirect('cartlist')
 
 
 @login_required
@@ -253,3 +254,48 @@ def get_messages(request):
     except Exception as e:
         print("get_messages error:", str(e))  # 콘솔에 출력
         return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
+
+@login_required
+def add_to_orderlist(request, pk):
+    post = Post.objects.get(pk=pk)
+    Orderlist.objects.get_or_create(user=request.user, post=post)
+    return redirect('shopdetail', pk=pk)
+
+
+@login_required
+def remove_from_orderlist(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    Orderlist.objects.filter(user=request.user, post=post).delete()
+    return redirect('orderlist')
+
+def bulk_action(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_posts')
+        action = request.POST.get('action')
+
+        posts = Post.objects.filter(pk__in=selected_ids)
+
+        if action == 'delete':
+            posts.delete()
+        elif action == 'purchase':
+            # 구매 처리 로직 (예: 주문 생성)
+            pass
+
+    return redirect('cartlist')
+
+def purchase_selected(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_posts')
+        posts = Post.objects.filter(pk__in=selected_ids)
+
+        # 여기에 구매 처리 로직을 추가하세요
+        # 예: 주문 생성, 결제 처리 등
+
+        return redirect('cartlist')
+
+def remove_from_cartlist_bulk(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_posts')
+        # 예: 장바구니 모델에서 삭제
+        Cartlist.objects.filter(user=request.user, post_id__in=selected_ids).delete()
+    return redirect('cartlist')

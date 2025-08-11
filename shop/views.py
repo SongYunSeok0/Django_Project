@@ -4,6 +4,13 @@ from .forms import PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import ChatMessage
+from django.core.serializers import serialize
+from django.utils.dateparse import parse_datetime
+from django.views.decorators.http import require_POST
+
 
 
 def is_staff(user):
@@ -40,7 +47,7 @@ def create(request):
             post1 = postform.save(commit=False)
             post1.title = post1.title + ""
             postform.save()
-            return redirect('/mypage/')
+            return redirect('mypage')
     else: #get
         postform = PostForm()
     return render(request,
@@ -212,3 +219,37 @@ def remove_from_cartlist(request, pk):
     post = get_object_or_404(Post, pk=pk)
     Cartlist.objects.filter(user=request.user, post=post).delete()
     return redirect('shopdetail', pk=pk)
+
+
+@login_required
+@require_POST
+def send_message(request):
+    try:
+        user = request.user
+        message = request.POST.get('message')
+        event_id = int(request.POST.get('event_id'))
+
+        if message and event_id:
+            print(message)
+            print(event_id)
+            ChatMessage.objects.create(user=user, message=message, event_id=event_id)
+            return JsonResponse({'status': 'ok'})
+        else:
+            return JsonResponse({'status': 'fail', 'error': 'Missing message or event_id'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
+
+@login_required
+def get_messages(request):
+    try:
+        event_id = int(request.GET.get('event_id', 0))
+        last_id = int(request.GET.get('last_id', 0))
+
+        messages = ChatMessage.objects.filter(event_id=event_id, id__gt=last_id).values(
+            'id', 'user__username', 'message', 'timestamp'
+        )
+        return JsonResponse(list(messages), safe=False)
+
+    except Exception as e:
+        print("get_messages error:", str(e))  # 콘솔에 출력
+        return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)

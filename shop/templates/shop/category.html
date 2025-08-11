@@ -1,6 +1,6 @@
 {% extends 'shop/base.html' %}
 {% block title %}{{ category_name }} 카테고리 - Dusty Shop{% endblock %}
-
+{% load humanize %}
 {% block content %}
 <section class="px-5">
     <div class="container px-4 px-lg-5 mt-5">
@@ -22,7 +22,7 @@
                     <div class="card-body p-4">
                         <div class="text-center">
                             <h5 class="fw-bolder">{{ post.title }}</h5>
-                            <span>{{ post.price }}₩</span>
+                            <span>{{ post.price|intcomma }}₩</span>
                         </div>
                     </div>
 

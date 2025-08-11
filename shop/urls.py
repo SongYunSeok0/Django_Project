@@ -23,4 +23,6 @@ urlpatterns = [
     path('cartlist/add/<int:pk>/', views.add_to_cartlist, name='add_to_cartlist'),
     path('cartlist/remove/<int:pk>/', views.remove_from_cartlist, name='remove_from_cartlist'),
     path('cartlist/', views.cartlist, name='cartlist'),
+    path('get-messages/', views.get_messages, name='get_messages'),
+    path('send-message/', views.send_message, name='send_message'),
     ]

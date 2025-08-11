@@ -26,7 +26,6 @@ urlpatterns = [
     path("", include('shop.urls')),
     path('accounts/', include('allauth.urls')),
     path('api/', include('shop.api_urls')),
-
    ]
 
 

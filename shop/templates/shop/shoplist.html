@@ -1,4 +1,3 @@
-<!-- templates/shop/shop_list.html -->
 {% extends 'shop/base.html' %}
 
 {% block title %}Shop List - Dusty Shop{% endblock %}
@@ -7,87 +6,129 @@
 {% load static %}
 {% load humanize %}
 
+<style>
+  /* 헤더 스타일 */
+  #hero-header {
+    position: relative;
+    background-color: #000;
+    background-image: url('https://www.transparenttextures.com/patterns/dust.png');
+    background-repeat: repeat;
+    background-size: auto;
+    min-height: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 0;
+    border-bottom: 1px solid #222;
+    text-align: center;
+    overflow: hidden;
+  }
 
+  /* 검은 반투명 오버레이 */
+  #hero-header::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+  }
 
-<header id="hero-header" class="bg-dark py-5 d-flex align-items-center" style="min-height: 800px;">
-    <div class="container px-4 px-lg-5 my-5">
-        <div class="text-center text-white">
-            <h1 class="display-1 fw-normal dusty-text" style="font-family: Georgia, Times New Roman, serif;">Dusty Shop</h1>
-        </div>
+  /* 텍스트는 오버레이 위에 */
+  #hero-header > .container {
+    position: relative;
+    z-index: 2;
+  }
+
+  #hero-header h1 {
+    font-family: Georgia, Times New Roman, serif;
+    font-size: 6rem;
+    letter-spacing: 4px;
+    color: #f5f1e9;
+    margin: 0;
+  }
+
+</style>
+
+<header id="hero-header" class="bg-dark py-5">
+  <div class="container px-4 px-lg-5 my-5">
+    <div class="text-center dusty-text">
+      <h1>DUSTY SHOP</h1>
     </div>
+  </div>
 </header>
 
 <section class="px-5 my-5">
-    <h3 style="color:black; font-family: Georgia, Times New Roman, serif ;"> Event </h3>
-    <div class=" px-4 px-lg-5 mt-5">
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center">
-            {% for post in posts %}
-                {% if post.category and post.category.slug == "event" %}
-            <div class="col mb-5">
-                <div class="card h-100 w-100" style="overflow: hidden">
-                    <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Event</div>
-                    {% if post.uploaded_image %}
-                    <div class="hover-box">
-                        <img class="img-fluid rounded" src="{{ post.uploaded_image.url }}" alt="..." />
-                    </div>
-                    {% else %}
-                    <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
-                    {% endif %}
+  <h3 style="color:black; font-family: Georgia, Times New Roman, serif;"> Event </h3>
+  <div class="px-4 px-lg-5 mt-5">
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center">
+      {% for post in posts %}
+      {% if post.category and post.category.slug == "event" %}
+      <div class="col mb-5">
+        <div class="card h-100 w-100" style="overflow: hidden">
+          <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Event</div>
+          {% if post.uploaded_image %}
+          <div class="hover-box">
+            <img class="img-fluid rounded" src="{{ post.uploaded_image.url }}" alt="..." />
+          </div>
+          {% else %}
+          <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
+          {% endif %}
 
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <h5 class="fw-bolder">{{ post.title }}</h5>
-                            <span>₩{{ post.price|intcomma }}</span>
-                        </div>
-                    </div>
-
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center">
-                            <a class="btn btn-outline-dark mt-auto" href="{{ post.pk }}">Draw</a>
-                        </div>
-                    </div>
-                </div>
+          <div class="card-body p-4">
+            <div class="text-center">
+              <h5 class="fw-bolder">{{ post.title }}</h5>
+              <span>₩{{ post.price|intcomma }}</span>
             </div>
-                {% endif %}
-            {% endfor %}
+          </div>
+
+          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+            <div class="text-center">
+              <a class="btn btn-outline-dark mt-auto" href="{{ post.pk }}">Draw</a>
+            </div>
+          </div>
         </div>
+      </div>
+      {% endif %}
+      {% endfor %}
     </div>
+  </div>
 </section>
 
 <section class="px-5">
-    <h3 style="color:black; font-family: Georgia, Times New Roman, serif ;" >New Arrivals</h3>
+  <h3 style="color:black; font-family: Georgia, Times New Roman, serif;">New Arrivals</h3>
 
-    <div class=" px-4 px-lg-5 mt-5">
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center">
-            {% for post in posts %}
-                {% if post.category and post.category.slug != "event" %}
-            <div class="col mb-5">
-                <div class="card h-100 w-100" style="overflow: hidden">
-                    <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">New</div>
-                    {% if post.uploaded_image %}
-                    <div class="hover-box">
-                        <img class="img-fluid rounded" src="{{ post.uploaded_image.url }}" alt="..."/>
-                    </div>
-                    {% else %}
-                    <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..."  />
-                    {% endif %}
+  <div class="px-4 px-lg-5 mt-5">
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center">
+      {% for post in posts %}
+      {% if post.category and post.category.slug != "event" %}
+      <div class="col mb-5">
+        <div class="card h-100 w-100" style="overflow: hidden">
+          <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">New</div>
+          {% if post.uploaded_image %}
+          <div class="hover-box">
+            <img class="img-fluid rounded" src="{{ post.uploaded_image.url }}" alt="..." />
+          </div>
+          {% else %}
+          <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
+          {% endif %}
 
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <h5 class="fw-bolder">{{ post.title }}</h5>
-                            <span>₩{{ post.price|intcomma }}</span>
-                        </div>
-                    </div>
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center">
-                            <a class="btn btn-outline-dark mt-auto" href="{{ post.pk }}">상세 보기</a>
-                        </div>
-                    </div>
-                </div>
+          <div class="card-body p-4">
+            <div class="text-center">
+              <h5 class="fw-bolder">{{ post.title }}</h5>
+              <span>₩{{ post.price|intcomma }}</span>
             </div>
-                {% endif %}
-            {% endfor %}
+          </div>
+          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+            <div class="text-center">
+              <a class="btn btn-outline-dark mt-auto" href="{{ post.pk }}">상세 보기</a>
+            </div>
+          </div>
         </div>
+      </div>
+      {% endif %}
+      {% endfor %}
     </div>
+  </div>
 </section>
+
 {% endblock %}

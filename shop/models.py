@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, allow_unicode=True)
@@ -68,13 +69,6 @@ class Comment(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True,
                                on_delete=models.CASCADE, related_name='replies')
 
-    class Meta:
-        indexes = [
-            models.Index(fields=['id']),
-            models.Index(fields=['post']),
-            models.Index(fields=['parent']),
-        ]
-
     def __str__(self):
         who = self.author.username if self.author else "익명"
         return f'{who} - {self.title}'
@@ -100,3 +94,13 @@ class Cartlist(models.Model):
 
     class Meta:
         unique_together = ('user', 'post')
+
+class ChatMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    event_id = models.IntegerField()
+    temp_field = models.BooleanField(default=True)  # ✅ 임시 필드 추가
+
+    class Meta:
+        ordering = ['timestamp']

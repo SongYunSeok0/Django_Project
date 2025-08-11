@@ -4,7 +4,27 @@ from shop.models import Post, Comment
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'price', 'size', 'content', 'uploaded_image']
+        fields = [
+            "title", "content", "price", "size",
+            "shoulder", "chest", "somae", "chongjang",
+            "waist", "bottom_top", "thigh", "mit_dan",
+            "category", "uploaded_image",
+        ]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-control"}),
+            "content": forms.Textarea(attrs={"class": "form-control", "rows": 8}),
+            "price": forms.NumberInput(attrs={"class": "form-control", "step": "1"}),
+            "size": forms.TextInput(attrs={"class": "form-control"}),
+            "shoulder": forms.NumberInput(attrs={"class": "form-control", "step": "0.1"}),
+            "chest": forms.NumberInput(attrs={"class": "form-control", "step": "0.1"}),
+            "somae": forms.NumberInput(attrs={"class": "form-control", "step": "0.1"}),
+            "chongjang": forms.NumberInput(attrs={"class": "form-control", "step": "0.1"}),
+            "waist": forms.NumberInput(attrs={"class": "form-control", "step": "0.1"}),
+            "bottom_top": forms.NumberInput(attrs={"class": "form-control", "step": "0.1"}),
+            "thigh": forms.NumberInput(attrs={"class": "form-control", "step": "0.1"}),
+            "mit_dan": forms.NumberInput(attrs={"class": "form-control", "step": "0.1"}),
+            "category": forms.Select(attrs={"class": "form-control"}),
+        }
 
 
 class CommentForm(forms.ModelForm):

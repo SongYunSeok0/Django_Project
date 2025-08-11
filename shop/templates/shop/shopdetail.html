@@ -68,6 +68,59 @@
               </form>
               <a class="btn btn-dark" href="#" style="min-width: 120px;">Buy</a>
             </div>
+                {% else %}
+                    <div id="chat-box" style="height:300px; overflow-y:auto; border:1px solid #ccc;"></div>
+                    <input type="text" id="chat-input" placeholder="메시지를 입력하세요" />
+                    <button id="send-btn">전송</button>
+
+                    <script>
+                          const eventId = {{ post.id }};  // post가 이벤트라면 OK!
+
+                          let lastMessageId = 0;
+
+                          $.ajaxSetup({
+                            headers: {
+                              'X-CSRFToken': '{{ csrf_token }}'
+                            }
+                          });
+
+                          function addMessage(msg) {
+                            $('#chat-box').append(`<p><b>${msg.user__username}:</b> ${msg.message}</p>`);
+                            $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
+                          }
+
+                          function fetchMessages() {
+                            $.get("{% url 'get_messages' %}", {
+                              event_id: eventId,
+                              last_id: lastMessageId
+                            }, function(data) {
+                              data.forEach(msg => {
+                                addMessage(msg);
+                                lastMessageId = msg.id;
+                              });
+                            });
+                          }
+
+                          $('#send-btn').click(function() {
+                            const message = $('#chat-input').val();
+                            if (message.trim() === '') return;
+
+                            $.post("{% url 'send_message' %}", {
+                              message: message,
+                              event_id: eventId
+                            }, function(res) {
+                              if (res.status === 'ok') {
+                                $('#chat-input').val('');
+                                fetchMessages();
+                              } else {
+                                alert('전송 실패');
+                              }
+                            });
+                          });
+
+                          setInterval(fetchMessages, 2000);
+                          $(document).ready(fetchMessages);
+                        </script>
         {% endif %}
 
             <div id="cartSidebar" style="
@@ -94,7 +147,7 @@
                      name: '{{post.title}}',
                      price: '{{post.price|intcomma}}',
                      size: '{{post.size}}',
-                     image: '{{ post.uploaded_image.url }}'
+                     image: '{{ post.uploaded_image }}'
                    };
                  
                    sessionStorage.setItem('cartItem', JSON.stringify(item));

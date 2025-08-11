@@ -1,9 +1,31 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Comment, Wishlist, Cartlist
+from .models import Post, Comment, Wishlist, Category, Cartlist
 from .forms import PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import ChatMessage
+from django.core.serializers import serialize
+from django.utils.dateparse import parse_datetime
+from django.views.decorators.http import require_POST
 
+
+
+def create(request):
+    if request.method == "POST":
+        postform = PostForm(request.POST, request.FILES)
+        if postform.is_valid():
+            postform.save()
+            return redirect('shopmypage')  # 원하는 곳으로
+    else:
+        postform = PostForm()
+    return render(request, 'shop/postform.html', {'postform': postform})
+
+
+def is_staff(user):
+    return user.is_authenticated and user.is_staff
 
 def shoplist(request):
     #db에서 query select * from post
@@ -43,25 +65,22 @@ def create(request):
                   template_name="shop/postform.html",
                   context={'postform':postform})
 
-def top(request):
-    posts = Post.objects.filter(category__slug='top')
-    return render(request, 'shop/top.html', {'posts': posts})
 
-def outer(request):
-    posts = Post.objects.filter(category__slug='outer')
-    return render(request, 'shop/outer.html', {'posts': posts})
+def category_view(request, slug):
+    # 카테고리 있으면 가져오고, 없으면 None
+    category = Category.objects.filter(slug=slug).first()
 
-def bottom(request):
-    posts = Post.objects.filter(category__slug='bottom')
-    return render(request, 'shop/bottom.html', {'posts': posts})
+    if category:
+        posts = Post.objects.filter(category=category)
+        category_name = category.name
+    else:
+        posts = []
+        category_name = slug.capitalize()  # slug를 이름처럼 표시
 
-def shoes(request):
-    posts = Post.objects.filter(category__slug='shoes')
-    return render(request, 'shop/shoes.html', {'posts': posts})
-
-def etc(request):
-    posts = Post.objects.filter(category__slug='etc')
-    return render(request, 'shop/etc.html', {'posts': posts})
+    return render(request, 'shop/category.html', {
+        'category_name': category_name,
+        'posts': posts
+    })
 
 
 def search(request):
@@ -93,11 +112,6 @@ def order_history(request):
                   'shop/order_history.html',
                   context={'posts':posts})
 
-#def wishlist(request):
-#    posts = Post.objects.filter(category__slug='check')
-#    return render(request,
-#                  'shop/wishlist.html',
-#                  context={'posts':posts})
 @login_required
 def wishlist(request):
     wish_posts = Post.objects.filter(wishlist__user=request.user)
@@ -118,13 +132,15 @@ def contact(request):
         if commentform.is_valid():
             comment = commentform.save(commit=False)
             comment.author = request.user if request.user.is_authenticated else None
-            comment.save()  # ✅ 한 번만 저장 (루프 없음)
+            comment.save()
             messages.success(request, "문의가 등록되었습니다.")
             return redirect('contact')
     else:
         commentform = CommentForm()
 
-    comments = Comment.objects.order_by("-created_date")  # ✅ 최신순
+    qs = Comment.objects.filter(parent__isnull=True).order_by("-created_date")
+    comments = qs.select_related('author').prefetch_related('replies__author')
+
     return render(request, "shop/contact.html", {
         "commentform": commentform,
         "comments": comments,
@@ -132,16 +148,12 @@ def contact(request):
 
 def contact_history(request):
     if not request.user.is_authenticated:
-        return redirect('account_login')  # allauth 기본 로그인 URL name
+        return redirect('account_login')
     comments = Comment.objects.filter(author_id=request.user.id).order_by('-id')
     return render(request, 'shop/contact_history.html', {'comments': comments})
 
 def updatecomment(request, pk):
     comment = Comment.objects.get(pk=pk)
-
-    # 작성자 검증이 필요하면 아래 주석 해제
-    # if comment.author != request.user:
-    #     return redirect('my_inquiries')
 
     if request.method == "POST":
         form = CommentForm(request.POST, instance=comment)
@@ -154,7 +166,7 @@ def updatecomment(request, pk):
     return render(request, 'shop/commentform.html', {'commentform': form})
 
 
-# @login_required
+@login_required
 def deletecomment(request, pk):
     comment = comment = Comment.objects.get(pk=pk)
 
@@ -165,11 +177,40 @@ def deletecomment(request, pk):
     return render(request, 'shop/comment_confirm_delete.html', {'comment': comment})
 
 @login_required
+def admincontact(request):
+    if request.user.is_staff:
+        qs = Comment.objects.filter(parent__isnull=True).order_by('-id')
+    else:
+        qs = Comment.objects.filter(author=request.user, parent__isnull=True).order_by('-id')
+    comments = qs.select_related('author').prefetch_related('replies__author')  # N+1 방지
+    return render(request, 'shop/admincontact.html', {'comments': comments})
+
+
+@staff_member_required
+def reply_comment(request, comment_id):
+    parent = Comment.objects.get(pk=comment_id)
+
+    if request.method != "POST":
+        return redirect('admincontact')
+
+    content = (request.POST.get('content') or '').strip()
+    if not content:
+        messages.error(request, "답글 내용을 입력하세요.")
+        return redirect('admincontact')
+
+    Comment.objects.create(
+        author=request.user,
+        content=content,
+        parent=parent,     # ← 대댓글 연결 핵심
+    )
+    messages.success(request, "답글이 등록되었습니다.")
+    return redirect('admincontact')
+
+@login_required
 def add_to_wishlist(request, pk):
     post = Post.objects.get(pk=pk)
     Wishlist.objects.get_or_create(user=request.user, post=post)
     return redirect('shopdetail', pk=pk)
-
 
 @login_required
 def remove_from_wishlist(request, pk):
@@ -189,3 +230,41 @@ def remove_from_cartlist(request, pk):
     post = get_object_or_404(Post, pk=pk)
     Cartlist.objects.filter(user=request.user, post=post).delete()
     return redirect('shopdetail', pk=pk)
+
+@csrf_exempt
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        user = request.user
+        message = request.POST.get('message')
+        event_id = request.POST.get('event_id')
+
+        if message and event_id:
+            try:
+                ChatMessage.objects.create(
+                    user=user,
+                    message=message,
+                    event_id=int(event_id)
+                )
+                return JsonResponse({'status': 'ok'})
+            except Exception as e:
+                return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
+
+    return JsonResponse({'status': 'fail'}, status=400)
+
+
+@login_required
+def get_messages(request):
+    try:
+        event_id = int(request.GET.get('event_id'))
+        last_id = int(request.GET.get('last_id', 0))
+
+        messages = ChatMessage.objects.filter(
+            event_id=event_id,
+            id__gt=last_id
+        ).values('id', 'user__username', 'message', 'timestamp')
+
+        return JsonResponse(list(messages), safe=False)
+
+    except (ValueError, TypeError) as e:
+        return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)

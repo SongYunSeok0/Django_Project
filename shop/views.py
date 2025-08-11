@@ -13,17 +13,6 @@ from django.views.decorators.http import require_POST
 
 
 
-def create(request):
-    if request.method == "POST":
-        postform = PostForm(request.POST, request.FILES)
-        if postform.is_valid():
-            postform.save()
-            return redirect('shopmypage')  # 원하는 곳으로
-    else:
-        postform = PostForm()
-    return render(request, 'shop/postform.html', {'postform': postform})
-
-
 def is_staff(user):
     return user.is_authenticated and user.is_staff
 
@@ -58,7 +47,7 @@ def create(request):
             post1 = postform.save(commit=False)
             post1.title = post1.title + ""
             postform.save()
-            return redirect('/shop/')
+            return redirect('mypage')
     else: #get
         postform = PostForm()
     return render(request,
@@ -231,40 +220,36 @@ def remove_from_cartlist(request, pk):
     Cartlist.objects.filter(user=request.user, post=post).delete()
     return redirect('shopdetail', pk=pk)
 
-@csrf_exempt
+
 @login_required
+@require_POST
 def send_message(request):
-    if request.method == 'POST':
+    try:
         user = request.user
         message = request.POST.get('message')
-        event_id = request.POST.get('event_id')
+        event_id = int(request.POST.get('event_id'))
 
         if message and event_id:
-            try:
-                ChatMessage.objects.create(
-                    user=user,
-                    message=message,
-                    event_id=int(event_id)
-                )
-                return JsonResponse({'status': 'ok'})
-            except Exception as e:
-                return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
-
-    return JsonResponse({'status': 'fail'}, status=400)
-
+            print(message)
+            print(event_id)
+            ChatMessage.objects.create(user=user, message=message, event_id=event_id)
+            return JsonResponse({'status': 'ok'})
+        else:
+            return JsonResponse({'status': 'fail', 'error': 'Missing message or event_id'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)
 
 @login_required
 def get_messages(request):
     try:
-        event_id = int(request.GET.get('event_id'))
+        event_id = int(request.GET.get('event_id', 0))
         last_id = int(request.GET.get('last_id', 0))
 
-        messages = ChatMessage.objects.filter(
-            event_id=event_id,
-            id__gt=last_id
-        ).values('id', 'user__username', 'message', 'timestamp')
-
+        messages = ChatMessage.objects.filter(event_id=event_id, id__gt=last_id).values(
+            'id', 'user__username', 'message', 'timestamp'
+        )
         return JsonResponse(list(messages), safe=False)
 
-    except (ValueError, TypeError) as e:
-        return JsonResponse({'status': 'fail', 'error': str(e)}, status=400)
+    except Exception as e:
+        print("get_messages error:", str(e))  # 콘솔에 출력
+        return JsonResponse({'status': 'fail', 'error': str(e)}, status=500)

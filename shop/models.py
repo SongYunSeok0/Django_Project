@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, allow_unicode=True)
@@ -57,6 +58,8 @@ class PostImage(models.Model):
 
 
 class Comment(models.Model):
+    post = models.ForeignKey('Post', on_delete=models.CASCADE,
+                             related_name='comments', null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=100, default="No title")
     content = models.TextField()
@@ -96,7 +99,8 @@ class ChatMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    event_id = models.IntegerField()  # 특정 이벤트 구분
+    event_id = models.IntegerField()
+    temp_field = models.BooleanField(default=True)  # ✅ 임시 필드 추가
 
     class Meta:
         ordering = ['timestamp']

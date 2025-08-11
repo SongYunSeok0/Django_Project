@@ -1,11 +1,12 @@
 {% extends 'shop/base.html' %}
-{% block title %}Top 카테고리 - Dusty Shop{% endblock %}
+{% block title %}{{ category_name }} 카테고리 - Dusty Shop{% endblock %}
 
 {% block content %}
 <section class="px-5">
     <div class="container px-4 px-lg-5 mt-5">
-        <h2 class="mb-4 text-center">ETC</h2>
+        <h2 class="mb-4 text-center">{{ category_name }}</h2>
 
+        {% if posts %}
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             {% for post in posts %}
             <div class="col mb-5">
@@ -34,6 +35,9 @@
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <p class="text-center mt-5" style="font-size: 18px; color: gray;">상품이 없습니다.</p>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

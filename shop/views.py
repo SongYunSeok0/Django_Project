@@ -58,25 +58,22 @@ def create(request):
                   template_name="shop/postform.html",
                   context={'postform':postform})
 
-def top(request):
-    posts = Post.objects.filter(category__slug='top')
-    return render(request, 'shop/top.html', {'posts': posts})
 
-def outer(request):
-    posts = Post.objects.filter(category__slug='outer')
-    return render(request, 'shop/outer.html', {'posts': posts})
+def category_view(request, slug):
+    # 카테고리 있으면 가져오고, 없으면 None
+    category = Category.objects.filter(slug=slug).first()
 
-def bottom(request):
-    posts = Post.objects.filter(category__slug='bottom')
-    return render(request, 'shop/bottom.html', {'posts': posts})
+    if category:
+        posts = Post.objects.filter(category=category)
+        category_name = category.name
+    else:
+        posts = []
+        category_name = slug.capitalize()  # slug를 이름처럼 표시
 
-def shoes(request):
-    posts = Post.objects.filter(category__slug='shoes')
-    return render(request, 'shop/shoes.html', {'posts': posts})
-
-def etc(request):
-    posts = Post.objects.filter(category__slug='etc')
-    return render(request, 'shop/etc.html', {'posts': posts})
+    return render(request, 'shop/category.html', {
+        'category_name': category_name,
+        'posts': posts
+    })
 
 
 def search(request):

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'django.contrib.humanize',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -61,6 +62,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'allauth.account.middleware.AccountMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = "sesac_django_project.urls"
@@ -152,3 +155,8 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_SIGNUP_FIELDS = ['email*','username*','password1*','password2*']
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
+
+TOSS_API_SECRET_KEY = "test_sk_Poxy1XQL8RJmjGzj0Zz987nO5Wml"        #토스시크릿키
+#BUY_REDIRECT_URL='/'
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+#from .views import create_order
 urlpatterns = [
     path('', views.shoplist, name='shoplist'),
     path('<int:pk>/', views.shopdetail, name='shopdetail'),
@@ -23,4 +24,11 @@ urlpatterns = [
     path('cartlist/add/<int:pk>/', views.add_to_cartlist, name='add_to_cartlist'),
     path('cartlist/remove/<int:pk>/', views.remove_from_cartlist, name='remove_from_cartlist'),
     path('cartlist/', views.cartlist, name='cartlist'),
+
+    # 결제
+    path('checkout/<int:pk>/', views.checkout, name='checkout'),
+    path('success/', views.success, name='success'),
+    path('fail/', views.fail, name='fail'),
+    #path('api/orders/', create_order, name='create_order'),
+    path('callback-auth', views.callback_auth, name='callback_auth'),
     ]

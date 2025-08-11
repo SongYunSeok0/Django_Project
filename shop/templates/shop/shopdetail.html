@@ -62,12 +62,16 @@
                   {% endif %}
               {% endif %}
 
-              <form action="{% url 'add_to_cartlist' post.pk %}" method="post" onsubmit="handleCartSidebar()">
+             <form action="{% url 'add_to_cartlist' post.pk %}" method="post" onsubmit="handleCartSidebar()">
                 {% csrf_token %}
                 <button id="addToCartBtn" class="btn btn-dark" type="submit" style="min-width: 120px;">Add to Cart</button>
               </form>
-              <a class="btn btn-dark" href="#" style="min-width: 120px;">Buy</a>
+              <!-- 8/11 buy 버튼 클릭 시 구매창(테스트용) 이동 -->
+             <form action="{% url 'checkout' post.pk %}" method="get">
+                <button id="buy" class="btn btn-dark" type="submit" style="min-width: 120px;">Buy</button>
+              </form>
             </div>
+
         {% endif %}
 
             <div id="cartSidebar" style="

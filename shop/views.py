@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Comment, Wishlist, Category, Cartlist
-from .forms import PostForm, CommentForm
+from .models import Post, Comment, Wishlist, Category, Cartlist, Order
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
+#결제창
+import requests, json, base64
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 
 def create(request):
     if request.method == "POST":
@@ -223,3 +227,139 @@ def remove_from_cartlist(request, pk):
     post = get_object_or_404(Post, pk=pk)
     Cartlist.objects.filter(user=request.user, post=post).delete()
     return redirect('shopdetail', pk=pk)
+
+#buy 버튼 클릭 시 결제창으로 이동
+#https://github.com/tosspayments/tosspayments-sample/blob/main/django-javascript/payments/views.py
+
+# API 요청에 헤더를 생성하는 함수
+def create_headers(secret_key):
+    # 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
+    # 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
+    # @docs https://docs.tosspayments.com/reference/using-api/authorization#%EC%9D%B8%EC%A6%9D
+    userpass = f"{secret_key}:"
+    encoded_u = base64.b64encode(userpass.encode()).decode()
+    print("Authorization header:", f"Basic {encoded_u}")  # 디버깅용 출력
+    return {
+        "Authorization": f"Basic {encoded_u}",
+        "Content-Type": "application/json"
+    }
+
+# API 요청을 호출하고 응답 핸들링하는 함수
+def send_payment_request(url, params, headers):
+    response = requests.post(url, json=params, headers=headers)
+    return response.json(), response.status_code
+
+# 성공 및 실패 페이지 렌더링하는 함수
+def handle_response(request, resjson, status_code, success_template, fail_template):
+    if status_code == 200:
+        return render(request, success_template, {
+            "res": json.dumps(resjson, indent=4),
+            "respaymentKey": resjson.get("paymentKey"),
+            "resorderId": resjson.get("orderId"),
+            "restotalAmount": resjson.get("totalAmount")
+        })
+    else:
+        return render(request, fail_template, {
+            "code": resjson.get("code"),
+            "message": resjson.get("message")
+        })
+
+# 페이지 렌더링 함수
+#shop/templates/shop/checkout.html
+def checkout(request, pk):
+    print("결제 요청 함수 시작됨")
+    post = get_object_or_404(Post, pk=pk)
+    if request.user.is_authenticated:
+        customer_key = "uuid-123e4567-e89b-12d3-a456-426614174000"
+    else:
+        customer_key = "test_customer_1234"  # 테스트용 고정값
+    return render(request, 'shop/checkout.html',
+                  {'post': post, 'customer_key': customer_key})
+
+@csrf_exempt  # API라서 csrf 검증 제외 (AJAX 요청 편의상)
+def create_order(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        order_id = data.get('orderId')
+        amount = data.get('amount')
+        order_name = data.get('orderName')
+        user = request.user if request.user.is_authenticated else None
+
+        # Order 모델에 주문 정보 저장 (추가)
+        Order.objects.create(
+            order_id=order_id,
+            amount=amount,
+            order_name=order_name,
+            user=user,
+        )
+        return JsonResponse({'message': 'order created'}, status=201)
+
+    return JsonResponse({'error': 'invalid method'}, status=405)
+
+# 결제 성공 및 실패 핸들링
+# TODO: 개발자센터에 로그인해서 내 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
+# @docs https://docs.tosspayments.com/reference/using-api/api-keys
+#shop/templates/shop/success.html
+def success(request):
+    print("process_payment 호출됨", request.GET)
+    return process_payment(request, settings.TOSS_API_SECRET_KEY, 'shop/success.html')
+
+# 결제 승인 호출하는 함수
+# @docs https://docs.tosspayments.com/guides/v2/payment-widget/integration#3-결제-승인하기
+def process_payment(request, secret_key, success_template):
+    print("process_payment 호출됨")  # 이 부분이 찍히는지 확인
+    orderId = request.GET.get('orderId')
+    amount = request.GET.get('amount')
+    paymentKey = request.GET.get('paymentKey')
+
+    url = "https://api.tosspayments.com/v1/payments/confirm"
+    headers = create_headers(secret_key)
+    params = {
+        "orderId": orderId,
+        "amount": amount,
+        "paymentKey": paymentKey
+    }
+
+    resjson, status_code = send_payment_request(url, params, headers)
+    return handle_response(request, resjson, status_code, success_template, 'shop/fail.html')
+
+#결제 실패 페이지
+##shop/templates/shop/fail.html
+def fail(request):
+    return render(request, "shop/fail.html", {
+        "code": request.GET.get('code'),
+        "message": request.GET.get('message')
+    })
+
+
+# 브랜드페이 Access Token 발급
+def callback_auth(request):
+    customerKey = request.GET.get('customerKey')
+    code = request.GET.get('code')
+    print("callback_auth 호출됨:", customerKey, code)
+
+    if not customerKey or not code:
+        return JsonResponse({'error': 'Missing parameters'}, status=400)
+
+    url = "https://api.tosspayments.com/v1/brandpay/authorizations/access-token"
+    secret_key = settings.TOSS_API_SECRET_KEY
+    headers = create_headers(secret_key)
+    params = {
+        "grantType": "AuthorizationCode",
+        "customerKey": customerKey,
+        "code": code
+    }
+
+    resjson, status_code = send_payment_request(url, params, headers)
+
+    if status_code == 200:
+        # customerToken 받음
+        customer_token = resjson.get("customerToken")
+        # TODO: customerToken을 DB/세션 등에 저장하거나 클라이언트가 다시 요청해서 가져갈 수 있게 하세요.
+
+        # 임시로 JSON으로 바로 응답
+        return JsonResponse({"customerToken": customer_token}, status=200)
+    else:
+        return JsonResponse(resjson, status=status_code)
+
+

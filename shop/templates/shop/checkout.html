@@ -1,0 +1,90 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>토스페이 결제 테스트창</title>
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+  </head>
+
+  <body>
+   <script src="https://js.tosspayments.com/v2/brandpay"></script>
+        <script>
+      // ------  SDK 초기화 ------
+      // TODO: clientKey는 개발자센터의 API 개별 연동 키 > 연동에 사용할 브랜드페이가 계약된 MID > 클라이언트 키로 바꾸세요.
+      // TODO: server.js 의 secretKey 또한 결제위젯 연동 키가 아닌 API 개별 연동 키의 시크릿 키로 변경해야 합니다.
+      // TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
+      // @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
+      // ㅅclientKey 사용자키로 입력 완료
+      const clientKey = "test_ck_ma60RZblrqPp1A1L2yoRVwzYWBn1";
+
+      // generateRandomString 함수가 정의되어 있지 않아 오류가 날 수 있습니다.
+      // 임시로 함수를 추가하거나, 유저 고유 ID를 사용해야 합니다.
+      function generateRandomString() {
+          return Math.random().toString(36).substring(2, 15);
+      }
+
+
+      const customerKey =  "{{ customer_key|stringformat:'s'|escapejs }}";  // 로그인된 유저 고유 ID 문자열
+      console.log("customerKey:", customerKey);
+      const tossPayments = TossPayments(clientKey);
+
+      // 브랜드페이 객체 생성
+      // @docs https://docs.tosspayments.com/sdk/v2/js#tosspaymentsbrandpay
+      const brandpay = tossPayments.brandpay({
+        customerKey,
+        // TODO: 개발자센터의 브랜드페이 > Redirect URL 에 아래 URL 을 추가하세요.
+        // 등록완료
+        redirectUrl: "http://127.0.0.1:8000/callback-auth",
+      });
+
+      // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+      // @docs https://docs.tosspayments.com/sdk/v2/js#brandpayrequestpayment
+      async function requestPayment() {
+
+          // 서버에 orderId, amount를 저장하기 위한 API 호출 (추가)
+          const orderId = generateRandomString();  // 고유 주문번호 생성
+          const amount = {{ post.price }};          // 장고 템플릿 변수에서 가격 가져오기
+          const orderName = "{{ post.title|escapejs }}";    // 상품명 |escapejs 추가
+
+        // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
+        // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+        await brandpay.requestPayment({
+          amount: {
+            currency: "KRW",
+            value: amount,   //ㅅ각 제품들 가격 설정 완료
+          },
+          orderId: orderId, // 고유 주문번호
+          orderName: orderName,      //ㅅ제품명 설정
+          successUrl: `${window.location.origin}/success?customerKey=${customerKey}`,
+          failUrl: `${window.location.origin}/shop/fail/`, // 결제 요청이 실패하면 리다이렉트되는 URL
+          customerName: '{{ user.username|escapejs }}', //자바스크립트에서는 |escapejs문자열에 추가필요
+        });
+      }
+
+      async function addPaymentMethod() {
+        await brandpay.addPaymentMethod();
+      }
+
+      async function openSettings() {
+        await brandpay.openSettings();
+      }
+    </script>
+
+
+    <div class="wrapper">
+      <div class="box_section" style="padding: 40px 30px 50px 30px; margin-top: 30px; margin-bottom: 50px; display: flex; flex-direction: column">
+        <button class="button" type="button" style="margin-top: 30px" onclick="requestPayment()">결제하기</button>
+        <button class="button" type="button" style="margin-top: 30px" onclick="addPaymentMethod()">결제수단추가</button>
+        <button class="button" type="button" style="margin-top: 30px" onclick="openSettings()">브랜드페이 설정 열기</button>
+      </div>
+    </div>
+
+  </body>
+</html>

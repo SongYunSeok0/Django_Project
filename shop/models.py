@@ -91,3 +91,15 @@ class Cartlist(models.Model):
 
     class Meta:
         unique_together = ('user', 'post')
+
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=100, unique=True)
+    amount = models.IntegerField()
+    status = models.CharField(max_length=20, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order {self.order_id} by {self.user.username}"

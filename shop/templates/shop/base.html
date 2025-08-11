@@ -3,76 +3,62 @@
 {% load static %}
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Dusty Shop{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
-          crossorigin="anonymous">
-    <style>
-        .hover-box:hover {
-            cursor: pointer;
-            transform: scale(1.1);
-            transition: transform 0.35s;
-        }
+  <meta charset="UTF-8" />
+  <title>{% block title %}Dusty Shop{% endblock %}</title>
 
-        @keyframes dustyFadeIn {
-            0% {
-                filter: blur(20px) brightness(0.3);
-                opacity: 0;
-                transform: translateY(40px) scale(1.1);
-            }
-            100% {
-                filter: blur(0px) brightness(1);
-                opacity: 1;
-                transform: translateY(0px) scale(1);
-            }
-        }
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+        crossorigin="anonymous">
 
-        .dusty-text {
-            display: inline-block;
-            animation: dustyFadeIn 6s ease-out forwards;
-            opacity: 0;
-        }
-    .bg-img {
-        background-image: url("{% static 'images/모래배경.gif' %}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed; /* optional: keeps bg fixed on scroll */
+  <!-- 레이아웃: footer를 하단에 붙이는 핵심 3줄 -->
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body { display: flex; flex-direction: column; }
+    main { flex: 1; }
+  </style>
+
+  <!-- 기존 스타일들 -->
+  <style>
+    .hover-box:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+      transition: transform 0.35s;
     }
+    @keyframes dustyFadeIn {
+      0% { filter: blur(20px) brightness(0.3); opacity: 0; transform: translateY(40px) scale(1.1); }
+      100% { filter: blur(0) brightness(1); opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .dusty-text { display: inline-block; animation: dustyFadeIn 6s ease-out forwards; opacity: 0; }
+    .bg-img {
+      background-image: url("{% static 'images/모래배경.gif' %}");
+      background-size: cover; background-position: center;
+      background-repeat: no-repeat; background-attachment: fixed;
+    }
+  </style>
 
-</style>
-    {% block extra_css %}
-<style>
-.image-text {
-    font-size: 6rem;
-    font-weight: bold;
-    font-family: 'Georgia', 'serif';
-
-    /* 텍스트 내부에 이미지 넣기 */
-    background: url("{% static 'images/leopard.jpg' %}") no-repeat center center;
-    background-size: cover;
-
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-}
-</style>
-    {% endblock %}
+  {% block extra_css %}
+  <style>
+    .image-text {
+      font-size: 6rem; font-weight: bold; font-family: 'Georgia','serif';
+      background: url("{% static 'images/leopard.jpg' %}") no-repeat center/cover;
+      color: transparent; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+  </style>
+  {% endblock %}
 </head>
+
 <body>
+  {% include 'shop/nav.html' %}
 
-    {% include 'shop/nav.html' %}
-    
+  <main>
     {% block content %}{% endblock %}
+  </main>
 
-    {% include 'shop/footer.html' %}
+  {% include 'shop/footer.html' %}
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
-            crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+          crossorigin="anonymous"></script>
 </body>
 </html>

@@ -112,15 +112,15 @@
               }, function(res) {
                 if (res.status === 'ok') {
                   $('#chat-input').val('');
-                    {# fetchMessages(); // 전송 후 바로 갱신 #}
+                    fetchMessages(); // 전송 후 바로 갱신 #}
                 } else {
                   alert('전송 실패');
                 }
               });
             });
 
-            {#setInterval(fetchMessages, 2000);#}
-            {#$(document).ready(fetchMessages);#}
+            setInterval(fetchMessages, 2000);
+            $(document).ready(fetchMessages);
           </script>
         {% endif %}
 

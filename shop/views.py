@@ -6,17 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
 
-def create(request):
-    if request.method == "POST":
-        postform = PostForm(request.POST, request.FILES)
-        if postform.is_valid():
-            postform.save()
-            return redirect('shopmypage')  # 원하는 곳으로
-    else:
-        postform = PostForm()
-    return render(request, 'shop/postform.html', {'postform': postform})
-
-
 def is_staff(user):
     return user.is_authenticated and user.is_staff
 
@@ -51,7 +40,7 @@ def create(request):
             post1 = postform.save(commit=False)
             post1.title = post1.title + ""
             postform.save()
-            return redirect('/shop/')
+            return redirect('/mypage/')
     else: #get
         postform = PostForm()
     return render(request,

@@ -57,6 +57,8 @@ class PostImage(models.Model):
 
 
 class Comment(models.Model):
+    post = models.ForeignKey('Post', on_delete=models.CASCADE,
+                             related_name='comments', null=True, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=100, default="No title")
     content = models.TextField()
@@ -65,6 +67,13 @@ class Comment(models.Model):
     updated_date = models.DateTimeField(auto_now=True, null=True)
     parent = models.ForeignKey('self', null=True, blank=True,
                                on_delete=models.CASCADE, related_name='replies')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['id']),
+            models.Index(fields=['post']),
+            models.Index(fields=['parent']),
+        ]
 
     def __str__(self):
         who = self.author.username if self.author else "익명"

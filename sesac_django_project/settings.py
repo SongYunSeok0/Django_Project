@@ -152,3 +152,10 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_SIGNUP_FIELDS = ['email*','username*','password1*','password2*']
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
+
+ALLOWED_HOSTS = ["184.73.139.202", "localhost", "127.0.0.1"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://184.73.139.202:8000",
+    "http://184.73.139.202",
+]

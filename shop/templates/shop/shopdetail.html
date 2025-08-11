@@ -94,7 +94,7 @@
                      name: '{{post.title}}',
                      price: '{{post.price|intcomma}}',
                      size: '{{post.size}}',
-                     image: '{{ post.uploaded_image }}'
+                     image: '{{ post.uploaded_image.url }}',
                    };
                  
                    sessionStorage.setItem('cartItem', JSON.stringify(item));

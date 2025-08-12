@@ -29,10 +29,11 @@
                                 <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
                                 <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송 조회</a>
                                 <a class="btn btn-sm btn-outline-danger w-100" href="{% url 'remove_from_cartlist' post.pk %}">내역 삭제</a>
-                                <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' post.pk %}">구매하기</a>
+                                 <a class="btn btn-sm btn-dark w-100" href="{% url 'checkout' post.pk %}">
+                                    지금 바로 구매
+                                </a>
                             </div>
-                        </div>
-                    </div>
+                        </div> 
                     {% endfor %}
                 </div>
             </div>

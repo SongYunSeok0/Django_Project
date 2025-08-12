@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from datetime import date
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -125,3 +126,10 @@ class Orderlist(models.Model):
 
     class Meta:
         unique_together = ('user', 'post')
+
+
+class StoreStats(models.Model):
+    # 사이트 전체 누적 구매 수량
+    total_purchases = models.PositiveIntegerField(default=847342)
+    today_purchases = models.PositiveIntegerField(default=21)
+    last_purchase_date = models.DateField(default=date.today)

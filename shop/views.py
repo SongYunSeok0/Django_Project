@@ -444,7 +444,7 @@ def add_order(post, user):
 
 def success(request, pk):
     resp = process_payment(request, settings.TOSS_API_SECRET_KEY, 'shop/success.html')
-
+    Post.is_sold = True
     today = date.today()
     stats, _ = StoreStats.objects.get_or_create(
         pk=1,
@@ -483,6 +483,8 @@ def success(request, pk):
         order.user = request.user
         order.post = post
         order.save(update_fields=['order_id', 'amount', 'status', 'user', 'post'])
+        post.is_sold = True
+        post.save(update_fields=['is_sold'])
     else:
         # 3) 어떤 것도 못 찾은 경우 새로 생성 (직접 결제 진입 등의 예외 케이스)
         if order_id:
@@ -496,6 +498,8 @@ def success(request, pk):
             amount=confirmed_amount,
             status='confirmed'
         )
+        post.is_sold = True
+        post.save(update_fields=['is_sold'])
 
     # (선택) 기존에 쓰던 Orderlist를 병행한다면 유지
     add_order(post, request.user)

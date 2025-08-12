@@ -66,27 +66,49 @@
       {% if post.category and post.category.slug == "event" %}
       <div class="col mb-5">
         <div class="card h-100 w-100" style="overflow: hidden">
-          <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Event</div>
-          {% if post.uploaded_image %}
-          <div class="hover-box">
-          <a href="{{ post.pk }}">
-              <img class="img-fluid rounded" src="{{ post.uploaded_image.url }}" alt="..." />
-          </a>
-          </div>
+          {% if post.is_sold %}
+            <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sold out</div>
           {% else %}
-          <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
+            {#<div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">New</div>#}
+            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Event</div>
           {% endif %}
+          
+          {% if post.uploaded_image %}
+            <div class="hover-box">
+              {% if not post.is_sold %}
+                <a href="{{ post.pk }}">
+                  <img class="img-fluid rounded " src="{{ post.uploaded_image.url }}"
+                style="width:100%; height:320px; object-fit:cover; border-radius:8px;" />
+                </a>
+              {% else %}
+                <div class="image-wrapper" style="position: relative; width: 100%; height: 320px;">
+                  <img class="img-fluid rounded opacity-50"
+                       src="{{ post.uploaded_image.url }}"
+                       style="width:100%; height:100%; object-fit:cover; border-radius:8px;" />
 
+                  <div class="diagonal-line"></div>
+               </div>
+              {% endif %}
+            </div>
+          
+          {% else %}
+            <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
+          {% endif %}
           <div class="card-body p-4">
             <div class="text-center">
               <h5 class="fw-bolder">{{ post.title }}</h5>
-              <span>시작가: {{ post.starting_price|intcomma }}₩</span>
+              <span>시작가: ₩{{ post.starting_price|intcomma }}</span>
             </div>
           </div>
 
           <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
             <div class="text-center">
-              <a class="btn btn-outline-dark mt-auto" href="{{ post.pk }}">Draw</a>
+              {% if post.is_sold %}
+                <a class="btn btn-danger mt-auto" href="#">Sold Out</a>
+              {% else %}
+                <a class="btn btn-outline-dark mt-auto" href="{{ post.pk }}">Draw</a>
+              {% endif %}
+              
             </div>
           </div>
         </div>
@@ -98,7 +120,7 @@
 </section>
 
 <section class="px-5">
-  <h3 style="color:black; font-family: Georgia, Times New Roman, serif;">New Arrivals</h3>
+  <h3 style="color:black; font-family: Georgia, Times New Roman, serif;">All Products</h3>
 
   <div class="px-4 px-lg-5 mt-5">
     <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center">
@@ -106,18 +128,36 @@
       {% if post.category and post.category.slug != "event" %}
       <div class="col mb-5">
         <div class="card h-100 w-100" style="overflow: hidden">
-          <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">New</div>
-          {% if post.uploaded_image %}
-          <div class="hover-box">
-          <a href="{{ post.pk }}">
-              <img src="{{ post.uploaded_image.url }}"
-                style="width:100%; height:320px; object-fit:cover; border-radius:8px;" />
-          </a>
-          </div>
+         
+          {% if post.is_sold %}
+            <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sold out</div>
           {% else %}
-          <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
+            {#<div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">New</div>#}
           {% endif %}
 
+          {% if post.uploaded_image %}
+            <div class="hover-box">
+              {% if not post.is_sold %}
+                <a href="{{ post.pk }}">
+                  <img class="img-fluid rounded " src="{{ post.uploaded_image.url }}"
+                style="width:100%; height:320px; object-fit:cover; border-radius:8px;" />
+                </a>
+              {% else %}
+                <div class="image-wrapper" style="position: relative; width: 100%; height: 320px;">
+                  <img class="img-fluid rounded opacity-50"
+                       src="{{ post.uploaded_image.url }}"
+                       style="width:100%; height:100%; object-fit:cover; border-radius:8px;" />
+
+                  <div class="diagonal-line"></div>
+               </div>
+              {% endif %}
+            </div>
+          
+          {% else %}
+            <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
+          {% endif %}
+
+          
           <div class="card-body p-4">
             <div class="text-center">
               <h5 class="fw-bolder">{{ post.title }}</h5>

@@ -3,14 +3,12 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from datetime import date
 
-
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True, allow_unicode=True)
-
+ 
     def __str__(self):
         return f'{self.name} - {self.slug}'
-
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
@@ -18,16 +16,17 @@ class Post(models.Model):
     price = models.IntegerField(null=True, blank=True)
     starting_price = models.PositiveIntegerField(null=True, blank=True)
     size = models.CharField(max_length=10, null=True, blank=True)
-    shoulder = models.FloatField(null=True, blank=True)
-    chest = models.FloatField(null=True, blank=True)
-    somae = models.FloatField(null=True, blank=True)
-    chongjang = models.FloatField(null=True, blank=True)
-    waist = models.FloatField(null=True, blank=True)
-    bottom_top = models.FloatField(null=True, blank=True)
-    thigh = models.FloatField(null=True, blank=True)
-    mit_dan = models.FloatField(null=True, blank=True)
+    shoulder= models.FloatField(null=True, blank=True)
+    chest= models.FloatField(null=True, blank=True)
+    somae= models.FloatField(null=True, blank=True)
+    chongjang= models.FloatField(null=True, blank=True)
+    waist= models.FloatField(null=True, blank=True)
+    bottom_top= models.FloatField(null=True, blank=True)
+    thigh= models.FloatField(null=True, blank=True)
+    mit_dan= models.FloatField(null=True, blank=True)
     uploaded_image = models.ImageField(upload_to='images/', blank=True, null=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,null=True, blank=True)
+    is_sold = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.title} - {self.category}'
@@ -75,14 +74,13 @@ class Comment(models.Model):
     def __str__(self):
         who = self.author.username if self.author else "익명"
         return f'{who} - {self.title}'
-
+    
     def get_absolute_url(self):
         return reverse('contact_history')
-
+    
     def is_reply(self):
         return self.parent_id is not None
-
-
+    
 class Wishlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -90,7 +88,6 @@ class Wishlist(models.Model):
 
     class Meta:
         unique_together = ('user', 'post')
-
 
 class Cartlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -109,6 +106,7 @@ class Order(models.Model):
     status = models.CharField(max_length=20, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
+
     def __str__(self):
         return f"Order {self.order_id} by {self.user.username}"
 
@@ -122,7 +120,6 @@ class ChatMessage(models.Model):
 
     class Meta:
         ordering = ['timestamp']
-
 
 class Orderlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

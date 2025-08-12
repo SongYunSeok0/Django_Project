@@ -130,10 +130,17 @@ def orderlist(request):
     view_all = request.GET.get('view') == 'all'
 
     if request.user.is_superuser and view_all:
-        posts = Post.objects.filter(orderlist__isnull=False)  # distinct 제거
+        base_qs = Order.objects.select_related('post', 'post__category', 'user').order_by('-created_at')
     else:
-        posts = Post.objects.filter(orderlist__user=request.user)  # distinct 제거
-    return render(request, 'shop/orderlist.html', {'posts': posts})
+        base_qs = Order.objects.select_related('post', 'post__category').filter(user=request.user).order_by('-created_at')
+
+    event_orders = base_qs.filter(post__category__slug='event')
+    regular_orders = base_qs.exclude(post__category__slug='event')
+
+    return render(request, 'shop/orderlist.html', {
+        'event_orders': event_orders,
+        'regular_orders': regular_orders,
+    })
 
 @login_required
 def wishlist(request):
@@ -432,6 +439,39 @@ def success(request, pk):
     )
 
     post = get_object_or_404(Post, pk=pk)
+
+    order_id = request.GET.get('orderId')
+    confirmed_amount = request.GET.get('amount')
+    try:
+        confirmed_amount = int(confirmed_amount) if confirmed_amount is not None else post.price
+    except ValueError:
+        confirmed_amount = post.price
+
+    if order_id:
+        order, created = Order.objects.get_or_create(
+            order_id=order_id,
+            defaults={
+                'user': request.user,
+                'post': post,
+                'amount': confirmed_amount,
+                'status': 'confirmed',
+            }
+        )
+        if not created:
+            order.user = request.user
+            order.post = post
+            order.amount = confirmed_amount
+            order.status = 'confirmed'
+            order.save(update_fields=['user', 'post', 'amount', 'status'])
+    else:
+        Order.objects.create(
+            user=request.user,
+            post=post,
+            order_id=str(uuid.uuid4()),
+            amount=confirmed_amount,
+            status='confirmed'
+        )
+
     add_order(post, request.user)
 
     if stats.last_purchase_date != today:

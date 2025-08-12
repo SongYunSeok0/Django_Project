@@ -157,11 +157,11 @@ ACCOUNT_SIGNUP_FIELDS = ['email*','username*','password1*','password2*']
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
 
-ALLOWED_HOSTS = ["18.205.246.211", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["54.221.38.23", "localhost", "127.0.0.1"]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://18.205.246.211:8000",
-    "http://18.205.246.211",
+    "http://54.221.38.23:8000",
+    "http://54.221.38.23",
 ]
 #8/12 로그인 페.꾸때문에 추가
 SOCIALACCOUNT_PROVIDERS = {

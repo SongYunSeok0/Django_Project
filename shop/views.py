@@ -10,9 +10,12 @@ from datetime import timedelta
 from django.utils import timezone
 from datetime import date
 import uuid
+from uuid import uuid4
+from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
 import re
 from django.forms import modelformset_factory
+
 
 #결제창
 import requests, json, base64
@@ -124,16 +127,35 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def order_status(request):
     if request.user.is_superuser:
-        orders = (Order.objects
+        base_qs = (Order.objects
                   .select_related('post','post__category','user')
                   .filter(post__category__slug='event', status='await_payment')
                   .order_by('-created_at'))
     else:
-        orders = (Order.objects
+        base_qs = (Order.objects
                   .select_related('post','post__category')
                   .filter(user=request.user, post__category__slug='event', status='await_payment')
                   .order_by('-created_at'))
-    return render(request, 'shop/event.html', {'orders': orders})
+
+    orders = base_qs
+
+    # 🔹 winner=1 파라미터가 있으면 alert 메시지 세팅
+    winner_alert_message = None
+    if request.GET.get('winner') == '1':
+        post_id = request.GET.get('post')
+        if post_id:
+            post = get_object_or_404(Post, pk=post_id)
+            pending = (Order.objects
+                       .filter(user=request.user, post=post, status='await_payment')
+                       .order_by('-created_at')
+                       .first())
+            if pending:
+                winner_alert_message = f"🎉 '{post.title}'에 {pending.amount:,}원으로 낙찰되었습니다. 결제를 진행해주세요."
+
+    return render(request, 'shop/event.html', {
+        'orders': orders,
+        'winner_alert_message': winner_alert_message
+    })
 
 
 @login_required
@@ -398,21 +420,39 @@ def handle_response(request, resjson, status_code, success_template, fail_templa
 
 # 페이지 렌더링 함수
 #shop/templates/shop/checkout.html
+@login_required
 def checkout(request, pk):
-    print("결제 요청 함수 시작됨")
     post = get_object_or_404(Post, pk=pk)
-    amount = request.GET.get('amount')
-    if amount is None:
-        amount = post.price  # 기본 가격
-    else:
-        amount = int(amount)  # 문자열이므로 int로 변환
 
-    if request.user.is_authenticated:
-        customer_key = "uuid-123e4567-e89b-12d3-a456-426614174000"
+    raw_amount = request.GET.get('amount')
+    try:
+        amount = int(raw_amount) if raw_amount is not None else int(post.price)
+    except (TypeError, ValueError):
+        amount = int(post.price)
+
+    existing = (Order.objects
+                .filter(user=request.user, post=post)
+                .order_by('-created_at')
+                .first())
+
+    if existing and existing.status in ['confirmed', 'shipped', 'delivered']:
+        messages.info(request, '이미 결제 완료된 주문입니다.')
+        return redirect('orderlist')
+
+    if existing and existing.status == 'await_payment' and existing.order_id:
+        order_id = existing.order_id
     else:
-        customer_key = "test_customer_1234"  # 테스트용 고정값
-    return render(request, 'shop/checkout.html',
-                  {'post': post, 'customer_key': customer_key, 'amount': amount})
+        prefix = 'BID-' if (existing and existing.order_id and existing.order_id.startswith('BID-')) else 'ORD-'
+        order_id = f'{prefix}{uuid4()}'
+
+    customer_key = "uuid-123e4567-e89b-12d3-a456-426614174000" if request.user.is_authenticated else "test_customer_1234"
+
+    return render(request, 'shop/checkout.html', {
+        'post': post,
+        'amount': amount,
+        'customer_key': customer_key,
+        'order_id': order_id,
+    })
 
 @csrf_exempt  # API라서 csrf 검증 제외 (AJAX 요청 편의상)
 def create_order(request):
@@ -595,27 +635,37 @@ def finalize_bid(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
     messages = ChatMessage.objects.filter(event_id=pk)
-    highest_bid = 0
-    winner = None
+    highest_bid, winner = 0, None
 
     for msg in messages:
         match = re.search(r'\d+', msg.message.replace(',', ''))
         if match:
             bid = int(match.group())
             if bid > highest_bid:
-                highest_bid = bid
-                winner = msg.user
+                highest_bid, winner = bid, msg.user
 
     if winner:
+        # 결제 대기 주문 생성(주문내역 숨기기 전략이라면 await_payment 유지)
         Order.objects.create(
             user=winner,
             post=post,
             order_id=f'BID-{uuid.uuid4()}',
             amount=highest_bid,
-            status='await_payment'   # ✅ 결제 대기 상태로 생성
+            status='await_payment'
+        )
+
+        # 낙찰자에게 링크가 담긴 메시지 남기기 (당사자가 클릭해서 들어오면 alert 뜸)
+        event_url = request.build_absolute_uri(
+            reverse('order_status') + f'?winner=1&post={pk}'
+        )
+        ChatMessage.objects.create(
+            user=winner,
+            message=f"'{post.title}'에 {highest_bid:,}원으로 낙찰되었습니다! 여기서 결제 진행: {event_url}",
+            event_id=pk
         )
 
     return redirect('shopdetail', pk=pk)
+
 
 
 @login_required

@@ -18,7 +18,8 @@
               {% endif %}
             </div>
             <div class="col-md-9">
-              <div><strong>{{ order.post.title }}</strong>
+              <div>
+                <strong>{{ order.post.title }}</strong>
                 {% if user.is_superuser and order.user %}
                   <span style="color:#666; font-size:.9rem;">(주문자: {{ order.user.username }})</span>
                 {% endif %}
@@ -27,16 +28,40 @@
               <div>금액: ₩{{ order.amount|intcomma }}</div>
               <div>주문일: {{ order.created_at|date:"Y-m-d H:i" }}</div>
 
-              <!-- 결제하기 버튼 -->
-              {% if order.status != "delivered" %}
-                <div class="mt-2">
-                  <a href="{% url 'checkout' order.post.pk %}?amount={{ order.amount }}" 
-                     class="btn btn-dark px-4 py-2 w-100"
-                     style="max-width: 200px; display: block; margin-top: 10px;">
+              <!-- 버튼 영역 -->
+              <div class="mt-3 d-flex gap-2 flex-wrap">
+                {% if order.status == 'await_payment' %}
+                  <a href="{% url 'checkout' order.post.pk %}?amount={{ order.amount }}"
+                     class="btn btn-dark px-4 py-2 flex-fill"
+                     style="max-width:220px;">
                     💳 결제하기
                   </a>
-                </div>
-              {% endif %}
+                {% else %}
+                  <span class="badge 
+                    {% if order.status == 'confirmed' %}bg-success
+                    {% elif order.status == 'shipped' %}bg-info text-dark
+                    {% elif order.status == 'delivered' %}bg-secondary
+                    {% endif %} me-2">
+                    {% if order.status == 'confirmed' %}결제완료
+                    {% elif order.status == 'shipped' %}배송출발
+                    {% elif order.status == 'delivered' %}배송완료
+                    {% endif %}
+                  </span>
+                  <button class="btn btn-dark px-4 py-2 flex-fill disabled"
+                          style="max-width:220px;" tabindex="-1" aria-disabled="true">
+                    💳 결제하기
+                  </button>
+                {% endif %}
+
+                <!-- 내역 삭제 버튼 -->
+                <form action="{% url 'remove_from_orderlist' order.post.pk %}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-danger px-4 py-2 flex-fill" style="max-width:220px;">
+                    🗑 내역 삭제
+                  </button>
+                </form>
+              </div>
+
             </div>
           </div>
         </div>
@@ -48,4 +73,3 @@
 {% endif %}
 </div>
 {% endblock %}
-

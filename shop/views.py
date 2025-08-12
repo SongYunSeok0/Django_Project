@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Comment, Wishlist, Category, Cartlist, Order, Orderlist
+from .models import Post, Comment, Wishlist, Category, Cartlist, Order, Orderlist,StoreStats
 from .forms import PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -8,6 +8,7 @@ from .models import ChatMessage
 from django.views.decorators.http import require_POST
 from datetime import timedelta
 from django.utils import timezone
+from datetime import date
 import uuid
 from django.contrib.auth.decorators import user_passes_test
 import re
@@ -53,9 +54,12 @@ def shopdetail(request, pk):
 
 def shopmyPage(request):
     posts = Post.objects.all()
-    return render(request,
-                  'shop/shopmypage.html',
-                  context={'posts':posts})
+    stats, _ = StoreStats.objects.get_or_create(pk=1)
+    return render(request, 'shop/shopmypage.html', {
+        'posts': posts,
+        'total_purchases': stats.total_purchases,
+        'today_purchases': stats.today_purchases,
+    })
 
 def create(request):
     if request.method == 'POST':
@@ -115,10 +119,13 @@ def order_status(request):
 
 @login_required
 def orderlist(request):
-    order_posts = Post.objects.filter(orderlist__user=request.user)
-    return render(request,
-                  'shop/orderlist.html',
-                  context={'posts': order_posts})
+    view_all = request.GET.get('view') == 'all'
+
+    if request.user.is_superuser and view_all:
+        posts = Post.objects.filter(orderlist__isnull=False)  # distinct 제거
+    else:
+        posts = Post.objects.filter(orderlist__user=request.user)  # distinct 제거
+    return render(request, 'shop/orderlist.html', {'posts': posts})
 
 @login_required
 def wishlist(request):
@@ -397,9 +404,33 @@ def create_order(request):
 # TODO: 개발자센터에 로그인해서 내 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
 # @docs https://docs.tosspayments.com/reference/using-api/api-keys
 #shop/templates/shop/success.html
-def success(request):
-    print("process_payment 호출됨", request.GET)
-    return process_payment(request, settings.TOSS_API_SECRET_KEY, 'shop/success.html')
+def add_order(post, user):
+    obj, created = Orderlist.objects.get_or_create(user=user, post=post)
+    return obj, created
+
+def success(request, pk):
+    resp = process_payment(request, settings.TOSS_API_SECRET_KEY, 'shop/success.html')
+
+    today = date.today()
+    stats, _ = StoreStats.objects.get_or_create(
+        pk=1,
+        defaults={'total_purchases': 0, 'today_purchases': 0, 'last_purchase_date': today}
+    )
+
+    post = get_object_or_404(Post, pk=pk)
+    add_order(post, request.user)
+
+    if stats.last_purchase_date != today:
+        stats.today_purchases = 1
+        stats.total_purchases += 1
+        stats.last_purchase_date = today
+    else:
+        stats.today_purchases += 1
+        stats.total_purchases += 1
+
+    stats.save(update_fields=['total_purchases', 'today_purchases', 'last_purchase_date'])
+    return resp
+
 
 # 결제 승인 호출하는 함수
 # @docs https://docs.tosspayments.com/guides/v2/payment-widget/integration#3-결제-승인하기
@@ -422,7 +453,7 @@ def process_payment(request, secret_key, success_template):
 
 #결제 실패 페이지
 ##shop/templates/shop/fail.html
-def fail(request):
+def fail(request, pk):
     return render(request, "shop/fail.html", {
         "code": request.GET.get('code'),
         "message": request.GET.get('message')
@@ -497,20 +528,6 @@ def finalize_bid(request, pk):
 
     return redirect('shopdetail', pk=pk)
 
-@login_required
-def order_history(request):
-    # 직접 구매한 상품 (Post.buyer)
-    purchased_posts = Post.objects.filter(buyer=request.user)
-
-    # 낙찰된 주문 (Order.user)
-    won_orders = Order.objects.filter(user=request.user).select_related('post')
-
-    # 두 리스트를 하나로 결합
-    items = list(purchased_posts) + list(won_orders)
-
-    return render(request, 'shop/orderlist.html', {
-        'items': items
-    })
 
 @login_required
 def delivery_status(request):

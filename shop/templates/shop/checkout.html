@@ -62,9 +62,9 @@
           },
           orderId: orderId, // 고유 주문번호
           orderName: orderName,      //ㅅ제품명 설정
-          successUrl: `${window.location.origin}/success?customerKey=${customerKey}`,
-          failUrl: `${window.location.origin}/shop/fail/`, // 결제 요청이 실패하면 리다이렉트되는 URL
-          customerName: '{{ user.username|escapejs }}', //자바스크립트에서는 |escapejs문자열에 추가필요
+          //successUrl: `${window.location.origin}/success?customerKey=${customerKey}`,
+          successUrl: "{{ request.scheme }}://{{ request.get_host }}{% url 'success' post.pk %}",
+          failUrl:    "{{ request.scheme }}://{{ request.get_host }}{% url 'fail' post.pk %}",
         });
       }
 

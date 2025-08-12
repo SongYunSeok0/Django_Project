@@ -39,8 +39,8 @@ urlpatterns = [
 
     # 결제
     path('checkout/<int:pk>/', views.checkout, name='checkout'),
-    path('success/', views.success, name='success'),
-    path('fail/', views.fail, name='fail'),
+    path('success/<int:pk>/', views.success, name='success'),
+    path('fail/<int:pk>/', views.fail, name='fail'),
     #path('api/orders/', create_order, name='create_order'),
     path('callback-auth', views.callback_auth, name='callback_auth'),
     ]

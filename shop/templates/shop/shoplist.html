@@ -110,7 +110,8 @@
           {% if post.uploaded_image %}
           <div class="hover-box">
           <a href="{{ post.pk }}">
-              <img class="img-fluid rounded" src="{{ post.uploaded_image.url }}" alt="..." />
+              <img src="{{ post.uploaded_image.url }}"
+                style="width:100%; height:320px; object-fit:cover; border-radius:8px;" />
           </a>
           </div>
           {% else %}

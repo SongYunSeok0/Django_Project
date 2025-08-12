@@ -36,12 +36,16 @@
                                 {% endwith %}
                               {% endif %}
                           </div>
-                          <div>₩{{ post.price }}</div>
-                          {% if post.orderlist_set.first %}
-                            <div style="font-size:0.9rem; color:#888;">
-                                주문일: {{ post.orderlist_set.first.added_at|date:"Y-m-d H:i" }}
-                            </div>
-                          {% endif %}
+                          {% with user_orders=post.order_set.filter(user=request.user).order_by('-created_at') %}
+                              {% if user_orders.exists %}
+                                <div>₩{{ user_orders.first.amount|intcomma }}</div>  {# 결제한 가격 그대로 표시 #}
+                                <div style="font-size:0.9rem; color:#888;">
+                                  주문일: {{ user_orders.first.created_at|date:"Y-m-d H:i" }}
+                                </div>
+                              {% else %}
+                                <div>₩{{ post.price|intcomma }}</div>  {# 주문 내역 없으면 기본 가격 #}
+                              {% endif %}
+                            {% endwith %}
                           {% if user.is_superuser %}
                           <div class="mt-1 d-flex justify-content-end gap-2">
                               <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' post.pk %}">배송준비중</a>

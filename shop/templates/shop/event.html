@@ -4,28 +4,48 @@
 {% block content %}
 <div class="container my-5">
   <h2 class="mb-4 fw-bold text-center">✨ EVENT</h2>
-  {% if orders %}
-    {% for order in orders %}
+{% if orders %}
+  {% for order in orders %}
+    {% if order.post.category and order.post.category.slug == 'event' %}
       <div class="card mb-3">
         <div class="card-body">
-          <h5>{{ order.post.title }}</h5>
-            <img src="{{ order.post.uploaded_image.url }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
-            <!-- 상품명 표시 -->
-          <p>상태: {{ order.status }}</p>
-          <p>금액: ₩{{ order.amount|intcomma }}</p>
-          <p>주문일: {{ order.created_at|date:"Y-m-d H:i" }}</p>
+          <div class="row align-items-center">
+            <div class="col-md-3">
+              {% if order.post.uploaded_image %}
+                <img src="{{ order.post.uploaded_image.url }}" alt="{{ order.post.title }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
+              {% else %}
+                <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg" alt="No image" class="img-fluid rounded">
+              {% endif %}
+            </div>
+            <div class="col-md-9">
+              <div><strong>{{ order.post.title }}</strong>
+                {% if user.is_superuser and order.user %}
+                  <span style="color:#666; font-size:.9rem;">(주문자: {{ order.user.username }})</span>
+                {% endif %}
+              </div>
+              <div>상태: {{ order.status }}</div>
+              <div>금액: ₩{{ order.amount|intcomma }}</div>
+              <div>주문일: {{ order.created_at|date:"Y-m-d H:i" }}</div>
+
+              <!-- 결제하기 버튼 -->
+              {% if order.status != "delivered" %}
+                <div class="mt-2">
+                  <a href="{% url 'checkout' order.post.pk %}?amount={{ order.amount }}" 
+                     class="btn btn-dark px-4 py-2 w-100"
+                     style="max-width: 200px; display: block; margin-top: 10px;">
+                    💳 결제하기
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
         </div>
-             <form action="{% url 'checkout' order.post.pk %}" method="get">
-              <input type="hidden" name="amount" value="{{ order.amount }}">
-              <button type="submit" class="btn btn-dark w-100">
-                지금 바로 구매
-              </button>
-             </form>
       </div>
-    {% endfor %}
-  {% else %}
-    <p class="text-center">해당 상품에 대한 배송 정보가 없습니다.</p>
-  {% endif %}
+    {% endif %}
+  {% endfor %}
+{% else %}
+  <p class="text-muted text-center">이벤트 구매 내역이 없습니다.</p>
+{% endif %}
 </div>
 {% endblock %}
 

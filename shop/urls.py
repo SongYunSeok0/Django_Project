@@ -31,9 +31,9 @@ urlpatterns = [
     path('orderlist/', views.orderlist, name='orderlist'),
     path('cartlist/remove_selected/', views.remove_from_cartlist_bulk, name='remove_from_cartlist_bulk'),
     path('mypage/event/', views.event, name='event'),
-    path('delivery_status/', views.delivery_status, name='delivery_status'),
+    path('mypage/delivery_status/', views.delivery_status, name='delivery_status'),
     path('event/finalize/<int:pk>/', views.finalize_bid, name='finalize_bid'),
-
+    path('orders/<int:order_pk>/status/', views.update_order_status, name='update_order_status'),
 
 
 

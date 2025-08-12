@@ -119,21 +119,40 @@ def search(request):
 def aboutme(request):
     return render(request, 'shop/aboutme.html')
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def order_status(request):
-    posts = Post.objects.all()
-    return render(request,
-                  'shop/event.html',
-                  context={'posts':posts})
+    if request.user.is_superuser:
+        orders = (Order.objects
+                  .select_related('post','post__category','user')
+                  .filter(post__category__slug='event', status='await_payment')
+                  .order_by('-created_at'))
+    else:
+        orders = (Order.objects
+                  .select_related('post','post__category')
+                  .filter(user=request.user, post__category__slug='event', status='await_payment')
+                  .order_by('-created_at'))
+    return render(request, 'shop/event.html', {'orders': orders})
+
 
 @login_required
 def orderlist(request):
-    view_all = request.GET.get('view') == 'all'
-
-    if request.user.is_superuser and view_all:
-        posts = Post.objects.filter(orderlist__isnull=False)  # distinct 제거
+    if request.user.is_superuser:
+        base_qs = Order.objects.select_related('post','post__category','user').order_by('-created_at')
     else:
-        posts = Post.objects.filter(orderlist__user=request.user)  # distinct 제거
-    return render(request, 'shop/orderlist.html', {'posts': posts})
+        base_qs = Order.objects.select_related('post','post__category').filter(user=request.user).order_by('-created_at')
+
+    # ✅ 결제대기(낙찰 직후) 는 주문내역에서 제외
+    base_qs = base_qs.exclude(status='await_payment')
+
+    event_orders = base_qs.filter(post__category__slug='event')
+    regular_orders = base_qs.exclude(post__category__slug='event')
+
+    return render(request, 'shop/orderlist.html', {
+        'event_orders': event_orders,
+        'regular_orders': regular_orders,
+    })
 
 @login_required
 def wishlist(request):
@@ -306,6 +325,7 @@ def add_to_orderlist(request, pk):
 def remove_from_orderlist(request, pk):
     post = get_object_or_404(Post, pk=pk)
     Orderlist.objects.filter(user=request.user, post=post).delete()
+    Order.objects.filter(user=request.user, post=post).delete()
     return redirect('orderlist')
 
 def bulk_action(request):
@@ -432,8 +452,55 @@ def success(request, pk):
     )
 
     post = get_object_or_404(Post, pk=pk)
+
+    # 결제 위젯이 리다이렉트로 전달한 값
+    order_id = request.GET.get('orderId')
+    confirmed_amount = request.GET.get('amount')
+    try:
+        confirmed_amount = int(confirmed_amount) if confirmed_amount is not None else post.price
+    except ValueError:
+        confirmed_amount = post.price
+
+    # 1) 우선, 결제에서 온 orderId로 기존 주문을 찾는다.
+    order = None
+    if order_id:
+        order = Order.objects.filter(order_id=order_id).first()
+
+    # 2) 못 찾으면, 낙찰 시 만들어 둔 결제대기( await_payment ) 주문을 찾는다.
+    #    (낙찰 버튼에서 Order(status='await_payment')로 생성해둔 케이스)
+    if order is None:
+        order = (Order.objects
+                 .filter(user=request.user, post=post, status='await_payment')
+                 .order_by('-created_at')
+                 .first())
+
+    if order:
+        # 기존 주문을 결제 완료로 승격
+        if order_id:
+            order.order_id = order_id   # 결제에서 온 orderId로 갱신(선택)
+        order.amount = confirmed_amount
+        order.status = 'confirmed'
+        order.user = request.user
+        order.post = post
+        order.save(update_fields=['order_id', 'amount', 'status', 'user', 'post'])
+    else:
+        # 3) 어떤 것도 못 찾은 경우 새로 생성 (직접 결제 진입 등의 예외 케이스)
+        if order_id:
+            oid = order_id
+        else:
+            oid = str(uuid.uuid4())
+        Order.objects.create(
+            user=request.user,
+            post=post,
+            order_id=oid,
+            amount=confirmed_amount,
+            status='confirmed'
+        )
+
+    # (선택) 기존에 쓰던 Orderlist를 병행한다면 유지
     add_order(post, request.user)
 
+    # 통계 갱신
     if stats.last_purchase_date != today:
         stats.today_purchases = 1
         stats.total_purchases += 1
@@ -523,13 +590,11 @@ def event(request):
 def finalize_bid(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
-    # 숫자만 포함된 메시지만 필터링
     messages = ChatMessage.objects.filter(event_id=pk)
     highest_bid = 0
     winner = None
 
     for msg in messages:
-        # 숫자 추출
         match = re.search(r'\d+', msg.message.replace(',', ''))
         if match:
             bid = int(match.group())
@@ -537,14 +602,13 @@ def finalize_bid(request, pk):
                 highest_bid = bid
                 winner = msg.user
 
-    # 주문 생성
     if winner:
         Order.objects.create(
             user=winner,
             post=post,
-            order_id=str(uuid.uuid4()),
+            order_id=f'BID-{uuid.uuid4()}',
             amount=highest_bid,
-            status='confirmed'
+            status='await_payment'   # ✅ 결제 대기 상태로 생성
         )
 
     return redirect('shopdetail', pk=pk)
@@ -552,5 +616,20 @@ def finalize_bid(request, pk):
 
 @login_required
 def delivery_status(request):
-    orderlist_items = Orderlist.objects.select_related('post').filter(user=request.user).order_by('-added_at')
-    return render(request, 'shop/delivery_status.html', {'orderlist_items': orderlist_items})
+    orders = Order.objects.select_related('post').filter(user=request.user).order_by('-created_at')
+    return render(request, 'shop/delivery_status.html', {'orders': orders})
+
+
+@staff_member_required
+@require_POST
+def update_order_status(request, order_pk):
+    status = request.POST.get('status')
+    allowed = {'confirmed', 'preparing', 'shipped', 'delivered', 'cancelled'}
+    if status not in allowed:
+        messages.error(request, "올바르지 않은 상태값입니다.")
+        return redirect('orderlist')
+
+    # 해당 주문의 상태 업데이트
+    Order.objects.filter(pk=order_pk).update(status=status)
+    messages.success(request, "주문 상태가 업데이트되었습니다.")
+    return redirect('orderlist')

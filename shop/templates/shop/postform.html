@@ -149,6 +149,23 @@
       </div>
     {% endif %}
 
+    {{ image_formset.management_form }}
+      <div id="upload-row" style="display:flex; flex-wrap:wrap; gap:16px; padding-bottom: 20px;">
+        {% for form in image_formset %}
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            {{ form.image }}
+            {{ form.image.errors }}
+            <label for="{{ postform.uploaded_image.id_for_label }}"
+               id="preview"
+               style="width:120px;height:120px;border:1px solid #ccc;border-radius:6px;
+                          background:#f9f9f9;display:flex;align-items:center;justify-content:center;
+                          color:#bbb;font-size:24px; cursor:pointer;">
+              +
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+
     <button type="submit"
             style="display:block; width:100%; padding:12px; font-size:16px; font-weight:600;
                    background:#212529; color:#fff; border:none; border-radius:8px; cursor:pointer;"

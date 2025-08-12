@@ -108,7 +108,7 @@
             </li>
             {% else %}
             <li class="nav-item">
-              <a class="nav-link" role="button" href="{% provider_login_url 'google' %}">
+              <a class="nav-link" role="button" href="{% url 'account_login' %}">  <!-- account/login.html 일반장고로그인으로이동-->
                 <!-- Login icon and text -->
                 <svg class="navbar-icon" width="24px" height="24px" stroke-width="1.5"
                      viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

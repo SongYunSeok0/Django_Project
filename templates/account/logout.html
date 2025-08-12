@@ -1,0 +1,32 @@
+<!-- http://127.0.0.1:8000/accounts/signup/ -->
+<!-- 통합 로그아웃 창 templates/account/signup.html -->
+
+
+{% extends "account/base_manage.html" %}
+{% load allauth i18n %}
+
+
+{% block content %}
+    {% element h1 %}
+        {% trans "로그아웃" %}
+    {% endelement %}
+
+    {% element p %}
+        {% trans '로그아웃 하시겠습니까?' %}
+    {% endelement %}
+
+    {% url 'account_logout' as action_url %}
+    {% element form method="post" action=action_url no_visible_fields=True %}
+        {% slot body %}
+            {% csrf_token %}
+            {{ redirect_field }}
+        {% endslot %}
+        {% slot actions %}
+            {% element button type="submit" %}
+                {% trans '로그아웃' %}
+            {% endelement %}
+        {% endslot %}
+    {% endelement %}
+
+{% endblock content %}
+

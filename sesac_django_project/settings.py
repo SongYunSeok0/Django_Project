@@ -71,7 +71,7 @@ ROOT_URLCONF = "sesac_django_project.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],       #구글로그인경로생성. 미니_프로젝트 하단에 경로폴더 생성 완
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -131,7 +131,7 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DEBUG = True
@@ -163,6 +163,19 @@ CSRF_TRUSTED_ORIGINS = [
     "http://18.205.246.211:8000",
     "http://18.205.246.211",
 ]
+#8/12 로그인 페.꾸때문에 추가
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+    }
+}
+
 
 TOSS_API_SECRET_KEY = "test_sk_Poxy1XQL8RJmjGzj0Zz987nO5Wml"        #토스시크릿키
 #BUY_REDIRECT_URL='/'

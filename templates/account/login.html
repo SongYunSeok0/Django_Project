@@ -1,0 +1,100 @@
+<!-- http://127.0.0.1:8000/accounts/login/ -->
+<!-- 기본 장고 로그인 창 templates/account/login.html -->
+
+<!-- http://127.0.0.1:8000/accounts/google/login/ -->
+<!-- 구글 로그인 창 templates/socialaccounts/login.html -->
+{% load i18n allauth static socialaccount %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block head_title %}로그인 & 회원가입{% endblock %}</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'login-form-06/css/owl.carousel.min.css' %}">
+  <link rel="stylesheet" href="{% static 'login-form-06/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'login-form-06/css/style.css' %}">
+  <style>
+    .tab-btn {
+      background: #f5f5f5;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .tab-btn.active {
+      background: #007bff;
+      color: white;
+    }
+    .form-section {
+      display: none;
+    }
+    .form-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="d-lg-flex half">
+  <div class="bg order-1 order-md-2" style="background-image: url('{% static '/images/로그인창테스트사진.png' %}');"></div>
+  <div class="contents order-2 order-md-1">
+
+    <div class="container">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-md-7">
+
+          <!-- 로그인 폼 -->
+          <div id="login-form" class="form-section active">
+            <form method="post" action="{% url 'account_login' %}">
+              {% csrf_token %}
+              <div class="form-wrapper">
+                <input type="text" name="login" placeholder="{% trans '아이디' %}" required class="form-control" autofocus autocomplete="username"/>
+              </div>
+              <div class="form-wrapper">
+                <input type="password" name="password" placeholder="{% trans '비밀번호' %}" required class="form-control" autocomplete="current-password"/>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">{% trans "로그인" %}</button>
+
+              <!-- 구글 로그인 버튼 -->
+              <div style="margin-top: 20px; text-align: center;">
+                <a href="{% provider_login_url 'google' %}" class="btn btn-block" >
+                  <i class="zmdi zmdi-google"></i> {% trans "구글 계정으로 로그인" %}
+                </a>
+              </div>
+
+               <span class="d-block text-center my-4 text-muted">&mdash; or &mdash;</span>
+
+
+              <!-- 회원가입 폼 -->
+                <div style="margin-top: 5px; text-align: center;">
+                <a href="{% url 'account_signup' %}" class="btn btn-block">
+                    {% trans "회원가입 하러 가기" %}
+                </a>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(".tab-btn").click(function(){
+    $(".tab-btn").removeClass("active");
+    $(this).addClass("active");
+    $(".form-section").removeClass("active");
+    $($(this).data("target")).addClass("active");
+  });
+</script>
+
+</body>
+</html>
+
+
+
+

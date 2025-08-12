@@ -5,32 +5,38 @@
   <div class="container px-4 px-lg-5 mt-5">
     <h2 class="mb-4 text-center">📦 배송 예정 상품</h2>
 
-    {% if orderlist_items %}
-      {% for item in orderlist_items %}
+    {% if orders %}
+      {% for order in orders %}
         <div class="card mb-4">
           <div class="card-body">
             <div class="row align-items-center">
               <div class="col-md-3">
-                {% if item.post.uploaded_image %}
-                  <img src="{{ item.post.uploaded_image.url }}" alt="{{ item.post.title }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
+                {% if order.post.uploaded_image %}
+                  <img src="{{ order.post.uploaded_image.url }}" alt="{{ order.post.title }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
                 {% else %}
                   <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg" alt="No image" class="img-fluid rounded">
                 {% endif %}
               </div>
               <div class="col-md-9">
-                <h5>{{ item.post.title }}</h5>
-                <p>가격: ₩{{ item.post.price|intcomma }}</p>
-                <p>추가일: {{ item.added_at|date:"Y-m-d H:i" }}</p>
+                <h5>{{ order.post.title }}</h5>
+                <p>가격: ₩{{ order.amount|intcomma }}</p>
+                <p>주문일: {{ order.created_at|date:"Y-m-d H:i" }}</p>
 
-                <!-- 배송 상태 이모티콘 -->
+                <!-- 배송 상태 -->
                 <div class="mt-2">
-                  <span class="badge bg-light text-dark">
-                    🚚 배송 준비중
-                  </span>
-                  <span class="ms-2 text-muted">배송은 1~3일 내 시작됩니다.</span>
+                  {% if order.status == 'preparing' %}
+                    <span class="badge bg-light text-dark">🚚 배송 준비중</span>
+                    <span class="ms-2 text-muted">배송은 1~3일 내 시작됩니다.</span>
+                  {% elif order.status == 'shipped' %}
+                    <span class="badge bg-info text-dark">📦 배송 출발</span>
+                  {% elif order.status == 'delivered' %}
+                    <span class="badge bg-success">✅ 배송 완료</span>
+                  {% else %}
+                    <span class="badge bg-secondary">대기중</span>
+                  {% endif %}
                 </div>
 
-                <a href="{% url 'shopdetail' item.post.pk %}" class="btn btn-sm btn-outline-primary mt-3">상품 상세</a>
+                <a href="{% url 'shopdetail' order.post.pk %}" class="btn btn-sm btn-outline-primary mt-3">상품 상세</a>
               </div>
             </div>
           </div>

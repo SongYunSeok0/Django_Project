@@ -484,7 +484,7 @@ def add_order(post, user):
 
 def success(request, pk):
     resp = process_payment(request, settings.TOSS_API_SECRET_KEY, 'shop/success.html')
-    Post.is_sold = True
+    Post.is_sold = False
     today = date.today()
     stats, _ = StoreStats.objects.get_or_create(
         pk=1,

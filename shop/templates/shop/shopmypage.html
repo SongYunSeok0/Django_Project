@@ -1,18 +1,18 @@
 {% extends 'shop/base.html' %}
 
 {% block content %}
-
 <div style="background-color: #f8f9fa; min-height: 80vh; padding-top: 3rem; padding-bottom: 3rem; width: 100%;">
   <div style="max-width: 1000px; margin: 60px auto 0;">
     <div class="container d-flex justify-content-center">
       <div class="w-100" style="max-width: 900px;">
-        {% if user.username == 'admin'%}
+        {% if user.username == 'admin' %}
         <h2 class="text-center" style="margin: 0 0 100px">AdminPage</h2>
         {% else %}
         <h2 class="text-center" style="margin: 0 0 100px">MYPAGE</h2>
         {% endif %}
       </div>
     </div>
+
     <!-- 섹션 1: 프로필 -->
     <section id="profile" style="margin-bottom: 3rem;">
       <div style="display: flex; align-items: center; gap: 1.5rem; margin-left: 0.25rem;">
@@ -25,71 +25,83 @@
         </div>
       </div>
     </section>
+
     {% if user.is_superuser %}
-    <section id="account" style="margin-top: 8rem; padding: 0"></section>
-        <ul style="list-style-type: none; margin: 0; padding: 0; font-size: 1.25rem;">
-          <li style="border-top: 1px solid #dee2e6;">
-                <a href="{% url 'create' %}"
-                   style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
-                   onmouseover="this.style.backgroundColor='#f1f1f1'"
-                   onmouseout="this.style.backgroundColor=''">
-                    POST
-                </a>  
-            </li>
-            <li style="border-top: 1px solid #dee2e6;">
-                <a href="{% url 'admincontact' %}"
-                   style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
-                   onmouseover="this.style.backgroundColor='#f1f1f1'"
-                   onmouseout="this.style.backgroundColor=''">
-                    고객문의내역
-                </a>  
-            </li>
-        </ul>
+    <!-- 관리자 메뉴 -->
+    <section id="account" style="margin-top: 8rem;">
+      <ul style="list-style-type: none; margin: 0; padding: 0; font-size: 1.25rem;">
+        <li style="border-top: 1px solid #dee2e6;">
+          <a href="{% url 'create' %}"
+             style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
+             onmouseover="this.style.backgroundColor='#f1f1f1'"
+             onmouseout="this.style.backgroundColor=''">
+            POST
+          </a>
+        </li>
+        <li style="border-top: 1px solid #dee2e6;">
+          <a href="{% url 'admincontact' %}"
+             style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
+             onmouseover="this.style.backgroundColor='#f1f1f1'"
+             onmouseout="this.style.backgroundColor=''">
+            고객문의내역
+          </a>
+        </li>
+      </ul>
+    </section>
+
     {% else %}
-    <!-- 섹션 2: 편의 -->
-    <section id="account" style="margin-top: 8rem; padding: 0">
-        <ul style="list-style-type: none; margin: 0; padding: 0; font-size: 1.25rem;">
-            <li style="border-top: 1px solid #dee2e6;">
-                <a href="order_status/"
-                   style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
-                   onmouseover="this.style.backgroundColor='#f1f1f1'"
-                   onmouseout="this.style.backgroundColor=''">
-                    주문현황
-                </a>
-            </li>
-            <li style="border-top: 1px solid #dee2e6;">
-                <a href="{% url 'orderlist' %}"
-                   style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
-                   onmouseover="this.style.backgroundColor='#f1f1f1'"
-                   onmouseout="this.style.backgroundColor=''">
-                    주문내역
-                </a>
-            </li>
-            <li style="border-top: 1px solid #dee2e6;">
-                <a href="{% url 'wishlist' %}"
-                   style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
-                   onmouseover="this.style.backgroundColor='#f1f1f1'"
-                   onmouseout="this.style.backgroundColor=''">
-                    위시리스트
-                </a>
-            </li>
-            <li style="border-top: 1px solid #dee2e6;">
-                <a href="contact/"
-                   style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
-                   onmouseover="this.style.backgroundColor='#f1f1f1'"
-                   onmouseout="this.style.backgroundColor=''">
-                    문의하기
-                </a>
-            </li>
-            <li style="border-top: 1px solid #dee2e6;">
-                <a href="contact_history/"
-                   style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
-                   onmouseover="this.style.backgroundColor='#f1f1f1'"
-                   onmouseout="this.style.backgroundColor=''">
-                    문의내역
-                </a>
-            </li>
-        </ul>
+    <!-- 일반 사용자 메뉴 -->
+    <section id="account" style="margin-top: 8rem;">
+      <ul style="list-style-type: none; margin: 0; padding: 0;">
+        <li style="border-top: 1px solid #dee2e6;">
+          <a href="{% url 'delivery_status' %}" class="d-flex justify-content-between align-items-center py-3 px-3 text-decoration-none text-dark"
+             onmouseover="this.style.backgroundColor='#f1f1f1'"
+             onmouseout="this.style.backgroundColor=''">
+            <span>📦 배송조회</span>
+            <span class="badge bg-secondary">진행중</span>
+          </a>
+        </li>
+        <li style="border-top: 1px solid #dee2e6;">
+          <a href="event/" class="d-flex justify-content-between align-items-center py-3 px-3 text-decoration-none text-dark"
+             onmouseover="this.style.backgroundColor='#f1f1f1'"
+             onmouseout="this.style.backgroundColor=''">
+            <span>🎉 이벤트 참여</span>
+            <span class="badge bg-warning text-dark">구매 가능</span>
+          </a>
+        </li>
+        <li style="border-top: 1px solid #dee2e6;">
+          <a href="{% url 'orderlist' %}" class="d-flex justify-content-between align-items-center py-3 px-3 text-decoration-none text-dark"
+             onmouseover="this.style.backgroundColor='#f1f1f1'"
+             onmouseout="this.style.backgroundColor=''">
+            <span>🧾 주문내역</span>
+            <span class="badge bg-info text-dark">최근 주문</span>
+          </a>
+        </li>
+        <li style="border-top: 1px solid #dee2e6;">
+          <a href="{% url 'wishlist' %}"
+             style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
+             onmouseover="this.style.backgroundColor='#f1f1f1'"
+             onmouseout="this.style.backgroundColor=''">
+            위시리스트
+          </a>
+        </li>
+        <li style="border-top: 1px solid #dee2e6;">
+          <a href="contact/"
+             style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
+             onmouseover="this.style.backgroundColor='#f1f1f1'"
+             onmouseout="this.style.backgroundColor=''">
+            문의하기
+          </a>
+        </li>
+        <li style="border-top: 1px solid #dee2e6;">
+          <a href="contact_history/"
+             style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
+             onmouseover="this.style.backgroundColor='#f1f1f1'"
+             onmouseout="this.style.backgroundColor=''">
+            문의내역
+          </a>
+        </li>
+      </ul>
     </section>
     {% endif %}
   </div>

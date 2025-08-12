@@ -1,0 +1,28 @@
+{% extends 'shop/base.html' %}
+{% load humanize %}
+{% block title %}배송조회{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="mb-4 fw-bold text-center">✨ EVENT</h2>
+  {% if orders %}
+    {% for order in orders %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5>{{ order.post.title }}</h5>
+            <img src="{{ order.post.uploaded_image.url }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
+            <!-- 상품명 표시 -->
+          <p>상태: {{ order.status }}</p>
+          <p>금액: ₩{{ order.amount|intcomma }}</p>
+          <p>주문일: {{ order.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+              <form action="{% url 'checkout' order.post.pk %}" method="get">
+              <button id="buy" class="btn btn-dark w-100" type="submit">지금 바로 구매</button>
+            </form>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-center">해당 상품에 대한 배송 정보가 없습니다.</p>
+  {% endif %}
+</div>
+{% endblock %}
+

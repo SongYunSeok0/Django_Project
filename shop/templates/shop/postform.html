@@ -135,6 +135,20 @@
       </div>
     {% endif %}
 
+    {% if postform.uploaded_image %}
+      <div id="upload-row" style="display:flex; align-items:center; gap:16px; padding-bottom: 20px;">
+        {{ postform.uploaded_image }}
+        {{ postform.uploaded_image.errors }}
+        <label for="{{ postform.uploaded_image.id_for_label }}"
+               id="preview"
+               style="width:120px;height:120px;border:1px solid #ccc;border-radius:6px;
+                      background:#f9f9f9;display:flex;align-items:center;justify-content:center;
+                      color:#bbb;font-size:24px; cursor:pointer;">
+          +
+        </label>
+      </div>
+    {% endif %}
+
     <button type="submit"
             style="display:block; width:100%; padding:12px; font-size:16px; font-weight:600;
                    background:#212529; color:#fff; border:none; border-radius:8px; cursor:pointer;"

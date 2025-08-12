@@ -153,7 +153,6 @@ function addMessage(msg) {
   let formattedMessage = msg.message;
 
   if (isValidBid) {
-    // 숫자만 있는 메시지라면 쉼표 추가
     if (/^\d+$/.test(msg.message.trim())) {
       formattedMessage = `₩ ${bidValue.toLocaleString()}`;
     }
@@ -164,15 +163,27 @@ function addMessage(msg) {
     }
   }
 
-  const messageElement = $(`<p><b>${msg.user__username}:</b> ${formattedMessage}</p>`);
+  // 시간 포맷 변환 (예: 2024-08-12 14:32)
+  const timestamp = new Date(msg.timestamp);
+  const formattedTime = timestamp.toLocaleString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const messageElement = $(`
+    <p>
+      <b>${msg.user__username}</b> <span style="color:gray; font-size:0.9em;">(${formattedTime})</span>: ${formattedMessage}
+    </p>
+  `);
+
   $('#chat-box').append(messageElement);
   $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
 
-  // 1분 후 메시지 삭제
   setTimeout(() => {
     messageElement.remove();
   }, 60000);
 }
+
 
   function fetchMessages() {
     $.get("{% url 'get_messages' %}", {

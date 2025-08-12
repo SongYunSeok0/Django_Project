@@ -110,7 +110,7 @@ def aboutme(request):
 def order_status(request):
     posts = Post.objects.all()
     return render(request,
-                  'shop/delivery_status.html',
+                  'shop/event.html',
                   context={'posts':posts})
 
 @login_required
@@ -459,13 +459,13 @@ def callback_auth(request):
     else:
         return JsonResponse(resjson, status=status_code)
 
-def delivery_status(request):
+def event(request):
     user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'shop/delivery_status.html', {'orders': user_orders})
+    return render(request, 'shop/event.html', {'orders': user_orders})
 
-def order_status_detail(request, post_id):
-    orders = Order.objects.filter(user=request.user, post_id=post_id).order_by('-created_at')
-    return render(request, 'shop/order_status_detail.html', {'orders': orders})
+# def order_status_detail(request, post_id):
+#     orders = Order.objects.filter(user=request.user, post_id=post_id).order_by('-created_at')
+#     return render(request, 'shop/order_status_detail.html', {'orders': orders})
 
 @user_passes_test(lambda u: u.is_superuser)
 def finalize_bid(request, pk):
@@ -511,3 +511,8 @@ def order_history(request):
     return render(request, 'shop/orderlist.html', {
         'items': items
     })
+
+@login_required
+def delivery_status(request):
+    orderlist_items = Orderlist.objects.select_related('post').filter(user=request.user).order_by('-added_at')
+    return render(request, 'shop/delivery_status.html', {'orderlist_items': orderlist_items})

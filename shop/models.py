@@ -25,7 +25,6 @@ class Post(models.Model):
     mit_dan= models.FloatField(null=True, blank=True)
     uploaded_image = models.ImageField(upload_to='images/', blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE,null=True, blank=True)
-    buyer = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f'{self.title} - {self.category}'
@@ -116,7 +115,6 @@ class ChatMessage(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     event_id = models.IntegerField()
     temp_field = models.BooleanField(default=True)  # ✅ 임시 필드 추가
-
 
     class Meta:
         ordering = ['timestamp']

@@ -121,16 +121,9 @@ class ChatMessage(models.Model):
         ordering = ['timestamp']
 
 class Orderlist(models.Model):
-    STATUS_CHOICES = [
-        ('preparing', '배송준비중'),
-        ('shipped', '배송출발'),
-        ('completed', '배송완료'),
-    ]
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='preparing')
 
     class Meta:
         unique_together = ('user', 'post')

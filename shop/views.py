@@ -130,15 +130,11 @@ def orderlist(request):
     view_all = request.GET.get('view') == 'all'
 
     if request.user.is_superuser and view_all:
-        posts = Post.objects.filter(orderlist__isnull=False).distinct()
+        posts = Post.objects.filter(orderlist__isnull=False)  # distinct 제거
     else:
-        posts = Post.objects.filter(orderlist__user=request.user).distinct()
+        posts = Post.objects.filter(orderlist__user=request.user)  # distinct 제거
+    return render(request, 'shop/orderlist.html', {'posts': posts})
 
-    context = {
-        'posts': posts,
-        'user': request.user,
-    }
-    return render(request, 'shop/orderlist.html', context)
 
 
 @login_required
@@ -387,12 +383,18 @@ def handle_response(request, resjson, status_code, success_template, fail_templa
 def checkout(request, pk):
     print("결제 요청 함수 시작됨")
     post = get_object_or_404(Post, pk=pk)
+    amount = request.GET.get('amount')
+    if amount is None:
+        amount = post.price  # 기본 가격
+    else:
+        amount = int(amount)  # 문자열이므로 int로 변환
+
     if request.user.is_authenticated:
         customer_key = "uuid-123e4567-e89b-12d3-a456-426614174000"
     else:
         customer_key = "test_customer_1234"  # 테스트용 고정값
     return render(request, 'shop/checkout.html',
-                  {'post': post, 'customer_key': customer_key})
+                  {'post': post, 'customer_key': customer_key, 'amount': amount})
 
 @csrf_exempt  # API라서 csrf 검증 제외 (AJAX 요청 편의상)
 def create_order(request):
@@ -454,11 +456,18 @@ def process_payment(request, secret_key, success_template):
     amount = request.GET.get('amount')
     paymentKey = request.GET.get('paymentKey')
 
+    if not all([orderId, amount, paymentKey]):
+        # 필수 파라미터 없으면 바로 실패 페이지 렌더링
+        return render(request, 'shop/fail.html', {
+            "code": "INVALID_REQUEST",
+            "message": "필수 파라미터(orderId, amount, paymentKey)가 없습니다."
+        })
+
     url = "https://api.tosspayments.com/v1/payments/confirm"
     headers = create_headers(secret_key)
     params = {
         "orderId": orderId,
-        "amount": amount,
+        "amount": int(amount),
         "paymentKey": paymentKey
     }
 
@@ -542,14 +551,6 @@ def finalize_bid(request, pk):
 
     return redirect('shopdetail', pk=pk)
 
-@user_passes_test(lambda u: u.is_superuser)
-def set_order_status(request, order_id, new_status):
-    order = get_object_or_404(Order, id=order_id)
-    valid_statuses = ['preparing', 'shipped', 'completed']
-    if new_status in valid_statuses:
-        order.status = new_status
-        order.save()
-    return redirect('orderlist')
 
 @login_required
 def delivery_status(request):

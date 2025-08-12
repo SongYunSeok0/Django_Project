@@ -31,3 +31,53 @@ stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="roun
 
 <!-- login.html 템플릿 라이선스 표기-->
 https://github.com/LoginRadius/awesome-login-pages/blob/main/login-form-06/login-form-06/index.html
+
+해당 프로젝트는 수익을 발생하지 않는 비영리 목적 포트폴리오입니다.
+프로젝트에 이용된 아이콘, 사진 데이터 등의 모든 데이터는 라이선스 표기를 진행했습니다.
+사진, 제품설명 데이터 라이선스 표기
+
+가방_마리떼
+https://marithe-official.com/product/classic-logo-terry-shopper-bag-blue/8934/category/939/display/1/#none
+모자_마리떼
+https://marithe-official.com/product/marithe-applique-flat-brim-cap-green/9943/category/810/display/1/
+
+탑_폴로
+https://www.ralphlauren.co.kr/%EC%BD%94%ED%8A%BC-v%EB%84%A5-%EC%B9%B4%EB%94%94%EA%B1%B4-633739.html?dwvar633739_colorname=Dune%20Melange&cgid=men-clothing-jumpers-cardigans#start=1&cgid=men-clothing-jumpers-cardigans
+시계_폴로
+https://www.ralphlauren.co.kr/42-mm-denim-flag-polo-bear-watch-562110.html?cgid=men-watches#start=1&cgid=men-watches
+
+가방1_프라다
+https://www.prada.com/kr/ko/p/%ED%94%84%EB%9D%BC%EB%8B%A4-%EC%9E%90%EB%A5%B4%EB%94%94%EB%8B%88%EC%97%90%EB%A5%B4-%EC%8A%A4%ED%8A%B8%EB%9D%BC%EC%9D%B4%ED%94%84-%EC%BD%94%ED%8A%BC-%EC%BA%94%EB%B2%84%EC%8A%A4-%EB%AF%B8%EB%8B%88%EB%B0%B1/1BA038_2HJN_F0C56_V_8OX
+가방2_프라다
+https://www.prada.com/kr/ko/p/%ED%94%84%EB%9D%BC%EB%8B%A4-%EB%A6%AC%EC%97%90%EB%94%94%EC%85%98-2005-%EB%A6%AC%EB%82%98%EC%9D%BC%EB%A1%A0-%EB%AF%B8%EB%8B%88%EB%B0%B1-/1N204M_R064_F0632
+아우터_프라다
+https://www.prada.com/kr/ko/p/%EC%BD%94%ED%8A%BC-%EC%9E%AC%ED%82%B7/SGC885_1715_F04OS_S_OOO
+
+가방1_디올
+https://www.dior.com/ko_kr/fashion/products/M0565ONGE_M50P
+가방2_디올
+https://www.dior.com/ko_kr/fashion/products/M1296ZTDT_M34I
+탑_디올
+https://www.dior.com/ko_kr/fashion/products/413D488A374X_C580
+바텀_디올
+https://www.dior.com/ko_kr/fashion/products/541J75B8986_X4304
+아우터_디올
+https://www.dior.com/ko_kr/fashion/products/451V25A1761_X0200
+8/12 오후8시20분 상단제품모두올림
+
+-----------
+신발1_구찌
+https://www.gucci.com/kr/ko/pr/women/shoes-for-women/sneakers-for-women/womens-gucci-ace-sneaker-with-bee-p-43194202JP09064
+신발2_구찌
+https://www.gucci.com/kr/ko/pr/women/shoes-for-women/sneakers-for-women/womens-gucci-re-web-sneaker-p-838831FAEVU4645
+
+
+신발1_버켄스탁
+https://www.birkenstock.com/kr/utti-lace-suede-leather/uttilace-snugglessuede-suedeleather-0-rubber-u_1702.html
+신발2_버켄스탁
+https://www.birkenstock.com/kr/boston-nova-textile/boston-265940-textile-0-eva-u_1811.html#srule=priceDesc&start=0&sz=24
+
+신발1_뉴발란스
+https://www.nbkorea.com/product/productDetail.action?styleCode=NBPZFS101W&colCode=10&cIdx=1385
+신발2_뉴발란스
+https://www.nbkorea.com/product/productDetail.action?styleCode=NBPZFS106B&colCode=19&cIdx=1385

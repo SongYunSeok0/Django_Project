@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Comment, Wishlist, Category, Cartlist, Order, Orderlist,StoreStats
-from .forms import PostForm, CommentForm
+from .models import Post, Comment, Wishlist, Category, Cartlist, Order, Orderlist,StoreStats, PostImage
+from .forms import PostForm, CommentForm, PostImageForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -12,8 +12,7 @@ from datetime import date
 import uuid
 from django.contrib.auth.decorators import user_passes_test
 import re
-
-
+from django.forms import modelformset_factory
 
 #결제창
 import requests, json, base64
@@ -61,21 +60,30 @@ def shopmyPage(request):
         'today_purchases': stats.today_purchases,
     })
 
+PostImageFormSet = modelformset_factory(PostImage, form=PostImageForm, extra=5)
+
 def create(request):
     if request.method == 'POST':
-        #작성하다가 제출 버튼을 누른 경우
-        postform = PostForm(request.POST,request.FILES)
-        if postform.is_valid():
-            post1 = postform.save(commit=False)
-            post1.title = post1.title + ""
-            postform.save()
-            return redirect('mypage')
-    else: #get
-        postform = PostForm()
-    return render(request,
-                  template_name="shop/postform.html",
-                  context={'postform':postform})
+        postform = PostForm(request.POST, request.FILES)
+        image_formset = PostImageFormSet(request.POST, request.FILES, queryset=PostImage.objects.none())
 
+        if postform.is_valid() and image_formset.is_valid():
+            post1 = postform.save(commit=False)
+            post1.save()  # 🔥 반드시 저장해야 외래키 연결 가능
+
+            for form in image_formset:
+                if form.cleaned_data.get('image'):
+                    PostImage.objects.create(post=post1, image=form.cleaned_data['image'])
+
+            return redirect('mypage')
+    else:
+        postform = PostForm()
+        image_formset = PostImageFormSet(queryset=PostImage.objects.none())
+
+    return render(request, "shop/postform.html", {
+        'postform': postform,
+        'image_formset': image_formset,
+    })
 
 def category_view(request, slug):
     # 카테고리 있으면 가져오고, 없으면 None

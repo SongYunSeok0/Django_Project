@@ -9,26 +9,56 @@
         <div class="card">
             <div class="card-body">
                 {% for post in posts %}
-                <div class="row align-items-center mb-3 pb-3 border-bottom">
-                    <div class="col-md-3">
-                        {% if post.uploaded_image %}
-                        <img src="{{ post.uploaded_image.url }}" alt="{{ post.title }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
-                        {% else %}
-                        <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg" alt="No image" class="img-fluid rounded">
-                        {% endif %}
-                    </div>
-                    <div class="col-md-9">
-                        <div><strong>{{ post.title }}</strong></div>
-                        <div>₩{{ post.price|intcomma }}</div>
-                        <div class="mt-1 d-flex justify-content-end gap-2">
-                            <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
-                            <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송 조회</a>
-                            <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' post.pk %}">내역 삭제</a>
-                        
-                        </div>
-                        
-                    </div>
-                </div>
+                  <div class="row align-items-center mb-3 pb-3 border-bottom">
+                      <div class="col-md-3">
+                          {% if post.uploaded_image %}
+                          <img src="{{ post.uploaded_image.url }}" alt="{{ post.title }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
+                          {% else %}
+                          <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg" alt="No image" class="img-fluid rounded">
+                          {% endif %}
+                      </div>
+                      <div class="col-md-9">
+                          <div>
+                              <strong>{{ post.title }}</strong>
+                              {% if user.is_superuser %}
+                                {% with buyers=post.orderlist_set.all %}
+                                  {% if buyers %}
+                                    <span style="color:#666; font-size:.9rem;">
+                                      (주문자:
+                                      {% for ol in buyers %}
+                                        {{ ol.user.username }}{% if not forloop.last %}, {% endif %}
+                                      {% endfor %}
+                                      )
+                                    </span>
+                                  {% else %}
+                                    <span style="color:#999; font-size:.9rem;">(주문자 없음)</span>
+                                  {% endif %}
+                                {% endwith %}
+                              {% endif %}
+                          </div>
+                          <div>₩{{ post.price|intcomma }}</div>
+                          {% if post.orderlist_set.first %}
+                            <div style="font-size:0.9rem; color:#888;">
+                                주문일: {{ post.orderlist_set.first.added_at|date:"Y-m-d H:i" }}
+                            </div>
+                          {% endif %}
+                          {% if user.is_superuser %}
+                          <div class="mt-1 d-flex justify-content-end gap-2">
+                              <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' post.pk %}">배송준비중</a>
+                              <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송출발</a>
+                              <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' post.pk %}">배송완료</a>
+                          </div>
+                          {% else %}
+                          <div class="mt-1 d-flex justify-content-end gap-2">
+                              <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
+                              <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송 조회</a>
+                              <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' post.pk %}">내역 삭제</a>
+                          </div>
+                          {% endif %}
+                      </div>
+                  </div>
+                {% empty %}
+                  <div class="text-center text-muted py-5">주문 내역이 없습니다.</div>
                 {% endfor %}
             </div>
         </div>

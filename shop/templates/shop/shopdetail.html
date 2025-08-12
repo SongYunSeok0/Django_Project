@@ -92,11 +92,6 @@
               <button id="addToCartBtn" class="btn btn-dark w-100" type="submit">Add to Cart</button>
             </form>
 
-            <form action="{% url 'add_to_orderlist' post.pk %}" method="post" onsubmit="return alert('구매되었습니다')">
-              {% csrf_token %}
-              <button id="buyBtn" class="btn btn-dark w-100" type="submit">Buy</button>
-            </form>
-
             <form action="{% url 'checkout' post.pk %}" method="get">
               <button id="buy" class="btn btn-dark w-100" type="submit">지금 바로 구매</button>
             </form>

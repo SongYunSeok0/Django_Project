@@ -36,7 +36,7 @@
                                 {% endwith %}
                               {% endif %}
                           </div>
-                          <div>₩{{ post.price|intcomma }}</div>
+                          <div>₩{{ post.price }}</div>
                           {% if post.orderlist_set.first %}
                             <div style="font-size:0.9rem; color:#888;">
                                 주문일: {{ post.orderlist_set.first.added_at|date:"Y-m-d H:i" }}

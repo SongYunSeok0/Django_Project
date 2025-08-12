@@ -15,9 +15,12 @@
           <p>금액: ₩{{ order.amount|intcomma }}</p>
           <p>주문일: {{ order.created_at|date:"Y-m-d H:i" }}</p>
         </div>
-              <form action="{% url 'checkout' order.post.pk %}" method="get">
-              <button id="buy" class="btn btn-dark w-100" type="submit">지금 바로 구매</button>
-            </form>
+             <form action="{% url 'checkout' order.post.pk %}" method="get">
+              <input type="hidden" name="amount" value="{{ order.amount }}">
+              <button type="submit" class="btn btn-dark w-100">
+                지금 바로 구매
+              </button>
+             </form>
       </div>
     {% endfor %}
   {% else %}

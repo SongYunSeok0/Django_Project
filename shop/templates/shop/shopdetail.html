@@ -31,20 +31,29 @@
              alt="{{ post.title }}"
              style="max-height: 800px; width: 100%; object-fit: contain;">
       {% endif %}
+        {% if post.category and post.category.slug == "event" %}
+          <div style="margin-top: 20px;">
+            <h2 style="font-weight: bold; color: #333; text-align: center">💬 Make offer 💬</h2>
+            <div class="mb-3">
+              <h5 style="color: #444; text-align: center">📌 시작 가격: ₩ {{ post.starting_price|intcomma }}</h5>
+            </div>
 
-      {% if post.category and post.category.slug == "event" %}
-        <div style="margin-top: 20px;">
-          <h2 style="font-weight: bold; color: #333; text-align: center">💬 Make offer 💬</h2>
-             <div class="mb-3">
-                 <h5 style="color: #444; text-align: center">📌 시작 가격: ₩ {{ post.starting_price|intcomma }}</h5>
-             </div>
-          <div id="chat-box" style="height:300px; overflow-y:auto; border:1px solid #ccc; padding:10px; margin-bottom:10px;"></div>
-          <div style="display: flex; gap: 10px;">
-            <input type="number" id="chat-input" placeholder="가격을 제시하세요." class="form-control" />
-            <button id="send-btn" class="btn btn-dark" style="min-width: 100px;">입찰</button>
+            <div id="chat-box" style="height:300px; overflow-y:auto; border:1px solid #ccc; padding:10px; margin-bottom:10px;"></div>
+
+            <!-- 가격 제시 입력창 + 버튼 그룹 -->
+            <div class="d-flex gap-2" style="margin-bottom: 10px;">
+              <input type="number" id="chat-input" class="form-control" placeholder="가격을 제시하세요." style="height: 48px;" />
+              <button id="send-btn" class="btn btn-dark" style="height: 48px; white-space: nowrap;">🏆입찰</button>
+              {% if request.user.is_superuser %}
+                <form action="{% url 'finalize_bid' post.pk %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger" style="height: 48px; white-space: nowrap;">🏆 낙찰</button>
+                </form>
+              {% endif %}
+            </div>
           </div>
-        </div>
-      {% endif %}
+        {% endif %}
+
     </div>
 
     <!-- 오른쪽: 상세 설명 + 버튼 -->
@@ -139,7 +148,6 @@ function addMessage(msg) {
   let formattedMessage = msg.message;
 
   if (isValidBid) {
-    // 숫자만 있는 메시지라면 쉼표 추가
     if (/^\d+$/.test(msg.message.trim())) {
       formattedMessage = `₩ ${bidValue.toLocaleString()}`;
     }
@@ -150,15 +158,27 @@ function addMessage(msg) {
     }
   }
 
-  const messageElement = $(`<p><b>${msg.user__username}:</b> ${formattedMessage}</p>`);
+  // 시간 포맷 변환 (예: 2024-08-12 14:32)
+  const timestamp = new Date(msg.timestamp);
+  const formattedTime = timestamp.toLocaleString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const messageElement = $(`
+    <p>
+      <b>${msg.user__username}</b> <span style="color:gray; font-size:0.9em;">(${formattedTime})</span>: ${formattedMessage}
+    </p>
+  `);
+
   $('#chat-box').append(messageElement);
   $('#chat-box').scrollTop($('#chat-box')[0].scrollHeight);
 
-  // 1분 후 메시지 삭제
   setTimeout(() => {
     messageElement.remove();
   }, 60000);
 }
+
 
   function fetchMessages() {
     $.get("{% url 'get_messages' %}", {
@@ -194,7 +214,7 @@ function sendBid() {
       $('#chat-input').val('');
       fetchMessages();
     } else {
-      alert('전송 실패');
+      alert('로그인 하세요');
     }
   });
 }

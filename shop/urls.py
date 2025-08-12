@@ -30,6 +30,12 @@ urlpatterns = [
     path('orderlist/remove/<int:pk>/', views.remove_from_orderlist, name='remove_from_orderlist'),
     path('orderlist/', views.orderlist, name='orderlist'),
     path('cartlist/remove_selected/', views.remove_from_cartlist_bulk, name='remove_from_cartlist_bulk'),
+    path('mypage/event/', views.event, name='event'),
+    path('delivery_status/', views.delivery_status, name='delivery_status'),
+    path('event/finalize/<int:pk>/', views.finalize_bid, name='finalize_bid'),
+
+
+
 
     # 결제
     path('checkout/<int:pk>/', views.checkout, name='checkout'),

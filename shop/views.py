@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Comment, Wishlist, Category, Cartlist, Order, Orderlist, StoreStats
+from .models import Post, Comment, Wishlist, Category, Cartlist, Order, Orderlist,StoreStats
 from .forms import PostForm, CommentForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -9,6 +9,12 @@ from django.views.decorators.http import require_POST
 from datetime import timedelta
 from django.utils import timezone
 from datetime import date
+import uuid
+from django.contrib.auth.decorators import user_passes_test
+import re
+
+
+
 #결제창
 import requests, json, base64
 from django.http import JsonResponse
@@ -108,13 +114,13 @@ def aboutme(request):
 def order_status(request):
     posts = Post.objects.all()
     return render(request,
-                  'shop/order_status.html',
+                  'shop/event.html',
                   context={'posts':posts})
 
 @login_required
 def orderlist(request):
     view_all = request.GET.get('view') == 'all'
-    
+
     if request.user.is_superuser and view_all:
         posts = Post.objects.filter(orderlist__isnull=False)  # distinct 제거
     else:
@@ -483,3 +489,47 @@ def callback_auth(request):
         return JsonResponse({"customerToken": customer_token}, status=200)
     else:
         return JsonResponse(resjson, status=status_code)
+
+def event(request):
+    user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'shop/event.html', {'orders': user_orders})
+
+# def order_status_detail(request, post_id):
+#     orders = Order.objects.filter(user=request.user, post_id=post_id).order_by('-created_at')
+#     return render(request, 'shop/order_status_detail.html', {'orders': orders})
+
+@user_passes_test(lambda u: u.is_superuser)
+def finalize_bid(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    # 숫자만 포함된 메시지만 필터링
+    messages = ChatMessage.objects.filter(event_id=pk)
+    highest_bid = 0
+    winner = None
+
+    for msg in messages:
+        # 숫자 추출
+        match = re.search(r'\d+', msg.message.replace(',', ''))
+        if match:
+            bid = int(match.group())
+            if bid > highest_bid:
+                highest_bid = bid
+                winner = msg.user
+
+    # 주문 생성
+    if winner:
+        Order.objects.create(
+            user=winner,
+            post=post,
+            order_id=str(uuid.uuid4()),
+            amount=highest_bid,
+            status='confirmed'
+        )
+
+    return redirect('shopdetail', pk=pk)
+
+
+@login_required
+def delivery_status(request):
+    orderlist_items = Orderlist.objects.select_related('post').filter(user=request.user).order_by('-added_at')
+    return render(request, 'shop/delivery_status.html', {'orderlist_items': orderlist_items})

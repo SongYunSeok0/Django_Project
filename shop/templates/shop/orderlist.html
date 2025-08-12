@@ -59,7 +59,41 @@
                   </div>
                 {% empty %}
                   <div class="text-center text-muted py-5">주문 내역이 없습니다.</div>
+                <div class="row align-items-center mb-3 pb-3 border-bottom">
+                    <div class="col-md-3">
+                        {% if post.uploaded_image %}
+                        <img src="{{ post.uploaded_image.url }}" alt="{{ post.title }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
+                        {% else %}
+                        <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg" alt="No image" class="img-fluid rounded">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        <div><strong>{{ post.title }}</strong></div>
+                        <div>₩{{ post.price|intcomma }}</div>
+                        <div class="mt-1 d-flex justify-content-end gap-2">
+                            <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
+                            <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'delivery_status' %}">배송 조회</a>
+                            <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' post.pk %}">내역 삭제</a>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
+
+                {% if orders %}
+                {% for order in orders %}
+                  <div class="card mb-3">
+                    <div class="card-body">
+                      <h5>{{ order.post.title }}</h5>
+                        <img src="{{ order.post.uploaded_image.url }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
+                        <!-- 상품명 표시 -->
+                      <p>상태: {{ order.status }}</p>
+                      <p>금액: ₩{{ order.amount|intcomma }}</p>
+                      <p>주문일: {{ order.created_at|date:"Y-m-d H:i" }}</p>
+                    </div>
+                  </div>
+                {% endfor %}
+              {% else %}
+              {% endif %}
             </div>
         </div>
     </div>

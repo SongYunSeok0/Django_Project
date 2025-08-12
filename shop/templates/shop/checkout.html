@@ -50,7 +50,7 @@
 
           // 서버에 orderId, amount를 저장하기 위한 API 호출 (추가)
           const orderId = generateRandomString();  // 고유 주문번호 생성
-          const amount = {{ post.price }};          // 장고 템플릿 변수에서 가격 가져오기
+          const amount = {{ order.amount }};          // 장고 템플릿 변수에서 가격 가져오기
           const orderName = "{{ post.title|escapejs }}";    // 상품명 |escapejs 추가
 
         // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.

@@ -528,6 +528,20 @@ def finalize_bid(request, pk):
 
     return redirect('shopdetail', pk=pk)
 
+@login_required
+def order_history(request):
+    # 직접 구매한 상품 (Post.buyer)
+    purchased_posts = Post.objects.filter(buyer=request.user)
+
+    # 낙찰된 주문 (Order.user)
+    won_orders = Order.objects.filter(user=request.user).select_related('post')
+
+    # 두 리스트를 하나로 결합
+    items = list(purchased_posts) + list(won_orders)
+
+    return render(request, 'shop/orderlist.html', {
+        'items': items
+    })
 
 @login_required
 def delivery_status(request):

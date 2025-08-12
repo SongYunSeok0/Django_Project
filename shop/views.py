@@ -13,8 +13,6 @@ import uuid
 from django.contrib.auth.decorators import user_passes_test
 import re
 from django.forms import modelformset_factory
-from .models import Post, ChatMessage, Order, Notification
-from django.contrib.auth.models import User
 
 #결제창
 import requests, json, base64
@@ -605,35 +603,16 @@ def finalize_bid(request, pk):
                 winner = msg.user
 
     if winner:
-        # 낙찰 주문 생성
         Order.objects.create(
             user=winner,
             post=post,
             order_id=f'BID-{uuid.uuid4()}',
             amount=highest_bid,
-            status='await_payment'   # 결제 대기 상태
-        )
-
-        # 낙찰자에게 알림 생성
-        Notification.objects.create(
-            user=winner,
-            message=f"'{post.title}' 경매에서 낙찰되었습니다! 축하합니다 🎉"
+            status='await_payment'   # ✅ 결제 대기 상태로 생성
         )
 
     return redirect('shopdetail', pk=pk)
 
-@login_required
-def check_notifications(request):
-    notifications = Notification.objects.filter(user=request.user, is_read=False)
-    data = {
-        'notifications': [{'id': n.id, 'message': n.message} for n in notifications]
-    }
-    return JsonResponse(data)
-
-@login_required
-def mark_notifications_read(request):
-    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
-    return JsonResponse({'status': 'ok'})
 
 @login_required
 def delivery_status(request):

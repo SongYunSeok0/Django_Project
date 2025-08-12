@@ -5,15 +5,6 @@
 {% block title %}{{ post.title }} - Dusty Shop{% endblock %}
 
 {% block content %}
-
-{% if messages %}
-<script>
-  {% for message in messages %}
-    alert("{{ message|escapejs }}");
-  {% endfor %}
-</script>
-{% endif %}
-
 <div class="container my-5">
   <div class="row">
     <!-- 왼쪽: 썸네일 이미지 -->
@@ -54,7 +45,7 @@
               <input type="number" id="chat-input" class="form-control" placeholder="가격을 제시하세요." style="height: 48px;" />
               <button id="send-btn" class="btn btn-dark" style="height: 48px; white-space: nowrap;">🏆입찰</button>
               {% if request.user.is_superuser %}
-                <form action="{% url 'finalize_bid' post.pk %}" method="post" style="margin:0;">
+                <form action="{% url 'finalize_bid' post.pk %}" method="post">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-danger" style="height: 48px; white-space: nowrap;">🏆 낙찰</button>
                 </form>
@@ -249,5 +240,6 @@ function sendBid() {
   setInterval(fetchMessages, 2000);
 </script>
 {% endif %}
+
 
 {% endblock %}

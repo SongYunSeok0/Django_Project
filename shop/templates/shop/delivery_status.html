@@ -1,0 +1,22 @@
+{% extends 'shop/base.html' %}
+{% load humanize %}
+{% block title %}배송조회{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h2 class="mb-4 fw-bold text-center">📦 배송조회</h2>
+  {% if orders %}
+    {% for order in orders %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5>{{ order.post.title }}</h5>  <!-- 상품명 표시 -->
+          <p>상태: {{ order.status }}</p>
+          <p>금액: ₩{{ order.amount|intcomma }}</p>
+          <p>주문일: {{ order.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-center">해당 상품에 대한 배송 정보가 없습니다.</p>
+  {% endif %}
+</div>
+{% endblock %}

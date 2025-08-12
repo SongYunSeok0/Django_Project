@@ -8,6 +8,11 @@ from .models import ChatMessage
 from django.views.decorators.http import require_POST
 from datetime import timedelta
 from django.utils import timezone
+import uuid
+from django.contrib.auth.decorators import user_passes_test
+import re
+
+
 
 #결제창
 import requests, json, base64
@@ -105,7 +110,7 @@ def aboutme(request):
 def order_status(request):
     posts = Post.objects.all()
     return render(request,
-                  'shop/order_status.html',
+                  'shop/delivery_status.html',
                   context={'posts':posts})
 
 @login_required
@@ -454,4 +459,55 @@ def callback_auth(request):
     else:
         return JsonResponse(resjson, status=status_code)
 
+def delivery_status(request):
+    user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'shop/delivery_status.html', {'orders': user_orders})
 
+def order_status_detail(request, post_id):
+    orders = Order.objects.filter(user=request.user, post_id=post_id).order_by('-created_at')
+    return render(request, 'shop/order_status_detail.html', {'orders': orders})
+
+@user_passes_test(lambda u: u.is_superuser)
+def finalize_bid(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    # 숫자만 포함된 메시지만 필터링
+    messages = ChatMessage.objects.filter(event_id=pk)
+    highest_bid = 0
+    winner = None
+
+    for msg in messages:
+        # 숫자 추출
+        match = re.search(r'\d+', msg.message.replace(',', ''))
+        if match:
+            bid = int(match.group())
+            if bid > highest_bid:
+                highest_bid = bid
+                winner = msg.user
+
+    # 주문 생성
+    if winner:
+        Order.objects.create(
+            user=winner,
+            post=post,
+            order_id=str(uuid.uuid4()),
+            amount=highest_bid,
+            status='confirmed'
+        )
+
+    return redirect('shopdetail', pk=pk)
+
+@login_required
+def order_history(request):
+    # 직접 구매한 상품 (Post.buyer)
+    purchased_posts = Post.objects.filter(buyer=request.user)
+
+    # 낙찰된 주문 (Order.user)
+    won_orders = Order.objects.filter(user=request.user).select_related('post')
+
+    # 두 리스트를 하나로 결합
+    items = list(purchased_posts) + list(won_orders)
+
+    return render(request, 'shop/orderlist.html', {
+        'items': items
+    })

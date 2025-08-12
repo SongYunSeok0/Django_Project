@@ -24,12 +24,40 @@
                             <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' post.pk %}">상세 보기</a>
                             <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송 조회</a>
                             <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' post.pk %}">내역 삭제</a>
-                        
                         </div>
-                        
                     </div>
                 </div>
                 {% endfor %}
+                {% for order in orders %}
+                <div class="row align-items-center mb-3 pb-3 border-bottom">
+                    <div class="col-md-3">
+                        {% if order.post.uploaded_image %}
+                        <img src="{{ order.post.uploaded_image.url }}" alt="{{ order.post.title }}" class="img-fluid rounded" style="max-height: 100px; object-fit: cover;">
+                        {% else %}
+                        <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg" alt="No image" class="img-fluid rounded">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-9">
+                        <div><strong>{{ order.post.title }}</strong></div>
+                        <div>₩{{ order.amount|intcomma }}</div>
+                        {% if order.status == 'won' %}
+                            <span class="badge bg-success">낙찰됨</span>
+                        {% elif order.status == 'confirmed' %}
+                            <span class="badge bg-secondary">주문 완료</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark">기타</span>
+                        {% endif %}
+                        <div class="mt-1 d-flex justify-content-end gap-2">
+                            <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' order.post.pk %}">상세 보기</a>
+                            <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송 조회</a>
+                            <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' order.pk %}">내역 삭제</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center">주문 내역이 없습니다.</p>
+                {% endfor %}
+
             </div>
         </div>
     </div>

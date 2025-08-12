@@ -1,18 +1,16 @@
 <style>
   #dusty-footer {
-  position: relative;
-  background-color: #000;
-  background-image: url('https://www.transparenttextures.com/patterns/dust.png');
-  background-repeat: repeat;
-  background-size: auto;
-  padding: 5rem 0;
-  border-top: 1px solid #222;
-  color: #f5f1e9;
-  font-family: Georgia, Times New Roman, serif;
-  /* overflow: hidden; ← 이 줄 제거 */
-  min-height: 400px; /* 충분한 높이 확보 */
-}
-
+    position: relative;
+    background-color: #000;
+    background-image: url('https://www.transparenttextures.com/patterns/dust.png');
+    background-repeat: repeat;
+    background-size: auto;
+    padding: 2.5rem 0; /* 높이 줄임 */
+    border-top: 1px solid #222;
+    color: #f5f1e9;
+    font-family: Georgia, Times New Roman, serif;
+    min-height: 250px; /* 높이 줄임 */
+  }
 
   #dusty-footer::before {
     content: "";
@@ -41,7 +39,7 @@
   <div class="container">
     <div class="row">
       <!-- 고객 정보 섹션 -->
-      <div class="col-md-4 mb-3">
+      <div class="col-md-4 mb-2">
         <h5>고객 지원</h5>
         <ul class="list-unstyled">
           <li><a href="#">문의하기</a></li>
@@ -52,7 +50,7 @@
       </div>
 
       <!-- 정책 섹션 -->
-      <div class="col-md-4 mb-3">
+      <div class="col-md-4 mb-2">
         <h5>정책</h5>
         <ul class="list-unstyled">
           <li><a href="#">개인정보 보호정책</a></li>
@@ -61,7 +59,7 @@
       </div>
 
       <!-- 뉴스레터 섹션 -->
-      <div class="col-md-4 mb-3">
+      <div class="col-md-4 mb-2">
         <h5>뉴스레터 구독</h5>
         <p>최신 DustyShop 소식을 받아보세요.</p>
         <form class="d-flex align-items-center" style="gap: 10px;">
@@ -72,7 +70,7 @@
     </div>
 
     <!-- 하단 카피라이트 -->
-    <div class="text-center mt-4">
+    <div class="text-center mt-3">
       <p class="m-0" style="color: #aaa;">Copyright &copy; Sesac mini project - Dusty Shop</p>
     </div>
   </div>

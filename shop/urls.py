@@ -33,6 +33,7 @@ urlpatterns = [
     path('mypage/event/', views.event, name='event'),
     path('delivery_status/', views.delivery_status, name='delivery_status'),
     path('event/finalize/<int:pk>/', views.finalize_bid, name='finalize_bid'),
+    path('admin/order/<int:order_id>/status/<str:new_status>/', views.set_order_status, name='set_status'),
 
 
 

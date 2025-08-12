@@ -17,10 +17,7 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('order_id', 'user__username', 'post__title')
     list_filter = ('status', 'created_at')
 
-@admin.register(Orderlist)
-class OrderlistAdmin(admin.ModelAdmin):
-    list_display = ('user', 'post', 'status', 'added_at')
-    list_editable = ('status',)
+
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(Category)

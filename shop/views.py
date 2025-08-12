@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Post, Comment, Wishlist, Category, Cartlist, Order, Orderlist,StoreStats
-from .forms import PostForm, CommentForm
+from .models import Post, Comment, Wishlist, Category, Cartlist, Order, Orderlist,StoreStats, PostImage
+from .forms import PostForm, CommentForm, PostImageForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -12,8 +12,7 @@ from datetime import date
 import uuid
 from django.contrib.auth.decorators import user_passes_test
 import re
-
-
+from django.forms import modelformset_factory
 
 #결제창
 import requests, json, base64
@@ -61,21 +60,30 @@ def shopmyPage(request):
         'today_purchases': stats.today_purchases,
     })
 
+PostImageFormSet = modelformset_factory(PostImage, form=PostImageForm, extra=5)
+
 def create(request):
     if request.method == 'POST':
-        #작성하다가 제출 버튼을 누른 경우
-        postform = PostForm(request.POST,request.FILES)
-        if postform.is_valid():
-            post1 = postform.save(commit=False)
-            post1.title = post1.title + ""
-            postform.save()
-            return redirect('mypage')
-    else: #get
-        postform = PostForm()
-    return render(request,
-                  template_name="shop/postform.html",
-                  context={'postform':postform})
+        postform = PostForm(request.POST, request.FILES)
+        image_formset = PostImageFormSet(request.POST, request.FILES, queryset=PostImage.objects.none())
 
+        if postform.is_valid() and image_formset.is_valid():
+            post1 = postform.save(commit=False)
+            post1.save()  # 🔥 반드시 저장해야 외래키 연결 가능
+
+            for form in image_formset:
+                if form.cleaned_data.get('image'):
+                    PostImage.objects.create(post=post1, image=form.cleaned_data['image'])
+
+            return redirect('mypage')
+    else:
+        postform = PostForm()
+        image_formset = PostImageFormSet(queryset=PostImage.objects.none())
+
+    return render(request, "shop/postform.html", {
+        'postform': postform,
+        'image_formset': image_formset,
+    })
 
 def category_view(request, slug):
     # 카테고리 있으면 가져오고, 없으면 None
@@ -122,10 +130,16 @@ def orderlist(request):
     view_all = request.GET.get('view') == 'all'
 
     if request.user.is_superuser and view_all:
-        posts = Post.objects.filter(orderlist__isnull=False)  # distinct 제거
+        posts = Post.objects.filter(orderlist__isnull=False).distinct()
     else:
-        posts = Post.objects.filter(orderlist__user=request.user)  # distinct 제거
-    return render(request, 'shop/orderlist.html', {'posts': posts})
+        posts = Post.objects.filter(orderlist__user=request.user).distinct()
+
+    context = {
+        'posts': posts,
+        'user': request.user,
+    }
+    return render(request, 'shop/orderlist.html', context)
+
 
 @login_required
 def wishlist(request):
@@ -528,20 +542,14 @@ def finalize_bid(request, pk):
 
     return redirect('shopdetail', pk=pk)
 
-@login_required
-def order_history(request):
-    # 직접 구매한 상품 (Post.buyer)
-    purchased_posts = Post.objects.filter(buyer=request.user)
-
-    # 낙찰된 주문 (Order.user)
-    won_orders = Order.objects.filter(user=request.user).select_related('post')
-
-    # 두 리스트를 하나로 결합
-    items = list(purchased_posts) + list(won_orders)
-
-    return render(request, 'shop/orderlist.html', {
-        'items': items
-    })
+@user_passes_test(lambda u: u.is_superuser)
+def set_order_status(request, order_id, new_status):
+    order = get_object_or_404(Order, id=order_id)
+    valid_statuses = ['preparing', 'shipped', 'completed']
+    if new_status in valid_statuses:
+        order.status = new_status
+        order.save()
+    return redirect('orderlist')
 
 @login_required
 def delivery_status(request):

@@ -1,5 +1,5 @@
 from django import forms
-from shop.models import Post, Comment
+from shop.models import Post, Comment, PostImage
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -54,3 +54,8 @@ class CommentForm(forms.ModelForm):
             'content': '내용',
             'uploaded_image': '사진'
         }
+
+class PostImageForm(forms.ModelForm):
+    class Meta:
+        model = PostImage
+        fields = ['image']

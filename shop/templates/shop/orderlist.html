@@ -35,29 +35,28 @@
 
               {% if user.is_superuser %}
                 <div class="mt-1 d-flex justify-content-end gap-2">
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' order.post.pk %}">배송준비중</a>
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송출발</a>
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' order.post.pk %}">배송완료</a>
+                  <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="preparing">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송준비중</button>
+                  </form>
+                  <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="shipped">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송출발</button>
+                  </form>
+                  <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="delivered">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송완료</button>
+                  </form>
                 </div>
               {% else %}
                 <div class="mt-1 d-flex justify-content-end gap-2">
-                  <div class="w-100">
-                    <a class="btn btn-sm btn-outline-secondary w-100 text-center" href="{% url 'shopdetail' order.post.pk %}">상세 보기</a>
-                  </div>
-                  <div class="w-100">
-                    <a class="btn btn-sm btn-outline-secondary w-100 text-center" href="{% url 'order_status' %}">배송 조회</a>
-                  </div>
-                  <div class="w-100">
-                    <a class="btn btn-sm btn-outline-secondary w-100 text-center" href="{% url 'remove_from_orderlist' order.post.pk %}">내역 삭제</a>
-                  </div>
-                  <div class="w-100">
-                    <form action="{% url 'checkout' order.post.pk %}" method="get">
-                      <input type="hidden" name="amount" value="{{ order.amount }}">
-                      <button type="submit" class="btn btn-sm btn-dark w-100 text-center">구매</button>
-                    </form>
-                  </div>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' order.post.pk %}">상세 보기</a>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'delivery_status' %}">배송 조회</a>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' order.post.pk %}">내역 삭제</a>
                 </div>
-
               {% endif %}
             </div>
           </div>
@@ -91,14 +90,26 @@
 
               {% if user.is_superuser %}
                 <div class="mt-1 d-flex justify-content-end gap-2">
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' order.post.pk %}">배송준비중</a>
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송출발</a>
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' order.post.pk %}">배송완료</a>
+                  <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="preparing">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송준비중</button>
+                  </form>
+                  <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="shipped">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송출발</button>
+                  </form>
+                  <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="delivered">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송완료</button>
+                  </form>
                 </div>
               {% else %}
                 <div class="mt-1 d-flex justify-content-end gap-2">
                   <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' order.post.pk %}">상세 보기</a>
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'order_status' %}">배송 조회</a>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'delivery_status' %}">배송 조회</a>
                   <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' order.post.pk %}">내역 삭제</a>
                 </div>
               {% endif %}

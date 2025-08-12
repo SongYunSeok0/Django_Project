@@ -134,3 +134,9 @@ class StoreStats(models.Model):
     total_purchases = models.PositiveIntegerField(default=847342)
     today_purchases = models.PositiveIntegerField(default=21)
     last_purchase_date = models.DateField(default=date.today)
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)

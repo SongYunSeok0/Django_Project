@@ -109,9 +109,12 @@
 
         {# ▼▼ HTML만으로 대댓글 접기/펼치기 ▼▼ #}
         {% if comment.replies.all %}
-          <details style="margin-top:10px;">
-            <summary style="cursor:pointer; font-size:14px; padding:4px 10px; background:#f8f9fa; border:1px solid #ccc; border-radius:6px; display:inline-block; user-select:none;">
-              대댓글 보기 ({{ comment.replies.count }})
+          <details style="margin-top:4px;">
+            <summary style="cursor:pointer; font-size:14px; padding:6px 10px;
+              background:#f8f9fa; border:1px solid #ccc; border-radius:6px;
+              display:inline-block; user-select:none; background-color:#212529;
+              color:white; font-family:'Segoe UI', Arial, sans-serif;">
+              관리자 답변 ({{ comment.replies.count }})
             </summary>
 
             <ul style="list-style:none; padding:0; margin:12px 0 12px 0;">
@@ -140,7 +143,6 @@
             </ul>
           </details>
         {% endif %}
-        {# ▲▲ /HTML만으로 대댓글 접기/펼치기 ▲▲ #}
 
       </li>
     {% endfor %}

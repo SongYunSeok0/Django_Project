@@ -129,12 +129,12 @@ def order_status(request):
     if request.user.is_superuser:
         base_qs = (Order.objects
                   .select_related('post','post__category','user')
-                  .filter(post__category__slug='event', status='await_payment')
+                  .filter(post__category__slug='event', status='결제대기')
                   .order_by('-created_at'))
     else:
         base_qs = (Order.objects
                   .select_related('post','post__category')
-                  .filter(user=request.user, post__category__slug='event', status='await_payment')
+                  .filter(user=request.user, post__category__slug='event', status='결제대기')
                   .order_by('-created_at'))
 
     orders = base_qs
@@ -146,7 +146,7 @@ def order_status(request):
         if post_id:
             post = get_object_or_404(Post, pk=post_id)
             pending = (Order.objects
-                       .filter(user=request.user, post=post, status='await_payment')
+                       .filter(user=request.user, post=post, status='결제대기')
                        .order_by('-created_at')
                        .first())
             if pending:
@@ -166,7 +166,7 @@ def orderlist(request):
         base_qs = Order.objects.select_related('post','post__category').filter(user=request.user).order_by('-created_at')
 
     # ✅ 결제대기(낙찰 직후) 는 주문내역에서 제외
-    base_qs = base_qs.exclude(status='await_payment')
+    base_qs = base_qs.exclude(status='결제대기')
 
     event_orders = base_qs.filter(post__category__slug='event')
     regular_orders = base_qs.exclude(post__category__slug='event')
@@ -435,11 +435,11 @@ def checkout(request, pk):
                 .order_by('-created_at')
                 .first())
 
-    if existing and existing.status in ['confirmed', 'shipped', 'delivered']:
+    if existing and existing.status in ['결제완료', '배송출발', '배송완료']:
         messages.info(request, '이미 결제 완료된 주문입니다.')
         return redirect('orderlist')
 
-    if existing and existing.status == 'await_payment' and existing.order_id:
+    if existing and existing.status == '결제대기' and existing.order_id:
         order_id = existing.order_id
     else:
         prefix = 'BID-' if (existing and existing.order_id and existing.order_id.startswith('BID-')) else 'ORD-'
@@ -506,11 +506,11 @@ def success(request, pk):
     if order_id:
         order = Order.objects.filter(order_id=order_id).first()
 
-    # 2) 못 찾으면, 낙찰 시 만들어 둔 결제대기( await_payment ) 주문을 찾는다.
-    #    (낙찰 버튼에서 Order(status='await_payment')로 생성해둔 케이스)
+    # 2) 못 찾으면, 낙찰 시 만들어 둔 결제대기( 결제대기 ) 주문을 찾는다.
+    #    (낙찰 버튼에서 Order(status='결제대기')로 생성해둔 케이스)
     if order is None:
         order = (Order.objects
-                 .filter(user=request.user, post=post, status='await_payment')
+                 .filter(user=request.user, post=post, status='결제대기')
                  .order_by('-created_at')
                  .first())
 
@@ -519,7 +519,7 @@ def success(request, pk):
         if order_id:
             order.order_id = order_id   # 결제에서 온 orderId로 갱신(선택)
         order.amount = confirmed_amount
-        order.status = 'confirmed'
+        order.status = '결제완료'
         order.user = request.user
         order.post = post
         order.save(update_fields=['order_id', 'amount', 'status', 'user', 'post'])
@@ -536,7 +536,7 @@ def success(request, pk):
             post=post,
             order_id=oid,
             amount=confirmed_amount,
-            status='confirmed'
+            status='결제완료'
         )
         post.is_sold = True
         post.save(update_fields=['is_sold'])
@@ -645,13 +645,13 @@ def finalize_bid(request, pk):
                 highest_bid, winner = bid, msg.user
 
     if winner:
-        # 결제 대기 주문 생성(주문내역 숨기기 전략이라면 await_payment 유지)
+        # 결제 대기 주문 생성(주문내역 숨기기 전략이라면 결제대기 유지)
         Order.objects.create(
             user=winner,
             post=post,
             order_id=f'BID-{uuid.uuid4()}',
             amount=highest_bid,
-            status='await_payment'
+            status='결제대기'
         )
 
         # 낙찰자에게 링크가 담긴 메시지 남기기 (당사자가 클릭해서 들어오면 alert 뜸)
@@ -678,7 +678,7 @@ def delivery_status(request):
 @require_POST
 def update_order_status(request, order_pk):
     status = request.POST.get('status')
-    allowed = {'confirmed', 'preparing', 'shipped', 'delivered', 'cancelled'}
+    allowed = {'결제완료', '배송준비중', '배송출발', '배송완료', 'cancelled'}
     if status not in allowed:
         messages.error(request, "올바르지 않은 상태값입니다.")
         return redirect('orderlist')

@@ -22,40 +22,68 @@
             </div>
             <div class="col-md-9">
               <div>
-                <strong>{{ order.post.title }}</strong>
+                <strong style="font-size: 20px">{{ order.post.title }}</strong>
                 {% if user.is_superuser and order.user %}
                   <span style="color:#666; font-size:.9rem;">(주문자: {{ order.user.username }})</span>
                 {% endif %}
               </div>
-
               <div>₩{{ order.amount|intcomma }}</div>
               <div style="font-size:0.9rem; color:#888;">
                 주문일: {{ order.created_at|date:"Y-m-d H:i" }}
               </div>
-
               {% if user.is_superuser %}
                 <div class="mt-1 d-flex justify-content-end gap-2">
                   <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
                     {% csrf_token %}
-                    <input type="hidden" name="status" value="preparing">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송준비중</button>
+                    <input type="hidden" name="status" value="배송준비중">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100"
+                            style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                            onmouseover="this.style.background='#343a40'"
+                            onmouseout="this.style.background='#212529'">
+                      배송준비중
+                    </button>
                   </form>
                   <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
                     {% csrf_token %}
-                    <input type="hidden" name="status" value="shipped">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송출발</button>
+                    <input type="hidden" name="status" value="배송출발">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100"
+                            style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                            onmouseover="this.style.background='#343a40'"
+                            onmouseout="this.style.background='#212529'">
+                      배송출발
+                    </button>
                   </form>
                   <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
                     {% csrf_token %}
-                    <input type="hidden" name="status" value="delivered">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송완료</button>
+                    <input type="hidden" name="status" value="배송완료">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100"
+                            style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                            onmouseover="this.style.background='#343a40'"
+                            onmouseout="this.style.background='#212529'">
+                      배송완료
+                    </button>
                   </form>
                 </div>
               {% else %}
                 <div class="mt-1 d-flex justify-content-end gap-2">
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' order.post.pk %}">상세 보기</a>
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'delivery_status' %}">배송 조회</a>
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' order.post.pk %}">내역 삭제</a>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' order.post.pk %}"
+                     style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                     onmouseover="this.style.background='#343a40'"
+                     onmouseout="this.style.background='#212529'">
+                    상세 보기
+                  </a>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'delivery_status' %}"
+                     style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                     onmouseover="this.style.background='#343a40'"
+                     onmouseout="this.style.background='#212529'">
+                    배송 조회
+                  </a>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' order.post.pk %}"
+                     style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                     onmouseover="this.style.background='#343a40'"
+                     onmouseout="this.style.background='#212529'">
+                    내역 삭제
+                  </a>
                 </div>
               {% endif %}
             </div>
@@ -87,30 +115,59 @@
               <div style="font-size:0.9rem; color:#888;">
                 주문일: {{ order.created_at|date:"Y-m-d H:i" }}
               </div>
-
               {% if user.is_superuser %}
                 <div class="mt-1 d-flex justify-content-end gap-2">
                   <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
                     {% csrf_token %}
-                    <input type="hidden" name="status" value="preparing">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송준비중</button>
+                    <input type="hidden" name="status" value="배송준비중">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100"
+                            style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                            onmouseover="this.style.background='#343a40'"
+                            onmouseout="this.style.background='#212529'">
+                      배송준비중
+                    </button>
                   </form>
                   <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
                     {% csrf_token %}
-                    <input type="hidden" name="status" value="shipped">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송출발</button>
+                    <input type="hidden" name="status" value="배송출발">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100"
+                            style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                            onmouseover="this.style.background='#343a40'"
+                            onmouseout="this.style.background='#212529'">
+                      배송출발
+                    </button>
                   </form>
                   <form method="post" action="{% url 'update_order_status' order.pk %}" class="w-100">
                     {% csrf_token %}
-                    <input type="hidden" name="status" value="delivered">
-                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100">배송완료</button>
+                    <input type="hidden" name="status" value="배송완료">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100"
+                            style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                            onmouseover="this.style.background='#343a40'"
+                            onmouseout="this.style.background='#212529'">
+                      배송완료
+                    </button>
                   </form>
                 </div>
               {% else %}
                 <div class="mt-1 d-flex justify-content-end gap-2">
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' order.post.pk %}">상세 보기</a>
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'delivery_status' %}">배송 조회</a>
-                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' order.post.pk %}">내역 삭제</a>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'shopdetail' order.post.pk %}"
+                     style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                     onmouseover="this.style.background='#343a40'"
+                     onmouseout="this.style.background='#212529'">
+                    상세 보기
+                  </a>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'delivery_status' %}"
+                     style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                     onmouseover="this.style.background='#343a40'"
+                     onmouseout="this.style.background='#212529'">
+                    배송 조회
+                  </a>
+                  <a class="btn btn-sm btn-outline-secondary w-100" href="{% url 'remove_from_orderlist' order.post.pk %}"
+                     style="background:#212529; color:#fff; font-family:-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;"
+                     onmouseover="this.style.background='#343a40'"
+                     onmouseout="this.style.background='#212529'">
+                    내역 삭제
+                  </a>
                 </div>
               {% endif %}
             </div>

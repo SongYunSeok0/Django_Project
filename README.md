@@ -4,7 +4,7 @@
 
 | **김윤석** | **김윤정** | **김형준** | **송윤석** |
 | :------: | :------: | :------: | :------: |
-|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)||[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|
+|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong]([https://github.com/Mae-Hyong](https://github.com/Dusty-Miller))|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|
 
 
 

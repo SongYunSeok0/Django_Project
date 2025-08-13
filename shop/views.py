@@ -39,7 +39,7 @@ def is_staff(user):
 
 def shoplist(request):
     #db에서 query select * from post
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-pk')
     return render(request,
                   template_name='shop/shoplist.html',
                   context={'posts':posts})

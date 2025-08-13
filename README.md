@@ -1,10 +1,10 @@
-# DUSTYSHOP
+# DUSTY SHOP
 
 ## 팀 멤버 소개
 
 | **김윤석** | **김윤정** | **김형준** | **송윤석** |
 | :------: | :------: | :------: | :------: |
-|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong]([https://github.com/Mae-Hyong](https://github.com/Dusty-Miller))|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Dusty-Miller)|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|
+|[ @beautiyj](https://github.com/beautiyj)|[ @Monzi](https://github.com/Dusty-Miller)|[ @KimHyeongjun](https://github.com/Ayewww)|[ @SongYunSeok0](https://github.com/SongYunSeok0/SongYunSeok0.github.io)|
 
 
 ## 개발 환경
@@ -14,7 +14,7 @@ Front-end:
 Back-end:
 <img src="https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white"/> <img src="https://img.shields.io/badge/Django REST framework-red?style=flat&logo=django&logoColor=white"/> <img src="https://img.shields.io/badge/AJAX-0078D7?style=flat&logo=javascript&logoColor=white"/><br><br>
 Database:
-<img src="https://img.shields.io/badge/SQLite3-003B57?style=flat&logo=sqlite&logoColor=white"/> <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase&logoColor=black"/><br><br>
+<img src="https://img.shields.io/badge/SQLite3-003B57?style=flat&logo=sqlite&logoColor=white"/> <br><br>
 서버 구성:
 <img src="https://img.shields.io/badge/AWS 개발 서버-232F3E?style=flat&logo=amazonaws&logoColor=white"/><br><br>
 협업 툴:

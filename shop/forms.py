@@ -8,7 +8,7 @@ class PostForm(forms.ModelForm):
             "title", "content", "price", "size",
             "shoulder", "chest", "somae", "chongjang",
             "waist", "bottom_top", "thigh", "mit_dan",
-            "category", "uploaded_image","uploaded_file"
+            "category", "uploaded_image","starting_price"
         ]
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control"}),

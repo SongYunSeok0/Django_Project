@@ -10,27 +10,17 @@
 ## 개발 환경
 
 Front-end:
-<img src="https://img.shields.io/badge/flutter-02569B?style=flat&logo=flutter&logoColor=white"/>
-
+<img src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white"/> <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white"/> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black"/>
 Back-end:
-<img src="https://img.shields.io/badge/django-092E20?style=flat&logo=django&logoColor=white"/>
-<img src="https://img.shields.io/badge/Django REST framework-red?style=flat&logo=django&logoColor=white"/>
-<img src="https://img.shields.io/badge/AJAX-0078D7?style=flat&logo=javascript&logoColor=white"/>
-
+<img src="https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white"/> <img src="https://img.shields.io/badge/Django REST framework-red?style=flat&logo=django&logoColor=white"/> <img src="https://img.shields.io/badge/AJAX-0078D7?style=flat&logo=javascript&logoColor=white"/>
 Database:
-<img src="https://img.shields.io/badge/sqlite3-003B57?style=flat&logo=sqlite&logoColor=white"/>
-<img src="https://img.shields.io/badge/firebase-FFCA28?style=flat&logo=firebase&logoColor=black"/>
-
-개발용 서버 구축:
-<img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat&logo=amazonaws&logoColor=white"/>
-
+<img src="https://img.shields.io/badge/SQLite3-003B57?style=flat&logo=sqlite&logoColor=white"/> <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase&logoColor=black"/>
+서버 구성:
+<img src="https://img.shields.io/badge/AWS 개발 서버-232F3E?style=flat&logo=amazonaws&logoColor=white"/>
 협업 툴:
-<img src="https://img.shields.io/badge/notion-ffffff?style=flat&logo=notion&logoColor=black"/>
-<img src="https://img.shields.io/badge/github-1c8139?style=flat&logo=github&logoColor=white"/>
-<img src="https://img.shields.io/badge/discord-5562ea?style=flat&logo=discord&logoColor=white"/>
-
+<img src="https://img.shields.io/badge/GitHub-1c8139?style=flat&logo=github&logoColor=white"/>
 디자인:
-<img src="https://img.shields.io/badge/figma-430098?style=flat&logo=figma&logoColor=white"/>
+<img src="https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white"/> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black"/>
 
 ## 프로젝트 개요
 

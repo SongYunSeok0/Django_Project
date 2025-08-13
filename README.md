@@ -33,7 +33,6 @@ Database:
 
 
 ## 시연 영상
-<img width="1506" alt="image" src="https://github.com/rx5460/pophub_full/assets/42200731/414daa6d-fcb1-49ed-b44f-d8349fcdc317">
 
 [YouTube 영상]([[https://youtu.be/EqJkZOaBZCw](https://youtu.be/sCDBcvCAMvE?si=D9-1Yl2WOt98wo1N)](https://www.youtube.com/watch?v=sCDBcvCAMvE))<br><br><br>
 <h1>http://3.80.21.12:8000/</h1>

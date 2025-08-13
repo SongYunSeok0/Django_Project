@@ -7,18 +7,30 @@
 |[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong]([https://github.com/Mae-Hyong](https://github.com/Dusty-Miller))|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|
 
 
-
 ## 개발 환경
 
-- **Front-end**:  <img src="https://img.shields.io/badge/flutter-02569B?style=flat&logo=flutter&logoColor=white"/>
+Front-end:
+<img src="https://img.shields.io/badge/flutter-02569B?style=flat&logo=flutter&logoColor=white"/>
 
-- **Back-end**:  <img src="https://img.shields.io/badge/node.js-339933?style=flat&logo=Node.js&logoColor=white"/>
+Back-end:
+<img src="https://img.shields.io/badge/django-092E20?style=flat&logo=django&logoColor=white"/>
+<img src="https://img.shields.io/badge/Django REST framework-red?style=flat&logo=django&logoColor=white"/>
+<img src="https://img.shields.io/badge/AJAX-0078D7?style=flat&logo=javascript&logoColor=white"/>
 
-- **Database**: <img src="https://img.shields.io/badge/mysql-4479A1?style=flat&logo=mysql&logoColor=white"/> <img src="https://img.shields.io/badge/firebase-FFCA28?style=flat&logo=firebase&logoColor=black"/>
-- **배포**: <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat&logo=amazonaws&logoColor=white"/>
+Database:
+<img src="https://img.shields.io/badge/sqlite3-003B57?style=flat&logo=sqlite&logoColor=white"/>
+<img src="https://img.shields.io/badge/firebase-FFCA28?style=flat&logo=firebase&logoColor=black"/>
 
-- **협업 툴**: <img src="https://img.shields.io/badge/notion-ffffff?style=flat&logo=notion&logoColor=black"/> <img src="https://img.shields.io/badge/github-1c8139?style=flat&logo=github&logoColor=white"/> <img src="https://img.shields.io/badge/discord-5562ea?style=flat&logo=discord&logoColor=white"/>
-- **디자인**: <img src="https://img.shields.io/badge/figma-430098?style=flat&logo=figma&logoColor=white"/>
+개발용 서버 구축:
+<img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat&logo=amazonaws&logoColor=white"/>
+
+협업 툴:
+<img src="https://img.shields.io/badge/notion-ffffff?style=flat&logo=notion&logoColor=black"/>
+<img src="https://img.shields.io/badge/github-1c8139?style=flat&logo=github&logoColor=white"/>
+<img src="https://img.shields.io/badge/discord-5562ea?style=flat&logo=discord&logoColor=white"/>
+
+디자인:
+<img src="https://img.shields.io/badge/figma-430098?style=flat&logo=figma&logoColor=white"/>
 
 ## 프로젝트 개요
 

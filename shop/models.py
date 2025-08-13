@@ -133,7 +133,6 @@ class Orderlist(models.Model):
 
 
 class StoreStats(models.Model):
-    # 사이트 전체 누적 구매 수량
     total_purchases = models.PositiveIntegerField(default=847342)
     today_purchases = models.PositiveIntegerField(default=21)
     last_purchase_date = models.DateField(default=date.today)

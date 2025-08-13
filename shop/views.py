@@ -345,9 +345,12 @@ def add_to_orderlist(request, pk):
 
 @login_required
 def remove_from_orderlist(request, pk):
+    
     post = get_object_or_404(Post, pk=pk)
     Orderlist.objects.filter(user=request.user, post=post).delete()
     Order.objects.filter(user=request.user, post=post).delete()
+    post.is_sold = False
+    post.save()
     return redirect('orderlist')
 
 def bulk_action(request):
@@ -376,6 +379,7 @@ def purchase_selected(request):
         return redirect('cartlist')
 
 def remove_from_cartlist_bulk(request):
+    Post.is_sold = False
     if request.method == 'POST':
         selected_ids = request.POST.getlist('selected_posts')
         # 예: 장바구니 모델에서 삭제

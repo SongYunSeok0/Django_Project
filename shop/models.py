@@ -27,6 +27,8 @@ class Post(models.Model):
     uploaded_image = models.ImageField(upload_to='images/', blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE,null=True, blank=True)
     is_sold = models.BooleanField(default=False)
+    uploaded_file = models.FileField(upload_to = 'files/',
+                                     blank=True,null=True)
 
     def __str__(self):
         return f'{self.title} - {self.category}'
@@ -42,6 +44,7 @@ class Post(models.Model):
             "bottom_top": "밑위",
             "thigh": "허벅지",
             "mit_dan": "밑단",
+            
         }
         parts = []
         for field, label in field_labels.items():
@@ -131,7 +134,6 @@ class Orderlist(models.Model):
 
 
 class StoreStats(models.Model):
-    # 사이트 전체 누적 구매 수량
     total_purchases = models.PositiveIntegerField(default=847342)
     today_purchases = models.PositiveIntegerField(default=21)
     last_purchase_date = models.DateField(default=date.today)

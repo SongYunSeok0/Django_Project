@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'style.css' %}" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>토스페이먼츠 샘플 페이지 결제실패 fail.html</title>
+    <title>토스페이먼츠 결제실패 fail.html</title>
   </head>
 
   <body>
@@ -24,8 +24,8 @@
         <div class="p-grid-col text--right" id="code">{{ code }}</div>
       </div>
       <div class="p-grid">
-        <button class="button p-grid-col5" onclick="location.href='https://docs.tosspayments.com/guides/payment/integration';">연동 문서</button>
-        <button class="button p-grid-col5" onclick="location.href='https://discord.gg/A4fRFXQhRu';" style="background-color: #e8f3ff; color: #1b64da">실시간 문의</button>
+        <button type="button" class="button p-grid-col5" onclick="location.href='{% url 'main' %}'">홈으로 돌아가기</button>
+        <button class="button p-grid-col5" onclick="location.href='{% url 'contact' %}';" style="background-color: #e8f3ff; color: #1b64da">문의</button>
       </div>
     </div>
   </body>

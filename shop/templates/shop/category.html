@@ -5,20 +5,32 @@
 <section class="px-5">
     <div class="container px-4 px-lg-5 mt-5">
         <h2 class="mb-4 text-center">{{ category_name }}</h2>
-
         {% if posts %}
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             {% for post in posts %}
+
             <div class="col mb-5">
-                <div class="card h-100" style="overflow: hidden">
+                <div class="card h-100 w-100" style="overflow: hidden">
+                    {% if post.is_sold == True %}
+                      <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sold out</div>
+                    {% endif %}
+
                     {% if post.uploaded_image %}
-                    <div class="hover-box">
-                        <a href="{% url 'shopdetail' post.pk %}">
+                      <div class="hover-box">
+                        {% if not post.is_sold %}
+                          <a href="{% url 'shopdetail' post.pk %}">
                             <img class="card-img-top" src="{{ post.uploaded_image.url }}" alt="{{ post.title }}" style="height: 300px; object-fit: cover;">
                         </a>
-                    </div>
+                        {% else %}
+                        <a href="{% url 'shopdetail' post.pk %}">
+                            <img class="card-img-top img-fluid rounded opacity-50" src="{{ post.uploaded_image.url }}" alt="{{ post.title }}" style="height: 300px; object-fit: cover;">
+                        </a>
+                          
+                        {% endif %}
+                      </div>
+                  
                     {% else %}
-                    <img class="card-img-top" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
+                      <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
                     {% endif %}
 
                     <div class="card-body p-4">
@@ -32,7 +44,7 @@
                     </div>
                 </div>
             </div>
-            {% endfor %}
+        {% endfor %}
         </div>
         {% else %}
         <p class="text-center mt-5" style="font-size: 18px; color: gray;">상품이 없습니다.</p>

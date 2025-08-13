@@ -1,5 +1,5 @@
 {% extends 'shop/base.html' %}
-
+{% load static %}
 {% block content %}
 
 <div style="background-color: #f8f9fa; min-height: 80vh; padding-top: 3rem; padding-bottom: 3rem; width: 100%;">
@@ -62,9 +62,22 @@
     {% else %}
     <section id="profile" style="margin-bottom: 3rem;">
       <div style="display: flex; align-items: center; gap: 1.5rem; margin-left: 0.25rem;">
-        <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg"
-             alt="더미 이미지"
-             style="border-radius: 50%; width: 100px; height: 100px;">
+        {% if user.username == '윤석' %}
+            <img src="{% static 'images/leopard3.png' %}" alt="송윤석"
+                 style="border-radius:50%; width:100px; height:100px;">
+          {% elif user.username == 'Dust' %}
+            <img src="{% static 'images/aw.jpg' %}" alt="김윤석"
+                 style="border-radius:50%; width:100px; height:100px;">
+          {% elif user.username == 'AYEWWW' %}
+            <img src="{% static 'images/iu.gif' %}" alt="더미 이미지"
+                 style="border-radius:50%; width:100px; height:100px;">
+          {% elif user.username == 'eunice' %}
+            <img src="{% static 'images/dog.jpg' %}" alt="김윤정"
+                 style="border-radius:50%; width:100px; height:100px;">
+          {% else %}
+            <img src="https://dummyimage.com/100x100/ced4da/6c757d.jpg" alt="더미 이미지"
+                 style="border-radius:50%; width:100px; height:100px;">
+          {% endif %}
         <div>
           <h5 style="margin-bottom: 0.25rem; font-weight: bold;">{{ user.username }}</h5>
           <small style="color: #6c757d;">{{ user.email }}</small>
@@ -103,7 +116,7 @@
              style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
              onmouseover="this.style.backgroundColor='#f1f1f1'"
              onmouseout="this.style.backgroundColor=''">
-            위시리스트
+            ❤️ 위시리스트
           </a>
         </li>
         <li style="border-top: 1px solid #dee2e6;">
@@ -111,7 +124,7 @@
              style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
              onmouseover="this.style.backgroundColor='#f1f1f1'"
              onmouseout="this.style.backgroundColor=''">
-            문의하기
+            💬 문의하기
           </a>
         </li>
         <li style="border-top: 1px solid #dee2e6;">
@@ -119,7 +132,7 @@
              style="margin-left: 10px; display: block; padding: 1rem 0; text-decoration: none; color: inherit;"
              onmouseover="this.style.backgroundColor='#f1f1f1'"
              onmouseout="this.style.backgroundColor=''">
-            문의내역
+            🧾 문의내역
           </a>
         </li>
       </ul>

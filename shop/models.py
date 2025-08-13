@@ -42,6 +42,7 @@ class Post(models.Model):
             "bottom_top": "밑위",
             "thigh": "허벅지",
             "mit_dan": "밑단",
+            
         }
         parts = []
         for field, label in field_labels.items():

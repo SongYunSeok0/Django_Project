@@ -38,11 +38,7 @@ def is_staff(user):
     return user.is_authenticated and user.is_staff
 
 def shoplist(request):
-    #db에서 query select * from post
-    posts = Post.objects.all()
-    return render(request,
-                  template_name='shop/shoplist.html',
-                  context={'posts':posts})
+    return render(request, 'shop/shoplist.html')
 
 
 def shopdetail(request, pk):
@@ -190,17 +186,9 @@ def cartlist(request):
                   'shop/cartlist.html',
                   context={'posts': cart_posts})
 
+
 def contact(request):
-    if request.method == "POST":
-        commentform = CommentForm(request.POST, request.FILES)
-        if commentform.is_valid():
-            comment = commentform.save(commit=False)
-            comment.author = request.user if request.user.is_authenticated else None
-            comment.save()
-            messages.success(request, "문의가 등록되었습니다.")
-            return redirect('contact')
-    else:
-        commentform = CommentForm()
+    commentform = CommentForm()
 
     qs = Comment.objects.filter(parent__isnull=True).order_by("-created_date")
     comments = qs.select_related('author').prefetch_related('replies__author')

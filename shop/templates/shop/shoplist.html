@@ -23,8 +23,6 @@
     text-align: center;
     overflow: hidden;
   }
-
-  /* 검은 반투명 오버레이 */
   #hero-header::before {
     content: "";
     position: absolute;
@@ -32,13 +30,7 @@
     background: rgba(0, 0, 0, 0.7);
     z-index: 1;
   }
-
-  /* 텍스트는 오버레이 위에 */
-  #hero-header > .container {
-    position: relative;
-    z-index: 2;
-  }
-
+  #hero-header > .container { position: relative; z-index: 2; }
   #hero-header h1 {
     font-family: Georgia, Times New Roman, serif;
     font-size: 6rem;
@@ -47,7 +39,25 @@
     margin: 0;
   }
 
+  /* 카드 그리드 공통 */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 1200px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 992px)  { .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px)  { .grid { grid-template-columns: repeat(1, 1fr); } }
 
+  .card-img-box {
+    position: relative; width: 100%; height: 320px;
+    border-radius: 8px; overflow: hidden; border: 1px solid #f1f1f1;
+  }
+  .card-img-box img { width:100%; height:100%; object-fit: cover; }
+  .badge-abs {
+    position:absolute; top: .5rem; right: .5rem;
+  }
 </style>
 
 <header id="hero-header" class="bg-dark py-5">
@@ -61,117 +71,152 @@
 <section class="px-5 my-5">
   <h3 style="color:black; font-family: Georgia, Times New Roman, serif;"> Event </h3>
   <div class="px-4 px-lg-5 mt-5">
-    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-6 justify-content-center">
-      {% for post in posts %}
-      {% if post.category and post.category.slug == "event" %}
-      <div class="col mb-5">
-        <div class="card h-100 w-100" style="overflow: hidden">
-          {% if post.is_sold %}
-            <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sold out</div>
-          {% else %}
-            {#<div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">New</div>#}
-            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Event</div>
-          {% endif %}
-          
-          {% if post.uploaded_image %}
-            <div class="hover-box">
-              {% if not post.is_sold %}
-                <a href="{{ post.pk }}">
-                  <img class="img-fluid rounded " src="{{ post.uploaded_image.url }}"
-                style="width:100%; height:320px; object-fit:cover; border-radius:8px;" />
-                </a>
-              {% else %}
-                <div class="image-wrapper" style="position: relative; width: 100%; height: 320px;">
-                  <img class="img-fluid rounded opacity-50"
-                       src="{{ post.uploaded_image.url }}"
-                       style="width:100%; height:100%; object-fit:cover; border-radius:8px;" />
-
-                  <div class="diagonal-line"></div>
-               </div>
-              {% endif %}
-            </div>
-          
-          {% else %}
-            <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
-          {% endif %}
-          <div class="card-body p-4">
-            <div class="text-center">
-              <h5 class="fw-bolder">{{ post.title }}</h5>
-              <span>시작가: ₩{{ post.starting_price|intcomma }}</span>
-            </div>
-          </div>
-
-          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-            <div class="text-center">
-              {% if post.is_sold %}
-                <a class="btn btn-danger mt-auto" href="{{ post.pk }}">Sold Out</a>
-              {% else %}
-                <a class="btn btn-outline-dark mt-auto" href="{{ post.pk }}">Draw</a>
-              {% endif %}
-              
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-      {% endfor %}
-    </div>
+    <!-- ✅ JS가 채울 컨테이너 -->
+    <div id="eventGrid" class="grid"></div>
   </div>
 </section>
 
 <section class="px-5">
   <h3 style="color:black; font-family: Georgia, Times New Roman, serif;">All Products</h3>
-
   <div class="px-4 px-lg-5 mt-5">
-    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-6 justify-content-center">
-      {% for post in posts %}
-      {% if post.category and post.category.slug != "event" %}
-      <div class="col mb-5">
-        <div class="card h-100 w-100" style="overflow: hidden">
-         
-          {% if post.is_sold %}
-            <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sold out</div>
-          {% else %}
-            {#<div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">New</div>#}
-          {% endif %}
+    <!-- ✅ JS가 채울 컨테이너 -->
+    <div id="productGrid" class="grid"></div>
+  </div>
+</section>
 
-          {% if post.uploaded_image %}
-            <div class="hover-box">
-              {% if not post.is_sold %}
-                <a href="{{ post.pk }}">
-                  <img class="img-fluid rounded " src="{{ post.uploaded_image.url }}"
-                style="width:100%; height:320px; object-fit:cover; border-radius:8px;" />
-                </a>
-              {% else %}
-                <div class="image-wrapper" style="position: relative; width: 100%; height: 320px;">
-                  <img class="img-fluid rounded opacity-50"
-                       src="{{ post.uploaded_image.url }}"
-                       style="width:100%; height:100%; object-fit:cover; border-radius:8px;" />
+<script>
+/** 숫자 3자리 콤마 */
+function fmt(n){
+  if(n === null || n === undefined) return '';
+  try { return Number(n).toLocaleString(); } catch { return n; }
+}
 
-                  <div class="diagonal-line"></div>
-               </div>
-              {% endif %}
-            </div>
-          
-          {% else %}
-            <img class="img-fluid rounded" src="https://dummyimage.com/850x400/ced4da/6c757d.jpg" alt="..." />
-          {% endif %}
+/** 이미지 URL 우선순위: image_url → images[0].image_url */
+function pickImage(item){
+  if (item.image_url) return item.image_url;
+  if (Array.isArray(item.images) && item.images.length > 0) {
+    // PostImageSerializer가 image_url을 제공
+    return item.images[0].image_url || item.images[0].image;
+  }
+  return "https://dummyimage.com/850x400/ced4da/6c757d.jpg";
+}
 
-          
-          <div class="card-body p-4">
-            <div class="text-center">
-              <h5 class="fw-bolder">{{ post.title }}</h5>
-              <span>₩{{ post.price|intcomma }}</span>
-            </div>
+/** 이벤트 카드 HTML */
+function eventCard(item){
+  const img = pickImage(item);
+  const isSold = !!item.is_sold; // serializer에 is_sold가 있어야 정확
+  const price = item.starting_price ?? item.price; // starting_price가 없으면 price 사용
+
+  return `
+    <div class="col mb-5">
+      <div class="card h-100 w-100" style="overflow:hidden">
+        ${isSold
+          ? `<div class="badge bg-danger text-white badge-abs">Sold out</div>`
+          : `<div class="badge bg-dark text-white badge-abs">Event</div>`}
+
+        <div class="hover-box">
+          ${!isSold
+            ? `<a href="${item.id}">
+                 <div class="card-img-box"><img src="${img}" alt=""></div>
+               </a>`
+            : `<div class="card-img-box">
+                 <img class="opacity-50" src="${img}" alt="">
+               </div>`}
+        </div>
+
+        <div class="card-body p-4">
+          <div class="text-center">
+            <h5 class="fw-bolder">${item.title ?? ''}</h5>
+            <span>시작가: ₩${fmt(price)}</span>
           </div>
-          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+        </div>
+
+        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+          <div class="text-center">
+            ${isSold
+              ? `<a class="btn btn-danger mt-auto" href="${item.id}">Sold Out</a>`
+              : `<a class="btn btn-outline-dark mt-auto" href="${item.id}">Draw</a>`}
           </div>
         </div>
       </div>
-      {% endif %}
-      {% endfor %}
     </div>
-  </div>
-</section>
+  `;
+}
+
+/** 일반 상품 카드 HTML */
+function productCard(item){
+  const img = pickImage(item);
+  const isSold = !!item.is_sold;
+
+  return `
+    <div class="col mb-5">
+      <div class="card h-100 w-100" style="overflow:hidden">
+        ${isSold ? `<div class="badge bg-danger text-white badge-abs">Sold out</div>` : ''}
+
+        <div class="hover-box">
+          ${!isSold
+            ? `<a href="${item.id}">
+                 <div class="card-img-box"><img src="${img}" alt=""></div>
+               </a>`
+            : `<div class="card-img-box">
+                 <img class="opacity-50" src="${img}" alt="">
+               </div>`}
+        </div>
+
+        <div class="card-body p-4">
+          <div class="text-center">
+            <h5 class="fw-bolder">${item.title ?? ''}</h5>
+            <span>₩${fmt(item.price)}</span>
+          </div>
+        </div>
+
+        <div class="card-footer p-4 pt-0 bg-transparent border-top-0"></div>
+      </div>
+    </div>
+  `;
+}
+
+/** 목록 로드 */
+async function loadPosts(){
+  const eventGrid = document.getElementById('eventGrid');
+  const prodGrid  = document.getElementById('productGrid');
+  eventGrid.innerHTML = '';
+  prodGrid.innerHTML  = '';
+
+  try{
+    const res = await fetch('/api/posts/');
+    if(!res.ok) throw new Error('목록 로드 실패');
+    const items = await res.json();
+
+    // 분류: category_name이 'event'인 것
+    const evts = [];
+    const prods = [];
+    for(const item of items){
+      const cat = (item.category_name || '').toString().toLowerCase();
+      if (cat === 'event') evts.push(item);
+      else prods.push(item);
+    }
+
+    // 렌더
+    if(evts.length){
+      eventGrid.innerHTML = evts.map(eventCard).join('');
+    }else{
+      eventGrid.innerHTML = `<p style="color:#666">이벤트 상품이 없습니다.</p>`;
+    }
+
+    if(prods.length){
+      prodGrid.innerHTML = prods.map(productCard).join('');
+    }else{
+      prodGrid.innerHTML = `<p style="color:#666">상품이 없습니다.</p>`;
+    }
+  }catch(e){
+    console.error(e);
+    eventGrid.innerHTML = `<p style="color:#c00">이벤트 목록을 불러오지 못했습니다.</p>`;
+    prodGrid.innerHTML  = `<p style="color:#c00">상품 목록을 불러오지 못했습니다.</p>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadPosts);
+</script>
 
 {% endblock %}

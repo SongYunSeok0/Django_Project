@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Post, Comment, Category, PostImage, ChatMessage
 from .models import Order
 
+
 class PostImageInline(admin.TabularInline):
     model = PostImage
     extra = 1

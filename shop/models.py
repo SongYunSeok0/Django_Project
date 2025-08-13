@@ -27,6 +27,8 @@ class Post(models.Model):
     uploaded_image = models.ImageField(upload_to='images/', blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE,null=True, blank=True)
     is_sold = models.BooleanField(default=False)
+    uploaded_file = models.FileField(upload_to = 'files/',
+                                     blank=True,null=True)
 
     def __str__(self):
         return f'{self.title} - {self.category}'

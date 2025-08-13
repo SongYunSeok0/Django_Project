@@ -38,7 +38,10 @@ def is_staff(user):
     return user.is_authenticated and user.is_staff
 
 def shoplist(request):
-    return render(request, 'shop/shoplist.html')
+    posts = Post.objects.all().order_by('-pk')
+    return render(request, 'shop/shoplist.html', {
+        'posts': posts
+    })
 
 
 def shopdetail(request, pk):

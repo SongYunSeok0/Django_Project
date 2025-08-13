@@ -31,6 +31,14 @@
       {{ postform.content.errors }}
     </div>
 
+      <div style="margin-bottom:16px;">
+      <label for="{{ postform.starting_price.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
+        {{ postform.starting_price.label }}
+      </label>
+      {{ postform.starting_price }}
+      {{ postform.starting_price.errors }}
+    </div>
+
     <!-- 가격 -->
     <div style="margin-bottom:16px;">
       <label for="{{ postform.price.id_for_label }}" style="display:block;margin-bottom:8px;font-weight:600;">
@@ -135,9 +143,6 @@
         </label>
       </div>
     {% endif %}
-
-
-
 
     {{ image_formset.management_form }}
       <div id="upload-row" style="display:flex; flex-wrap:wrap; gap:16px; padding-bottom: 20px;">

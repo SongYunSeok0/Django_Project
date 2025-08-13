@@ -64,11 +64,10 @@
 
         {% if comment.title %}
           <div style="margin-top:6px; margin-bottom:6px; font-size:24px; font-weight:700;">
-            Title - {{ comment.title }}
+            제목 : {{ comment.title }}
           </div>
         {% endif %}
 
-        <div style="font-size:20px; font-weight:600;">Content</div>
         {% if comment.author == user or request.user.is_staff %}
             <p style="margin:6px 0 0; line-height:1.6; white-space:pre-wrap;">{{ comment.content }}</p>
         {% else %}

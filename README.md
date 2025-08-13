@@ -4,7 +4,7 @@
 
 | **김윤석** | **김윤정** | **김형준** | **송윤석** |
 | :------: | :------: | :------: | :------: |
-|[ @beautiyj](https://github.com/beautiyj)|[ @Monzi](https://github.com/Dusty-Miller)|[ @KimHyeongjun](https://github.com/Ayewww)|[ @SongYunSeok0](https://github.com/SongYunSeok0/SongYunSeok0.github.io)|
+|[ @Monzi](https://github.com/Dusty-Miller)|[ @beautiyj](https://github.com/beautiyj)|[ @KimHyeongjun](https://github.com/Ayewww)|[ @SongYunSeok0](https://github.com/SongYunSeok0/SongYunSeok0.github.io)|
 
 
 ## 개발 환경

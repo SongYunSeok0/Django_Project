@@ -34,9 +34,6 @@ Database:
 
 ## 시연 영상
 
-<div style="text-align: center;">
-  <iframe width="1000" height="400"
-    src="[https://www.youtube.com/embed/LGdRymaxx78](https://youtu.be/sCDBcvCAMvE?si=D9-1Yl2WOt98wo1N)
-  </iframe>
-</div><br><br><br>
+<button><a href=https://youtu.be/sCDBcvCAMvE?si=D9-1Yl2WOt98wo1N></a></button>
+<br><br><br>
 <h1>http://3.80.21.12:8000/</h1>

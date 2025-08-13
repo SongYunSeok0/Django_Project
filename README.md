@@ -4,12 +4,11 @@
 
 ## 프로젝트 개요
 
-![슬라이드3](https://github.com/user-attachments/assets/a863148b-a234-48b4-9c73-624ccf8cc2ca)
-![슬라이드5](https://github.com/user-attachments/assets/3cc22c51-300f-4d26-9d58-053b1944e63b)
-
-
-## 프로젝트 소개
-![슬라이드6](https://github.com/user-attachments/assets/505ab21c-219f-4c7e-8ffc-fca5d47c40a0)
+![슬라이드1](ppt/슬라이드1.PNG)
+![슬라이드2](ppt/슬라이드2.PNG)
+![슬라이드3](ppt/슬라이드3.png)
+![슬라이드4](ppt/슬라이드4.PNG)
+![슬라이드5](ppt/슬라이드5.PNG)
 
 
 ## 팀 멤버 소개

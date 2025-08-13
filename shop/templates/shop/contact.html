@@ -8,7 +8,7 @@
 
   <h2 style="text-align:center; margin-bottom:24px; font-size:28px; font-weight:700;">문의하기</h2>
 
-  {# ✅ SPA: id 부여, JS가 submit 가로채서 /api/comments/ 로 전송 #}
+  {# SPA: id 부여, JS가 submit 가로채서 /api/comments/ 로 전송 #}
   <form id="commentForm" enctype="multipart/form-data" style="margin-bottom: 40px;">
     {% csrf_token %}
 
@@ -58,7 +58,7 @@
   <hr style="border:1px solid #000; margin-bottom:20px;">
 
 {% if comments %}
-  <ul id="commentsList" style="list-style:none; padding:0; margin:0;">  {# ✅ 갱신 타겟 id #}
+  <ul id="commentsList" style="list-style:none; padding:0; margin:0;">
     {% for comment in comments %}
       <li class="comment-item" style="border-bottom:1px solid #ddd; padding:12px 0; margin-top:0;">
 
@@ -211,7 +211,7 @@ modal.addEventListener("click", (e) => {
 });
 </script>
 
-{# ✅ SPA 핵심 JS: 폼 새로고침 막고 /api/comments/ 로 전송 + 목록 갱신 #}
+{# SPA 핵심 JS: 폼 새로고침 막고 /api/comments/ 로 전송 + 목록 갱신 #}
 <script>
 // CSRF
 function getCookie(name){
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const list = document.getElementById('commentsList');
 
   form.addEventListener('submit', async (e) => {
-    e.preventDefault();                     // 🔥 전체 새로고침 차단
+    e.preventDefault();                     // 전체 새로고침 차단
 
     // FormData로 변환(파일 업로드 지원)
     const fd = new FormData(form);

@@ -163,7 +163,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://54.221.38.23:8000",
     "http://54.221.38.23",
 ]
-#8/12 로그인 페.꾸때문에 추가
+
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -177,7 +177,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 
-TOSS_API_SECRET_KEY = "test_sk_Poxy1XQL8RJmjGzj0Zz987nO5Wml"        #토스시크릿키
-#BUY_REDIRECT_URL='/'
+TOSS_API_SECRET_KEY = "test_sk_실제 토스 시크릿키 입력 필요"
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True

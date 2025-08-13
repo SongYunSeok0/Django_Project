@@ -104,8 +104,8 @@ function pickImage(item){
 /** 이벤트 카드 HTML */
 function eventCard(item){
   const img = pickImage(item);
-  const isSold = !!item.is_sold; // serializer에 is_sold가 있어야 정확
-  const price = item.starting_price ?? item.price; // starting_price가 없으면 price 사용
+  const isSold = !!item.is_sold;
+  const price = item.starting_price ?? item.price;
 
   return `
     <div class="col mb-5">

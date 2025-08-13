@@ -77,12 +77,12 @@
 
              btn.addEventListener('click', () => {
                if (form.style.display === 'none' || form.style.display === '') {
-                 form.style.display = 'flex';  // flex로 보여주기 (input-group이라 flex 권장)
-                 btn.style.display = 'none';   // 검색 아이콘 숨기기
-                 form.querySelector('input').focus(); // 검색창 포커스
+                 form.style.display = 'flex';
+                 btn.style.display = 'none';
+                 form.querySelector('input').focus();
                } else {
                  form.style.display = 'none';
-                 btn.style.display = 'inline-block'; // 검색 아이콘 다시 보이기
+                 btn.style.display = 'inline-block';
                }
              });
            </script>

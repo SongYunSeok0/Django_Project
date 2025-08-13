@@ -34,5 +34,14 @@ Database:
 
 ## 시연 영상
 
-[YouTube 영상]([[https://youtu.be/EqJkZOaBZCw](https://youtu.be/sCDBcvCAMvE?si=D9-1Yl2WOt98wo1N)](https://www.youtube.com/watch?v=sCDBcvCAMvE))<br><br><br>
+<div style="text-align: center;">
+  <iframe width="1000" height="400"
+    src="[https://www.youtube.com/embed/LGdRymaxx78](https://youtu.be/sCDBcvCAMvE?si=D9-1Yl2WOt98wo1N)?autoplay=1&mute=1"
+    title="ONE. STILL. FOREVER."
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen>
+  </iframe>
+</div><br><br><br>
 <h1>http://3.80.21.12:8000/</h1>

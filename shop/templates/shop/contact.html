@@ -8,7 +8,8 @@
 
   <h2 style="text-align:center; margin-bottom:24px; font-size:28px; font-weight:700;">문의하기</h2>
 
-  <form method="post" enctype="multipart/form-data" style="margin-bottom: 40px;">
+  {# ✅ SPA: id 부여, JS가 submit 가로채서 /api/comments/ 로 전송 #}
+  <form id="commentForm" enctype="multipart/form-data" style="margin-bottom: 40px;">
     {% csrf_token %}
 
     <!-- 제목 -->
@@ -57,17 +58,16 @@
   <hr style="border:1px solid #000; margin-bottom:20px;">
 
 {% if comments %}
-  <ul style="list-style:none; padding:0; margin:0;">
+  <ul id="commentsList" style="list-style:none; padding:0; margin:0;">  {# ✅ 갱신 타겟 id #}
     {% for comment in comments %}
-      <li style="border-bottom:1px solid #ddd; padding:12px 0; margin-top:0;">
+      <li class="comment-item" style="border-bottom:1px solid #ddd; padding:12px 0; margin-top:0;">
 
         {% if comment.title %}
           <div style="margin-top:6px; margin-bottom:6px; font-size:24px; font-weight:700;">
-            Title - {{ comment.title }}
+            제목 : {{ comment.title }}
           </div>
         {% endif %}
 
-        <div style="font-size:20px; font-weight:600;">Content</div>
         {% if comment.author == user or request.user.is_staff %}
             <p style="margin:6px 0 0; line-height:1.6; white-space:pre-wrap;">{{ comment.content }}</p>
         {% else %}
@@ -107,7 +107,6 @@
           </span>
         </div>
 
-        {# ▼▼ HTML만으로 대댓글 접기/펼치기 ▼▼ #}
         {% if comment.replies.all %}
           <details style="margin-top:4px;">
             <summary style="cursor:pointer; font-size:14px; padding:6px 10px;
@@ -134,7 +133,6 @@
                   <span>{{ reply.created_date|date:"Y-m-d H:i" }}</span>
                 </div>
               
-                <!-- 내용 -->
                 <div style="margin-top:4px; margin-bottom:4px; line-height:1.4; white-space:pre-line;">
                   {{ reply.content }}
                 </div>
@@ -148,7 +146,8 @@
     {% endfor %}
   </ul>
 {% else %}
-  <p>아직 등록된 문의가 없습니다.</p>
+  <ul id="commentsList" style="list-style:none; padding:0; margin:0;"></ul>
+  <p style="margin-top:8px;">아직 등록된 문의가 없습니다.</p>
 {% endif %}
 
 <!-- 단일 이미지 미리보기 -->
@@ -209,6 +208,91 @@ modal.addEventListener("click", (e) => {
   if (e.target === modal) {
     modal.style.display = "none";
   }
+});
+</script>
+
+{# ✅ SPA 핵심 JS: 폼 새로고침 막고 /api/comments/ 로 전송 + 목록 갱신 #}
+<script>
+// CSRF
+function getCookie(name){
+  const parts = document.cookie.split(';').map(c=>c.trim());
+  for(const c of parts){ if(c.startsWith(name+'=')) return decodeURIComponent(c.split('=')[1]); }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('commentForm');
+  const list = document.getElementById('commentsList');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();                     // 🔥 전체 새로고침 차단
+
+    // FormData로 변환(파일 업로드 지원)
+    const fd = new FormData(form);
+
+    // root 문의라면 post/parent가 비어 있어도 됨 (API가 허용)
+    try{
+      const res = await fetch('/api/comments/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'X-Requested-With': 'XMLHttpRequest'
+          // ⚠️ FormData 사용 시 'Content-Type' 지정하지 말 것 (브라우저가 boundary 포함해 자동 설정)
+        },
+        body: fd
+      });
+
+      if(!res.ok){
+        const err = await res.json().catch(()=>({}));
+        alert('등록 실패: ' + JSON.stringify(err));
+        return;
+      }
+
+      const item = await res.json();
+
+      // 입력 초기화
+      // (Django의 form 위젯 id는 보통 id_<fieldname> 형식)
+      const contentEl = document.getElementById('{{ commentform.content.id_for_label }}');
+      if (contentEl) contentEl.value = '';
+      const fileEl = document.getElementById('{{ commentform.uploaded_image.id_for_label }}');
+      if (fileEl) fileEl.value = '';
+      const preview = document.getElementById('preview');
+      if (preview){
+        preview.style.backgroundImage = ''; preview.textContent = '+';
+      }
+
+      // 목록에 즉시 반영(최상단 prepend)
+      const li = document.createElement('li');
+      li.className = 'comment-item';
+      li.style.cssText = 'border-bottom:1px solid #ddd; padding:12px 0; margin-top:0;';
+      li.innerHTML = `
+        ${item.title ? `<div style="margin-top:6px; margin-bottom:6px; font-size:24px; font-weight:700;">
+          Title - ${item.title}
+        </div>` : ''}
+
+        <div style="font-size:20px; font-weight:600;">Content</div>
+        <p style="margin:6px 0 0; line-height:1.6; white-space:pre-wrap;">${item.content ?? ''}</p>
+
+        ${item.image_url ? `
+          <div style="margin-top:20px;">
+            <img src="${item.image_url}" class="comment-img"
+                 style="width:160px;height:160px;object-fit:cover;border-radius:6px;border:1px solid #eee; cursor:pointer;">
+          </div>` : ''}
+
+        <div style="display:flex; align-items:center; margin-top:-4px;">
+          <span style="font-size:16px; font-weight:700; margin-left:auto;">
+            Username - ${item.author_name || '익명'}
+          </span>
+          <span style="color: gray; font-size:0.9em; margin-left:8px;">
+            ${new Date(item.created_date).toLocaleString()}
+          </span>
+        </div>
+      `;
+      list?.prepend(li);
+    }catch(e){
+      console.error(e);
+      alert('등록 중 오류가 발생했습니다.');
+    }
+  });
 });
 </script>
 

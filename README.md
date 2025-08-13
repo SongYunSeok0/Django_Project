@@ -1,5 +1,14 @@
 # DUSTYSHOP
 
+## 팀 멤버 소개
+
+| **김윤석** | **김윤정** | **김형준** | **송윤석** |
+| :------: | :------: | :------: | :------: |
+|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)
+|[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)||[<img src="https://github.com/rx5460/pophub_front/assets/42200731/e99003c5-26d5-4d09-b548-aeab53c105a5" height=150 width=150> <br/> @Mae-Hyong](https://github.com/Mae-Hyong)|
+
+
+
 ## 개발 환경
 
 - **Front-end**:  <img src="https://img.shields.io/badge/flutter-02569B?style=flat&logo=flutter&logoColor=white"/>
@@ -20,11 +29,6 @@
 ![슬라이드4](ppt/슬라이드4.PNG)
 ![슬라이드5](ppt/슬라이드5.PNG)
 
-
-## 팀 멤버 소개
-
-| **김윤석** | **김윤정** | **김형준** | **송윤석** |
-| :------: | :------: | :------: | :------: |
 
 
 ## 시연 영상

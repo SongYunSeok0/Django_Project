@@ -1,6 +1,6 @@
-# Pophub
+# DUSTYSHOP
 
-![Pophub Banner](https://capsule-render.vercel.app/api?type=waving&color=0:ADD8E6,100:E6A3B3&height=300&section=header&text=Pophub&fontSize=70&fontColor=FFFFFF)
+
 
 ## 프로젝트 개요
 

@@ -35,5 +35,3 @@ Database:
 ## 시연 영상
 
 <button>https://youtu.be/sCDBcvCAMvE?si=D9-1Yl2WOt98wo1N></a></button>
-<br><br><br>
-<h1>http://3.80.21.12:8000/</h1>
